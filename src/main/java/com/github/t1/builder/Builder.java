@@ -1,5 +1,7 @@
 package com.github.t1.builder;
 
+import static com.github.t1.builder.ChildNodesIterable.*;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -132,31 +134,6 @@ public class Builder {
                 + "\n" //
                 + "    <dependencies>\n" //
                 + dependendies() //
-                + "        \n" //
-                + "        <dependency>\n" //
-                + "            <groupId>ch.qos.logback</groupId>\n" //
-                + "            <artifactId>logback-classic</artifactId>\n" //
-                + "            <version>1.1.2</version>\n" //
-                + "        </dependency>\n" //
-                + "\n" //
-                + "        <dependency>\n" //
-                + "            <groupId>junit</groupId>\n" //
-                + "            <artifactId>junit</artifactId>\n" //
-                + "            <version>4.11</version>\n" //
-                + "            <scope>test</scope>\n" //
-                + "        </dependency>\n" //
-                + "        <dependency>\n" //
-                + "            <groupId>org.hamcrest</groupId>\n" //
-                + "            <artifactId>hamcrest-core</artifactId>\n" //
-                + "            <version>1.2.1</version>\n" //
-                + "            <scope>test</scope>\n" //
-                + "        </dependency>\n" //
-                + "        <dependency>\n" //
-                + "            <groupId>org.mockito</groupId>\n" //
-                + "            <artifactId>mockito-all</artifactId>\n" //
-                + "            <version>1.9.5</version>\n" //
-                + "            <scope>test</scope>\n" //
-                + "        </dependency>\n" //
                 + "    </dependencies>\n" //
                 + "</project>\n" //
         ;
@@ -174,19 +151,23 @@ public class Builder {
         for (Element element : feature.getOther()) {
             if ("dependency".equals(element.getTagName())) {
                 out.append("        <dependency>\n");
-                NodeList childNodes = element.getChildNodes();
-                for (int i = 0; i < childNodes.getLength(); i++) {
-                    Node childNode = childNodes.item(i);
-                    if (childNode.getNodeType() == Node.ELEMENT_NODE) {
-                        tag(out, childNode.getNodeName(), childNode.getTextContent());
-                    }
-                }
+                copyChildElements(out, element);
                 out.append("        </dependency>\n");
             }
         }
     }
 
-    private void tag(StringBuilder out, String name, String body) {
+    private void copyChildElements(StringBuilder out, Element element) {
+        for (Node childNode : childNodes(element)) {
+            if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+                copyChildElement(out, childNode);
+            }
+        }
+    }
+
+    private void copyChildElement(StringBuilder out, Node childNode) {
+        String name = childNode.getNodeName();
+        String body = childNode.getTextContent();
         out.append("            <" + name + ">" + body + "</" + name + ">\n");
     }
 }

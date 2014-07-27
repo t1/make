@@ -6,5 +6,6 @@
     <feature id="javaee-7"/>
     <feature id="org.projectlombok:lombok" version="1.12.6"/>
     <feature id="com.github.t1:webresource-generator"/>
-    <feature id="org.slf4j:slf4j-api" version="1.7+"/>
+    <feature id="ch.qos.logback:logback-classic" version="1.1+"/>
+    <feature id="com.github.t1:junit-hamcrest-mockito" version="1.0"/>
 </product>

@@ -25,7 +25,8 @@ public class BuilderTest {
                 .feature(Feature.builder().id("javaee-7").build()) //
                 .feature(Feature.builder().id("org.projectlombok:lombok").version("1.12.6").build()) //
                 .feature(Feature.builder().id("com.github.t1:webresource-generator").build()) //
-                .feature(Feature.builder().id("org.slf4j:slf4j-api").version("1.7+").build()) //
+                .feature(Feature.builder().id("ch.qos.logback:logback-classic").version("1.1+").build()) //
+                .feature(Feature.builder().id("com.github.t1:junit-hamcrest-mockito").version("1.0").build()) //
                 .build();
     }
 
