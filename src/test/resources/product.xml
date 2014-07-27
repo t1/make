@@ -1,0 +1,115 @@
+<product id="ommmm" version="0.1-SNAPSHOT"><!-- this id can be used by features, e.g. as the name of the war -->
+    <!-- basic principle: you can define sth. like this: -->
+    <producer id="com.github.t1">
+        <!-- when you specify an id, it's stored in the repository -->
+        <team>
+            <member id="t1">
+                <name>Rüdiger zu Dohna</name>
+                <!-- maybe roles like developer, tester, product-owner, etc. -->
+            </member>
+        </team>
+    </producer>
+    <!-- ... or you can reference sth. from a repository like this: -->
+    <producer id="com.github.t1" />
+
+    <name>Open Meeting Motion Minutes Manager</name>
+    <description>Web-App to manage meetings, agendas, participants, absentees, motions, minutes, etc.</description>
+    <inceptionYear>2013</inceptionYear>
+
+    <!-- some features are so well known that the producer-id is optional -->
+    <feature id="javaee-7" /><!-- this feature implies the default packaging 'war' -->
+    <!-- but you could override the packaging -->
+    <feature id="javaee-7">
+        <packaging id="war" />
+    </feature>
+    <!-- the feature knows when to run -->
+    <feature id="org.projectlombok:lombok" version="1.12.6" />
+    <!-- version defaults to the newest -->
+    <feature id="com.github.t1:webresource-generator" />
+    <!-- the version can be an expression like 1.12.* or 1.12+ -->
+    <feature id="org.slf4j:slf4j-api" version="1.7+" />
+    <!-- features can be just a group of other features: -->
+    <feature id="t1-war">
+        <feature id="com.github.t1:logging-interceptor" />
+        <feature id="com.github.t1:cdi-config-client" />
+        <feature id="com.github.t1:webresource-codecs" />
+    </feature>
+    <!-- the scope is inherited by the grouped features -->
+    <feature id="testing" scope="test">
+        <feature id="junit:junit" version="4.11" />
+        <feature id="org.hamcrest:hamcrest-core" version="1.2.1" />
+        <feature id="org.mockito:mockito-all" version="1.9.5" />
+    </feature>
+    <feature id="org.glassfish.jersey.core:jersey-client" version="2.5.1" />
+        
+    <!-- some features are activated by convention, e.g. java by the existence of a folder src/main/java -->
+    <feature id="java" version="1.0">
+        <activation type="folder">src/main/java</activation>
+        <!-- this feature is implemented by maven plugins -->
+        <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.1</version>
+            <configuration>
+                <!-- the version of the current running jdk is taken from the system property -->
+                <source>${java.specification.version}</source>
+                <target>${java.specification.version}</target>
+                <showWarnings>true</showWarnings>
+                <showDeprecation>true</showDeprecation>
+                <encoding>utf8</encoding>
+                <fork>true</fork>
+                <!-- TODO depends on jdk version: <compilerArgument>-parameters</compilerArgument> -->
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>2.9.1</version>
+        </plugin>
+    </feature>
+        
+    <!-- the default type is "feature"; replaces the xml-tag name -->
+    <feature type="deployment" id="jboss">
+        <plugin>
+            <groupId>org.jboss.as.plugins</groupId>
+            <artifactId>jboss-as-maven-plugin</artifactId>
+            <version>7.4.Final</version>
+        </plugin>
+    </feature>
+    <!-- use it like this -->
+    <deployment id="jboss" />
+
+    <feature type="packaging" id="war" unique="true"><!-- unique -> report contradictions, but merge matches -->
+        <plugin>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>2.4</version>
+            <configuration>
+                <failOnMissingWebXml>false</failOnMissingWebXml>
+                <archive>
+                    <addMavenDescriptor>false</addMavenDescriptor>
+                    <manifest>
+                        <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+    </feature>
+
+    <feature id="visualee">
+        <plugin>
+            <groupId>de.struller-baumann</groupId>
+            <artifactId>visualee</artifactId>
+            <version>0.26</version>
+            <executions>
+                <execution>
+                    <phase>process-resources</phase>
+                    <goals>
+                        <goal>visualize</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <outputdirectory>target/visualee</outputdirectory>
+            </configuration>
+        </plugin>
+    </feature>
+</product>

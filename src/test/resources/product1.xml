@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<product id="foo:bar" version="1.0">
+    <name>Product Name</name>
+    <description>The Product</description>
+    <inceptionYear>2014</inceptionYear>
+    <feature id="javaee-7"/>
+    <feature id="org.projectlombok:lombok" version="1.12.6"/>
+    <feature id="com.github.t1:webresource-generator"/>
+    <feature id="org.slf4j:slf4j-api" version="1.7+"/>
+</product>

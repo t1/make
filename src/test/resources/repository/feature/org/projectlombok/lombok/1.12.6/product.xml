@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<product id="org.projectlombok:lombok" version="1.12.6">
+    <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.12.6</version>
+        <scope>provided</scope>
+        <optional>true</optional>
+    </dependency>
+</product>
