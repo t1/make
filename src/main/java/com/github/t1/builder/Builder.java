@@ -92,15 +92,13 @@ public class Builder {
                 + "    xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" //
                 + "    <modelVersion>4.0.0</modelVersion>\n" //
                 + "\n" //
-                + "    <groupId>"
-                + product.getGroupId()
-                + "</groupId>\n" //
-                + "    <artifactId>"
-                + product.getArtifactId()
-                + "</artifactId>\n" //
-                + "    <version>"
-                + product.getVersion()
-                + "</version>\n" //
+                + tag(1, "groupId", product.getGroupId()) //
+                + tag(1, "artifactId", product.getArtifactId()) //
+                + tag(1, "version", product.getVersion()) //
+                + "\n" //
+                + tag(1, "name", product.getName()) //
+                + tag(1, "description", product.getDescription()) //
+                + tag(1, "inceptionYear", product.getInceptionYear()) //
                 + "\n" //
                 + "    <build>\n" //
                 + "        <plugins>\n" //
@@ -139,6 +137,21 @@ public class Builder {
         ;
     }
 
+    private String tag(int indent, String tagName, String body) {
+        StringBuilder out = new StringBuilder();
+        indent(indent, out);
+        out.append("<").append(tagName).append(">");
+        out.append(body);
+        out.append("</").append(tagName).append(">\n");
+        return out.toString();
+    }
+
+    private void indent(int indent, StringBuilder out) {
+        for (int i = 0; i < indent; i++) {
+            out.append("    ");
+        }
+    }
+
     private String dependendies() {
         StringBuilder out = new StringBuilder();
         for (Product feature : features) {
@@ -166,8 +179,6 @@ public class Builder {
     }
 
     private void copyChildElement(StringBuilder out, Node childNode) {
-        String name = childNode.getNodeName();
-        String body = childNode.getTextContent();
-        out.append("            <" + name + ">" + body + "</" + name + ">\n");
+        out.append(tag(3, childNode.getNodeName(), childNode.getTextContent()));
     }
 }

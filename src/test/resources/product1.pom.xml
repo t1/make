@@ -6,6 +6,10 @@
     <artifactId>bar</artifactId>
     <version>1.0</version>
 
+    <name>Product Name</name>
+    <description>The Product</description>
+    <inceptionYear>2014</inceptionYear>
+
     <build>
         <plugins>
             <plugin>
