@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.t1</groupId>
-    <artifactId>builder</artifactId>
+    <artifactId>sMAKe</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <build>
@@ -71,6 +71,11 @@
             <artifactId>mockito-all</artifactId>
             <version>1.9.5</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.3.3</version>
         </dependency>
     </dependencies>
 </project>

@@ -1,6 +1,7 @@
-package com.github.t1.builder;
+package com.github.t1.sMAKe;
 
-import static com.github.t1.builder.ChildNodesIterable.*;
+import static com.github.t1.sMAKe.ChildNodesIterable.*;
+import static org.w3c.dom.Node.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -62,24 +63,37 @@ public class Builder {
         List<Product> features = new ArrayList<>();
         if (product.getFeatures() != null) {
             for (Feature feature : product.getFeatures()) {
-                Path path = featurePath(feature);
+                String type = "feature";
+                String id = feature.getId();
+                String version = feature.getVersion();
+                Path path = featurePath(type, id, version);
                 if (path != null) {
-                    log.debug("found feature in repository: {}:{}", feature.getId(), feature.getVersion());
+                    log.debug("found in repository: {} {} {}", type, id, version);
                     features.add(Builder.of(path).getProduct());
                 }
             }
+            // if (product.getOther() != null) {
+            // for (Element feature : product.getOther()) {
+            String type = "packaging";
+            String id = "jar";
+            String version = "1.0";
+            Path path = featurePath(type, id, version);
+            if (path != null) {
+                log.debug("found in repository: {} {} {}", type, id, version);
+                features.add(Builder.of(path).getProduct());
+            }
+            // }
+            // }
         }
         return features;
     }
 
-    private Path featurePath(Feature feature) {
-        String id = feature.getId();
-        String version = feature.getVersion();
+    private Path featurePath(String type, String id, String version) {
         if (id == null || version == null)
             return null;
 
         String idPath = id.replace('.', '/').replace(':', '/');
-        Path path = REPOSITORY.resolve("feature").resolve(idPath).resolve(version).resolve("product.xml");
+        Path path = REPOSITORY.resolve(type).resolve(idPath).resolve(version).resolve("product.xml");
 
         if (!Files.exists(path))
             return null;
@@ -115,23 +129,12 @@ public class Builder {
                 + "                    <compilerArgument>-parameters</compilerArgument>\n" //
                 + "                </configuration>\n" //
                 + "            </plugin>\n" //
-                + "            <plugin>\n" //
-                + "                <artifactId>maven-jar-plugin</artifactId>\n" //
-                + "                <version>2.4</version>\n" //
-                + "                <configuration>\n" //
-                + "                    <archive>\n" //
-                + "                        <addMavenDescriptor>false</addMavenDescriptor>\n" //
-                + "                        <manifest>\n" //
-                + "                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>\n" //
-                + "                        </manifest>\n" //
-                + "                    </archive>\n" //
-                + "                </configuration>\n" //
-                + "            </plugin>\n" //
+                + buildPlugins() //
                 + "        </plugins>\n" //
                 + "    </build>\n" //
                 + "\n" //
                 + "    <dependencies>\n" //
-                + dependendies() //
+                + dependencies() //
                 + "    </dependencies>\n" //
                 + "</project>\n" //
         ;
@@ -152,33 +155,59 @@ public class Builder {
         }
     }
 
-    private String dependendies() {
+    private String buildPlugins() {
         StringBuilder out = new StringBuilder();
         for (Product feature : features) {
-            copyDependencies(out, feature);
+            copy(out, "plugin", feature, 3);
         }
         return out.toString();
     }
 
-    private void copyDependencies(StringBuilder out, Product feature) {
+    private String dependencies() {
+        StringBuilder out = new StringBuilder();
+        for (Product feature : features) {
+            copy(out, "dependency", feature, 2);
+        }
+        return out.toString();
+    }
+
+    private void copy(StringBuilder out, String type, Product feature, int indent) {
         for (Element element : feature.getOther()) {
-            if ("dependency".equals(element.getTagName())) {
-                out.append("        <dependency>\n");
-                copyChildElements(out, element);
-                out.append("        </dependency>\n");
+            if (type.equals(element.getNodeName())) {
+                copyNode(out, indent, element);
             }
         }
     }
 
-    private void copyChildElements(StringBuilder out, Element element) {
-        for (Node childNode : childNodes(element)) {
-            if (childNode.getNodeType() == Node.ELEMENT_NODE) {
-                copyChildElement(out, childNode);
-            }
+    private void copyNode(StringBuilder out, int indent, Node node) {
+        String tagName = node.getNodeName();
+        indent(indent, out);
+        out.append("<").append(tagName).append(">");
+        boolean hasChildNodes = copyChildNodes(out, node, indent);
+        if (hasChildNodes) {
+            indent(indent, out);
         }
+        out.append("</").append(tagName).append(">\n");
     }
 
-    private void copyChildElement(StringBuilder out, Node childNode) {
-        out.append(tag(3, childNode.getNodeName(), childNode.getTextContent()));
+    private boolean copyChildNodes(StringBuilder out, Node node, int indent) {
+        boolean hasChildNodes = false;
+        for (Node childNode : childNodes(node)) {
+            switch (childNode.getNodeType()) {
+                case ELEMENT_NODE:
+                    if (!hasChildNodes) {
+                        hasChildNodes = true;
+                        out.append("\n");
+                    }
+                    copyNode(out, indent + 1, childNode);
+                    break;
+                case TEXT_NODE:
+                    out.append(childNode.getTextContent().trim());
+                    break;
+                default:
+                    break;
+            }
+        }
+        return hasChildNodes;
     }
 }

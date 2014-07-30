@@ -1,4 +1,4 @@
-package com.github.t1.builder;
+package com.github.t1.sMAKe;
 
 import static javax.xml.bind.annotation.XmlAccessType.*;
 
@@ -12,11 +12,12 @@ import lombok.experimental.Builder;
 import org.w3c.dom.Element;
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder(builderMethodName = "feature")
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @XmlRootElement
 @XmlAccessorType(NONE)
+@XmlType(propOrder = { "id", "version", "features", "other" })
 public class Feature {
     @XmlAttribute
     String id;
@@ -24,6 +25,9 @@ public class Feature {
     @XmlAttribute
     String version;
 
+    @XmlElement(name = "feature")
+    private List<Feature> features;
+
     @XmlAnyElement
-    List<Element> other;
+    private List<Element> other;
 }

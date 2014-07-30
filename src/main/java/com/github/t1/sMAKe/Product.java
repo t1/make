@@ -1,6 +1,6 @@
-package com.github.t1.builder;
+package com.github.t1.sMAKe;
 
-import java.util.*;
+import java.util.List;
 
 import javax.xml.bind.annotation.*;
 
@@ -11,24 +11,17 @@ import org.w3c.dom.Element;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
+@XmlType(propOrder = { "id", "version", "name", "description", "inceptionYear", "activation", "features", "other" })
 public class Product {
-    public static class ProductBuilder {
-        public ProductBuilder feature(Feature feature) {
-            if (features == null)
-                features = new ArrayList<>();
-            features.add(feature);
-            return this;
-        }
-    }
+    @XmlAttribute
+    String id;
 
     @XmlAttribute
-    private String id;
-    @XmlAttribute
-    private String version;
+    String version;
 
     @XmlElement
     private String name;
@@ -37,17 +30,20 @@ public class Product {
     @XmlElement
     private String inceptionYear;
 
-    @XmlAnyElement
-    private List<Element> other;
+    @XmlElement
+    private Activation activation;
 
     @XmlElement(name = "feature")
     private List<Feature> features;
 
+    @XmlAnyElement
+    private List<Element> other;
+
     public String getGroupId() {
-        return id.split(":", 2)[0];
+        return (id == null) ? null : id.split(":", 2)[0];
     }
 
     public String getArtifactId() {
-        return id.split(":", 2)[1];
+        return (id == null) ? null : id.split(":", 2)[1];
     }
 }

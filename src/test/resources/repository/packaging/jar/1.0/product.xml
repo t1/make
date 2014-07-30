@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<product type="packaging" id="jar" version="1.0" unique="true">
+    <name>Java-ARchive packaging</name>
+    <description>Package Java classes and resources into a Zip with the file extension '.jar'</description>
+
+    <activation>
+        <folder>src/main/java</folder>
+        <default />
+    </activation>
+
+    <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+            <archive>
+                <addMavenDescriptor>false</addMavenDescriptor>
+                <manifest>
+                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                </manifest>
+            </archive>
+        </configuration>
+    </plugin>
+</product>

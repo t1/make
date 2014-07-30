@@ -1,4 +1,4 @@
-package com.github.t1.builder;
+package com.github.t1.sMAKe;
 
 import java.util.Iterator;
 
@@ -8,16 +8,16 @@ import org.w3c.dom.*;
 
 @AllArgsConstructor
 public class ChildNodesIterable implements Iterable<Node> {
-    public static Iterable<Node> childNodes(Element element) {
-        return new ChildNodesIterable(element);
+    public static Iterable<Node> childNodes(Node node) {
+        return new ChildNodesIterable(node);
     }
 
-    private final Element element;
+    private final Node node;
 
     @Override
     public Iterator<Node> iterator() {
         return new Iterator<Node>() {
-            private final NodeList childNodes = element.getChildNodes();
+            private final NodeList childNodes = node.getChildNodes();
             private int index;
 
             @Override
