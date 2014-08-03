@@ -1,6 +1,6 @@
-package com.github.t1.sMAKe;
+package com.github.t1.sMake;
 
-import static com.github.t1.sMAKe.Type.*;
+import static com.github.t1.sMake.Type.*;
 import static org.junit.Assert.*;
 
 import java.time.LocalDateTime;

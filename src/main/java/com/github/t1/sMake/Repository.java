@@ -1,4 +1,4 @@
-package com.github.t1.sMAKe;
+package com.github.t1.sMake;
 
 import java.nio.file.*;
 import java.util.*;
