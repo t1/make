@@ -2,13 +2,12 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>foo</groupId>
-    <artifactId>bar</artifactId>
+    <groupId>test</groupId>
+    <artifactId>prod</artifactId>
     <version>1.0</version>
 
-    <name>Product Name</name>
-    <description>The Product</description>
-    <inceptionYear>2014</inceptionYear>
+    <name>Test Product</name>
+    <description>A product used for tests</description>
 
     <build>
         <plugins>
@@ -41,13 +40,6 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.12.6</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>

@@ -5,24 +5,49 @@ import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableSet;
 
 @Value
 @Accessors(fluent = true)
+@AllArgsConstructor
 public class Product {
     private final Id id;
     private final String version;
-    private final LocalDateTime releaseTimestamp;
+
+    private String name;
+    private String description;
+    private LocalDateTime releaseTimestamp;
 
     @Getter(NONE)
     private ImmutableSet<Product> features;
 
-    public ImmutableCollection<Product> features() {
-        return features;
+    /** required for JAXB */
+    @SuppressWarnings("unused")
+    private Product() {
+        this.id = null;
+        this.version = null;
+        this.name = null;
+        this.description = null;
+        this.releaseTimestamp = null;
+        this.features = null;
+    }
+
+    public Type type() {
+        return id.type();
+    }
+
+    public Stream<Product> features() {
+        return features.stream();
+    }
+
+    public Stream<Product> features(Predicate<? super Product> predicate) {
+        return features.stream().filter(predicate);
     }
 
     public Product feature(Id id) {

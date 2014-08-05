@@ -1,6 +1,6 @@
 package com.github.t1.sMake;
 
-import lombok.Value;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 @Value(staticConstructor = "type")
@@ -14,10 +14,15 @@ public class Type {
         return type("feature").id(id);
     }
 
-    public static Id type(String type, String id) {
-        return type(type).id(id);
+    public static Id dependency(String id) {
+        return type("dependency").id(id);
     }
 
+    public static Id testDependency(String id) {
+        return type("testDependency").id(id);
+    }
+
+    @NonNull
     private final String typeName;
 
     public Id id(String id) {
@@ -27,5 +32,9 @@ public class Type {
     @Override
     public String toString() {
         return typeName;
+    }
+
+    public boolean is(String string) {
+        return typeName.equals(string);
     }
 }

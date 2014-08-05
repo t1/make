@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 import org.junit.Test;
 
-public class ProductBuilderTest {
+public class ProductBuilderTest extends AbstractTest {
     @Test
     public void shouldBuildBasicProduct() {
         LocalDateTime now = LocalDateTime.now();
@@ -39,7 +39,7 @@ public class ProductBuilderTest {
         LocalDateTime now = LocalDateTime.now();
         ProductBuilder foo1 = feature("foo").version("1.0");
         ProductBuilder bar2 = feature("bar").version("2.0");
-        Repository.put(foo1.releaseTimestamp(now) //
+        repository.put(foo1.releaseTimestamp(now) //
                 .feature(bar2.releaseTimestamp(now.plusDays(3))) //
                 .build());
 
@@ -54,7 +54,7 @@ public class ProductBuilderTest {
     @Test
     public void shouldIgnoreSameTypeAndIdButDifferentVersion() {
         LocalDateTime now = LocalDateTime.now();
-        Repository.put(feature("foo").version("1.0").releaseTimestamp(now).build());
+        repository.put(feature("foo").version("1.0").releaseTimestamp(now).build());
 
         Product product = product("baz").version("2").feature(feature("foo").version("2.0")).build();
 
@@ -62,10 +62,10 @@ public class ProductBuilderTest {
     }
 
     @Test
-    public void shouldIgnoreDifferentTypeSameIdAndVersion() {
+    public void shouldIgnoreDifferentTypeButSameIdAndVersion() {
         LocalDateTime now = LocalDateTime.now();
         ProductBuilder foo1 = feature("foo").version("1.0");
-        Repository.put(foo1.releaseTimestamp(now).build());
+        repository.put(foo1.releaseTimestamp(now).build());
 
         Product product = product("baz").version("3.0") //
                 .feature(foo1) //

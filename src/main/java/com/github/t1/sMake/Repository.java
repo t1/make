@@ -1,23 +1,12 @@
 package com.github.t1.sMake;
 
-import java.nio.file.*;
-import java.util.*;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
-public class Repository {
-    private static Map<Path, Product> map = new HashMap<>();
+public interface Repository {
+    public static AtomicReference<Repository> INSTANCE = new AtomicReference<>();
 
-    public static void put(Product product) {
-        map.put(path(product), product);
-    }
+    public void put(Product product);
 
-    private static Path path(Product product) {
-        return Paths.get(product.id().type().toString(), product.id().toString(), product.version());
-    }
-
-    public static Optional<Product> get(Id id, String version) {
-        Path path = Paths.get(id.type().toString(), id.toString());
-        if (version != null)
-            path = path.resolve(version);
-        return Optional.ofNullable(map.get(path));
-    }
+    public Optional<Product> get(Id id, String version);
 }
