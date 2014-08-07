@@ -9,10 +9,6 @@ public class Id {
     @NonNull
     String idString;
 
-    public ProductBuilder version(String version) {
-        return new ProductBuilder(this, version);
-    }
-
     public String groupId() {
         return idSplit()[0];
     }

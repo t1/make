@@ -28,7 +28,7 @@ public class PomWriterTest extends AbstractTest {
     @SuppressWarnings("unused")
     @Test(expected = IllegalArgumentException.class)
     public void shouldFailToBuildFeature() {
-        new PomWriter(feature("test-feature").version("1.0").build(), target);
+        new PomWriter(new ProductEntity().id(feature("test-feature")).version("1.0"), target);
     }
 
     @Test
