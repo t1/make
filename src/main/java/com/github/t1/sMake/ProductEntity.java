@@ -1,11 +1,9 @@
 package com.github.t1.sMake;
 
-import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import lombok.*;
@@ -24,29 +22,13 @@ public class ProductEntity implements Product {
     private final List<Product> features = new ArrayList<>();
 
     @Override
-    public Type type() {
-        return id.type();
-    }
-
-    @Override
     public Stream<Product> features() {
         return features.stream();
     }
 
     @Override
-    public Product feature(Product product) {
-        features.add(product);
+    public Product feature(Product feature) {
+        features.add(feature);
         return this;
-    }
-
-    @Override
-    public Stream<Product> features(Predicate<? super Product> predicate) {
-        return features.stream().filter(predicate);
-    }
-
-    @Override
-    public Product feature(Id id) {
-        List<Product> matching = features.stream().filter(f -> id.equals(f.id())).collect(toList());
-        return matching.get(0);
     }
 }

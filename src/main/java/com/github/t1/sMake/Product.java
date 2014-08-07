@@ -39,7 +39,7 @@ public interface Product {
 
     public Stream<Product> features();
 
-    public Product feature(Product product);
+    public Product feature(Product feature);
 
 
     default public Stream<Product> features(Predicate<? super Product> predicate) {
