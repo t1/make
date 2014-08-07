@@ -17,9 +17,7 @@ public class AbstractTest {
     }
 
     protected Product createProduct() {
-        return new ProductEntity() //
-                .id(product("test:prod")) //
-                .version("1.0") //
+        return newProduct(product("test:prod"), "1.0") //
                 .name("Test Product").description("A product used for tests") //
                 .releaseTimestamp(LocalDateTime.of(2014, 8, 4, 15, 16, 59)) //
                 .feature(new ProductEntity().id(feature("javaee-7")).version("1.1")) //
@@ -29,6 +27,10 @@ public class AbstractTest {
                 .feature(new ProductEntity().id(testDependency("org.hamcrest:hamcrest-core")).version("1.2.1")) //
                 .feature(new ProductEntity().id(testDependency("org.mockito:mockito-all")).version("1.9.5")) //
         ;
+    }
+
+    protected Product newProduct(Id id, String version) {
+        return new ProductEntity().id(id).version(version);
     }
 
     protected String readFile(Path path) {
