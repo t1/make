@@ -5,13 +5,11 @@ import static lombok.AccessLevel.*;
 import java.time.LocalDateTime;
 
 import lombok.*;
-import lombok.experimental.Accessors;
 
 import com.google.common.collect.ImmutableSet;
 
 @Setter
 @Getter
-@Accessors(fluent = true)
 @RequiredArgsConstructor
 public class ProductBuilder {
     private final Id id;

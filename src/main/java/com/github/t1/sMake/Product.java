@@ -9,13 +9,12 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import lombok.*;
-import lombok.experimental.Accessors;
 
 import com.google.common.collect.ImmutableSet;
 
 @Value
-@Accessors(fluent = true)
 @AllArgsConstructor
+@ToString(doNotUseGetters = true)
 public class Product {
     private final Id id;
     private final String version;

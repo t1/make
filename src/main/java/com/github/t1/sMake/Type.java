@@ -1,10 +1,8 @@
 package com.github.t1.sMake;
 
 import lombok.*;
-import lombok.experimental.Accessors;
 
 @Value(staticConstructor = "type")
-@Accessors(fluent = true)
 public class Type {
     public static Id product(String id) {
         return type("product").id(id);

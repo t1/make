@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<product id="foo:bar" version="1.0">
-    <name>Product Name</name>
-    <description>The Product</description>
-    <inceptionYear>2014</inceptionYear>
+<product id="product:test-product" version="1.0">
+    <name>Test Product</name>
+    <description>A product used for tests</description>
+    <releaseTimestamp>2014-08-04T15:16:59</releaseTimestamp>
 
-    <activation>activation-expression</activation>
-
+    <!-- <activation>activation-expression</activation> -->
     <feature id="javaee-7" />
-    <feature id="org.projectlombok:lombok" version="1.12.6">
-        <dependency>
-            <scope>test</scope>
-        </dependency>
-    </feature>
-    <feature id="com.github.t1:webresource-generator" />
-    <feature id="ch.qos.logback:logback-classic" version="1.1+" />
-    <feature id="com.github.t1:junit-hamcrest-mockito" version="1.0" />
+    <!-- <feature id="org.projectlombok:lombok" version="1.12.6"> -->
+        <!-- <dependency> -->
+            <!-- <scope>test</scope> -->
+        <!-- </dependency> -->
+    <!-- </feature> -->
+    <!-- <feature id="com.github.t1:webresource-generator" /> -->
+    <!-- <feature id="ch.qos.logback:logback-classic" version="1.1+" /> -->
+    <!-- <feature id="com.github.t1:junit-hamcrest-mockito" version="1.0" /> -->
 </product>

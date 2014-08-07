@@ -1,7 +1,5 @@
 package com.github.t1.sMake;
 
-import static com.fasterxml.jackson.databind.DeserializationFeature.*;
-import static com.fasterxml.jackson.databind.SerializationFeature.*;
 import static com.github.t1.sMake.Type.*;
 
 import java.io.IOException;
@@ -10,12 +8,8 @@ import java.time.LocalDateTime;
 
 import org.junit.Before;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class AbstractTest {
     protected final Repository repository = new ImMemoryRepository();
-
-    protected final ObjectMapper json = new ObjectMapper().enable(INDENT_OUTPUT).disable(FAIL_ON_UNKNOWN_PROPERTIES);
 
     @Before
     public void before() {

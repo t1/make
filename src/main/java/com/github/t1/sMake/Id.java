@@ -1,10 +1,8 @@
 package com.github.t1.sMake;
 
 import lombok.*;
-import lombok.experimental.Accessors;
 
 @Value
-@Accessors(fluent = true)
 public class Id {
     @NonNull
     Type type;
