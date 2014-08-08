@@ -29,7 +29,7 @@ public class PomWriter extends XmlWriter {
             nl();
             tag("groupId", product.id().groupId());
             tag("artifactId", product.id().artifactId());
-            tag("version", product.version());
+            tag("version", product.version().versionString());
             nl();
             tag("name", product.name());
             tag("description", product.description());
@@ -85,7 +85,7 @@ public class PomWriter extends XmlWriter {
             tag("dependency", () -> {
                 tag("groupId", p.id().groupId());
                 tag("artifactId", p.id().artifactId());
-                tag("version", p.version());
+                tag("version", p.version().versionString());
                 tag("scope", scope);
             });
         };

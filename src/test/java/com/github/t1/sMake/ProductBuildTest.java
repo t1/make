@@ -15,7 +15,7 @@ public class ProductBuildTest extends AbstractTest {
         Product product = newProduct(product("foo"), "1.0").releaseTimestamp(now);
 
         assertEquals("product:foo", product.id().toString());
-        assertEquals("1.0", product.version());
+        assertEquals("1.0", product.version().versionString());
         assertEquals(now, product.releaseTimestamp());
     }
 

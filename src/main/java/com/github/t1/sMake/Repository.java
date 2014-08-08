@@ -8,5 +8,5 @@ public interface Repository {
 
     public void put(Product product);
 
-    public Optional<Product> get(Id id, String version);
+    public Optional<Product> get(Version version);
 }

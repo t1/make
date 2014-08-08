@@ -9,10 +9,11 @@ import java.util.stream.Stream;
 import lombok.*;
 
 @Data
+@RequiredArgsConstructor
 @ToString(doNotUseGetters = true)
+@EqualsAndHashCode(doNotUseGetters = true)
 public class ProductEntity implements Product {
-    private Id id;
-    private String version;
+    private final Version version;
 
     private String name;
     private String description;

@@ -23,16 +23,20 @@ public class Type {
     @NonNull
     private final String typeName;
 
+    public boolean is(String string) {
+        return typeName.equals(string);
+    }
+
     public Id id(String id) {
         return new Id(this, id);
+    }
+
+    public Id id(String groupId, String artifactId) {
+        return new Id(this, groupId, artifactId);
     }
 
     @Override
     public String toString() {
         return typeName;
-    }
-
-    public boolean is(String string) {
-        return typeName.equals(string);
     }
 }

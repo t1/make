@@ -7,39 +7,59 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.jboss.weld.exceptions.UnsupportedOperationException;
+
 public interface Product {
-    public Id id();
-
-    public Product id(Id id);
-
     default public Type type() {
         return id().type();
     }
 
+    default public Id id() {
+        return version().id();
+    }
 
-    public String version();
+    public Version version();
 
-    public Product version(String version);
+    default public String versionString() {
+        return version().versionString();
+    }
+
+    default public Product versionString(@SuppressWarnings("unused") String version) {
+        throw changeUnsupportet("version");
+    }
+
+    public default UnsupportedOperationException changeUnsupportet(String what) {
+        return new UnsupportedOperationException("changing the " + what + " is not supported by "
+                + getClass().getSimpleName());
+    }
 
 
     public String name();
 
-    public Product name(String name);
+    default public Product name(@SuppressWarnings("unused") String name) {
+        throw changeUnsupportet("name");
+    }
 
 
     public String description();
 
-    public Product description(String description);
+    default Product description(@SuppressWarnings("unused") String description) {
+        throw changeUnsupportet("description");
+    }
 
 
     public LocalDateTime releaseTimestamp();
 
-    public Product releaseTimestamp(LocalDateTime releaseTimestamp);
+    default public Product releaseTimestamp(@SuppressWarnings("unused") LocalDateTime releaseTimestamp) {
+        throw changeUnsupportet("releaseTimestamp");
+    }
 
 
     public Stream<Product> features();
 
-    public Product feature(Product feature);
+    default public Product feature(@SuppressWarnings("unused") Product feature) {
+        throw new UnsupportedOperationException("adding features is not supported by " + getClass().getSimpleName());
+    }
 
 
     default public Stream<Product> features(Predicate<? super Product> predicate) {
@@ -49,9 +69,10 @@ public interface Product {
     default public Product feature(Id id) {
         List<Product> matching = features(f -> id.equals(f.id())).collect(toList());
         if (matching.size() == 0)
-            throw new IllegalArgumentException("no feature with id " + id);
+            throw new IllegalArgumentException("not found: " + id + " in " + this.version());
         if (matching.size() > 1)
-            throw new IllegalArgumentException("multiple features with id " + id + ":\n" + matching);
+            throw new IllegalArgumentException("multiple features with id " + id + " in " + this.version() + ":\n"
+                    + matching);
         return matching.get(0);
     }
 }
