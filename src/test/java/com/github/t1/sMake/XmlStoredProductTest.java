@@ -3,20 +3,20 @@ package com.github.t1.sMake;
 import static com.github.t1.sMake.Type.*;
 import static org.junit.Assert.*;
 
-import java.net.URI;
-import java.nio.file.*;
+import java.nio.file.Paths;
 
-import org.junit.Test;
+import org.junit.*;
 
 public class XmlStoredProductTest {
-    private static final Path REPOSITORY = Paths.get("src", "test", "resources", "repository");
+    @Before
+    public void before() {
+        Repository.INSTANCE.set(new FileSystemRepository(Paths.get("src", "test", "resources", "repository")));
+    }
 
     @Test
     public void shouldReadFromXmlFile() {
         Version version = dependency("org.projectlombok:lombok").version("1.12.6");
-        URI uri = REPOSITORY.resolve(version.path()).resolve("product.xml").toUri();
-
-        Product product = new XmlStoredProduct(uri);
+        Product product = Repository.INSTANCE.get().get(version).get();
 
         assertEquals("product", product.type().typeName());
         assertEquals("org.projectlombok:lombok", product.id().idString());

@@ -1,12 +1,6 @@
 package com.github.t1.xml;
 
-import java.io.IOException;
-import java.net.URI;
-
-import javax.xml.parsers.*;
-
 import org.w3c.dom.*;
-import org.xml.sax.SAXException;
 
 import com.google.common.collect.ImmutableList;
 
@@ -14,18 +8,9 @@ import com.google.common.collect.ImmutableList;
 public class Xml extends XmlElement {
     private final Document dom;
 
-    public Xml(URI uri) {
-        super(loadDocument(uri).getDocumentElement());
+    public Xml(Document document) {
+        super(document.getDocumentElement());
         this.dom = element.getOwnerDocument();
-    }
-
-    private static Document loadDocument(URI uri) {
-        try {
-            return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(uri.toASCIIString());
-            // JsonObject obj = Json.createReader(uri.toURL().openStream()).readObject();
-        } catch (SAXException | IOException | ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public ImmutableList<XmlElement> elements() {

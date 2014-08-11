@@ -1,6 +1,5 @@
 package com.github.t1.sMake;
 
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
@@ -11,14 +10,14 @@ import com.github.t1.xml.*;
 import com.google.common.collect.ImmutableList;
 
 public class XmlStoredProduct implements Product {
+    private final Xml xml;
+
     @Getter
     private final Version version;
     private final List<Product> features;
 
-    private final Xml xml;
-
-    public XmlStoredProduct(URI uri) {
-        this.xml = new Xml(uri);
+    public XmlStoredProduct(Xml xml) {
+        this.xml = xml;
         this.version = parseVersion();
         this.features = parseFeatures();
     }
