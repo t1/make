@@ -13,7 +13,7 @@ public class AbstractTest {
 
     @Before
     public void before() {
-        Repository.INSTANCE.set(repository);
+        Repositories.getInstance().register(repository);
     }
 
     protected Product createProduct() {

@@ -10,13 +10,14 @@ import org.junit.*;
 public class XmlStoredProductTest {
     @Before
     public void before() {
-        Repository.INSTANCE.set(new FileSystemRepository(Paths.get("src", "test", "resources", "repository")));
+        FileSystemRepository repository = new FileSystemRepository(Paths.get("src", "test", "resources", "repository"));
+        Repositories.getInstance().register(repository);
     }
 
     @Test
     public void shouldReadFromXmlFile() {
         Version version = dependency("org.projectlombok:lombok").version("1.12.6");
-        Product product = Repository.INSTANCE.get().get(version).get();
+        Product product = Repositories.getInstance().get(version).get();
 
         assertEquals("product", product.type().typeName());
         assertEquals("org.projectlombok:lombok", product.id().idString());
