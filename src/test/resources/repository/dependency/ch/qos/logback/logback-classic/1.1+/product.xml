@@ -1,8 +1,3 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<product id="ch.qos.logback:logback-classic" version="1.1.2">
-    <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>1.1.2</version>
-    </dependency>
-</product>
+<dependency id="ch.qos.logback:logback-classic" version="1.1.2">
+</dependency>

@@ -2,6 +2,9 @@ package com.github.t1.sMake;
 
 import java.util.*;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class Repositories {
     private static final Repositories INSTANCE = new Repositories();
 
@@ -30,5 +33,16 @@ public class Repositories {
             }
         }
         return Optional.empty();
+    }
+
+    public Product merge(Product product) {
+        Optional<Product> referenced = get(product.version());
+        if (referenced.isPresent()) {
+            log.debug("merge {}", product.version());
+            product = new MergedProduct(product, referenced.get());
+        } else {
+            log.debug("{} not found in repositories", product.version());
+        }
+        return product;
     }
 }

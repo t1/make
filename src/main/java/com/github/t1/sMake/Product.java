@@ -57,7 +57,7 @@ public interface Product {
 
     public Stream<Product> features();
 
-    default public Product feature(@SuppressWarnings("unused") Product feature) {
+    default public Product add(@SuppressWarnings("unused") Product feature) {
         throw new UnsupportedOperationException("adding features is not supported by " + getClass().getSimpleName());
     }
 
@@ -66,13 +66,13 @@ public interface Product {
         return features().filter(predicate);
     }
 
-    default public Product feature(Id id) {
+    default public Product get(Id id) {
         List<Product> matching = features(f -> id.equals(f.id())).collect(toList());
         if (matching.size() == 0)
             throw new IllegalArgumentException("not found: " + id + " in " + this.version());
         if (matching.size() > 1)
             throw new IllegalArgumentException("multiple features with id " + id + " in " + this.version() + ":\n"
                     + matching);
-        return matching.get(0);
+        return Repositories.getInstance().merge(matching.get(0));
     }
 }

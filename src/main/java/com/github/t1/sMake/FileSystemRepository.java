@@ -2,12 +2,12 @@ package com.github.t1.sMake;
 
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.Optional;
 
 import javax.xml.parsers.*;
 
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 import org.jboss.weld.exceptions.UnsupportedOperationException;
 import org.w3c.dom.Document;
@@ -35,9 +35,17 @@ public class FileSystemRepository implements Repository {
     }
 
     @Override
-    public Optional<Product> get(Version version) {
-        URI uri = path.resolve(version.path()).resolve("product.xml").toUri();
-        Xml xml = new Xml(loadXml(uri));
-        return Optional.of(new XmlStoredProduct(xml));
+    public Optional<Product> get(@NonNull Version version) {
+        Path filePath = path.resolve(version.path()).resolve("product.xml");
+        if (!Files.exists(filePath))
+            return Optional.empty();
+
+        Xml xml = new Xml(loadXml(filePath.toUri()));
+        XmlStoredProduct product = new XmlStoredProduct(xml);
+        if (!version.equals(product.version()))
+            throw new IllegalStateException("unexpected version in " + filePath + "\n" //
+                    + "  expected: " + version + "\n" //
+                    + "     found: " + product.version());
+        return Optional.of(product);
     }
 }

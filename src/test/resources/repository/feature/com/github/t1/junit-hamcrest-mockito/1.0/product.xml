@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<product id="com.github.t1:junit-hamcrest-mockito" version="1.0">
+<feature id="com.github.t1:junit-hamcrest-mockito" version="1.0">
+    <name>JUnit, Hamcrest, and Mockito</name>
+    <description>Bundles typical dependencies for unit tests</description>
+
     <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -18,4 +21,4 @@
         <version>1.9.5</version>
         <scope>test</scope>
     </dependency>
-</product>
+</feature>

@@ -10,8 +10,6 @@ import lombok.*;
 
 @Data
 @RequiredArgsConstructor
-@ToString(doNotUseGetters = true)
-@EqualsAndHashCode(doNotUseGetters = true)
 public class ProductEntity implements Product {
     private final Version version;
 
@@ -28,7 +26,7 @@ public class ProductEntity implements Product {
     }
 
     @Override
-    public Product feature(Product feature) {
+    public Product add(Product feature) {
         features.add(feature);
         return this;
     }

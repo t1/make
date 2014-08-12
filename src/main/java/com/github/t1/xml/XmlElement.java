@@ -20,16 +20,21 @@ public class XmlElement {
         return element.getAttribute(name);
     }
 
-    public String getElementValue(String name) {
-        return getOptionalElementValue(name).get();
+    public String value() {
+        return element.getTextContent();
     }
 
-    public Optional<String> getOptionalElementValue(String name) {
+    public String getValue(String name) {
+        return getOptionalElement(name).map(e -> e.value()).get();
+    }
+
+    public Optional<XmlElement> getOptionalElement(String name) {
         NodeList elements = element.getElementsByTagName(name);
         if (elements.getLength() == 0)
             return Optional.empty();
         if (elements.getLength() > 1)
             throw new IllegalArgumentException("found " + elements.getLength() + " elements by name " + name);
-        return Optional.of(elements.item(0).getTextContent());
+        Node sub = elements.item(0);
+        return (sub == null) ? Optional.empty() : Optional.of(new XmlElement((Element) sub));
     }
 }

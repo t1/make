@@ -22,18 +22,18 @@ public class ProductBuildTest extends AbstractTest {
     @Test
     public void shouldBuildFeature() {
         Product product = newProduct(product("foo"), "1.0") //
-                .feature(newProduct(feature("bar"), "1.1"));
+                .add(newProduct(feature("bar"), "1.1"));
 
-        assertEquals("feature:bar", product.feature(feature("bar")).id().toString());
+        assertEquals("feature:bar", product.get(feature("bar")).id().toString());
     }
 
     @Test
     public void shouldBuildDoubleNestedProduct() {
         Product bar = newProduct(feature("bar"), "1.0") //
-                .feature(newProduct(feature("baz"), "2.0"));
-        Product product = newProduct(product("foo"), "3.0").feature(bar);
+                .add(newProduct(feature("baz"), "2.0"));
+        Product product = newProduct(product("foo"), "3.0").add(bar);
 
-        assertEquals("feature:baz", product.feature(feature("bar")).feature(feature("baz")).id().toString());
+        assertEquals("feature:baz", product.get(feature("bar")).get(feature("baz")).id().toString());
     }
 
     @Test
@@ -41,12 +41,12 @@ public class ProductBuildTest extends AbstractTest {
         Product foo1 = newProduct(feature("foo"), "1.0");
         Product bar2 = newProduct(feature("bar"), "2.0");
         repository.put(foo1.releaseTimestamp(now) //
-                .feature(bar2.releaseTimestamp(now.plusDays(3))));
+                .add(bar2.releaseTimestamp(now.plusDays(3))));
 
-        Product product = newProduct(product("baz"), "3.0").feature(foo1);
+        Product product = newProduct(product("baz"), "3.0").add(foo1);
 
-        assertEquals(now, product.feature(feature("foo")).releaseTimestamp());
-        assertEquals(now.plusDays(3), product.feature(feature("foo")).feature(feature("bar")).releaseTimestamp());
+        assertEquals(now, product.get(feature("foo")).releaseTimestamp());
+        assertEquals(now.plusDays(3), product.get(feature("foo")).get(feature("bar")).releaseTimestamp());
     }
 
     @Test
@@ -54,9 +54,9 @@ public class ProductBuildTest extends AbstractTest {
         repository.put(newProduct(feature("foo"), "1.0").releaseTimestamp(now));
 
         Product product = newProduct(product("baz"), "2.0") //
-                .feature(newProduct(feature("foo"), "2.0"));
+                .add(newProduct(feature("foo"), "2.0"));
 
-        assertEquals(null, product.feature(feature("foo")).releaseTimestamp());
+        assertEquals(null, product.get(feature("foo")).releaseTimestamp());
     }
 
     @Test
@@ -65,11 +65,11 @@ public class ProductBuildTest extends AbstractTest {
         repository.put(foo1.releaseTimestamp(now));
 
         Product product = newProduct(product("baz"), "3.0") //
-                .feature(foo1).feature(newProduct(type("packaging").id("foo"), "1.0") //
+                .add(foo1).add(newProduct(type("packaging").id("foo"), "1.0") //
                         .releaseTimestamp(now.plusDays(5))) //
         ;
 
-        assertEquals(now, product.feature(feature("foo")).releaseTimestamp());
-        assertEquals(now.plusDays(5), product.feature(type("packaging").id("foo")).releaseTimestamp());
+        assertEquals(now, product.get(feature("foo")).releaseTimestamp());
+        assertEquals(now.plusDays(5), product.get(type("packaging").id("foo")).releaseTimestamp());
     }
 }

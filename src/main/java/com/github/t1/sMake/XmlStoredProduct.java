@@ -1,14 +1,16 @@
 package com.github.t1.sMake;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import com.github.t1.xml.*;
 import com.google.common.collect.ImmutableList;
 
+@Slf4j
 public class XmlStoredProduct implements Product {
     private final Xml xml;
 
@@ -32,10 +34,19 @@ public class XmlStoredProduct implements Product {
     private ImmutableList<Product> parseFeatures() {
         ImmutableList.Builder<Product> result = ImmutableList.builder();
         for (XmlElement element : xml.elements()) {
-            Type type = Type.type(element.getName());
-            Id id = type.id(element.getElementValue("groupId"), element.getElementValue("artifactId"));
-            Version version = id.version(element.getElementValue("version"));
-            result.add(new ProductEntity(version));
+            String elementName = element.getName();
+            switch (elementName) {
+                case "dependency":
+                    Type type = Type.type(elementName);
+                    Id id = type.id(element.getValue("groupId"), element.getValue("artifactId"));
+                    Version version = id.version(element.getValue("version"));
+                    result.add(new ProductEntity(version));
+                    break;
+                case "name":
+                    // ignore these
+                default:
+                    log.debug("ignoring element: {}", elementName);
+            }
         }
         return result.build();
     }
@@ -52,11 +63,14 @@ public class XmlStoredProduct implements Product {
 
     @Override
     public LocalDateTime releaseTimestamp() {
-        return LocalDateTime.parse(element("releaseTimestamp"));
+        Optional<XmlElement> releaseTimestamp = xml.getOptionalElement("releaseTimestamp");
+        if (!releaseTimestamp.isPresent())
+            return null;
+        return LocalDateTime.parse(releaseTimestamp.get().value());
     }
 
     private String element(String name) {
-        return xml.getElementValue(name);
+        return xml.getValue(name);
     }
 
     @Override
