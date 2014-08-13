@@ -8,9 +8,10 @@ import java.util.stream.Stream;
 
 import lombok.*;
 
-@Data
+@Getter
+@Setter
 @RequiredArgsConstructor
-public class ProductEntity implements Product {
+public class ProductEntity extends Product {
     private final Version version;
 
     private String name;
@@ -22,7 +23,7 @@ public class ProductEntity implements Product {
 
     @Override
     public Stream<Product> features() {
-        return features.stream();
+        return features.stream().map(merged());
     }
 
     @Override

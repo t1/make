@@ -11,7 +11,7 @@ import com.github.t1.xml.*;
 import com.google.common.collect.ImmutableList;
 
 @Slf4j
-public class XmlStoredProduct implements Product {
+public class XmlStoredProduct extends Product {
     private final Xml xml;
 
     @Getter
@@ -34,21 +34,45 @@ public class XmlStoredProduct implements Product {
     private ImmutableList<Product> parseFeatures() {
         ImmutableList.Builder<Product> result = ImmutableList.builder();
         for (XmlElement element : xml.elements()) {
-            String elementName = element.getName();
-            switch (elementName) {
+            switch (element.getName()) {
                 case "dependency":
-                    Type type = Type.type(elementName);
-                    Id id = type.id(element.getValue("groupId"), element.getValue("artifactId"));
-                    Version version = id.version(element.getValue("version"));
+                case "feature":
+                    Version version = parseVersion(element);
                     result.add(new ProductEntity(version));
                     break;
                 case "name":
-                    // ignore these
+                case "description":
+                case "releaseTimestamp":
+                    break; // ignore these
                 default:
-                    log.debug("ignoring element: {}", elementName);
+                    log.debug("ignoring element {} in {}", element.getName(), version());
             }
         }
         return result.build();
+    }
+
+    private Version parseVersion(XmlElement element) {
+        try {
+            return parseId(element).version(parseVersionString(element));
+        } catch (RuntimeException e) {
+            throw new RuntimeException("can't parse version for " + element, e);
+        }
+    }
+
+    private Id parseId(XmlElement element) {
+        Type type = Type.type(element.getName());
+        if (element.hasAttribute("id"))
+            return type.id(element.getAttribute("id"));
+        return type.id(element.getValue("groupId"), element.getValue("artifactId"));
+    }
+
+    private String parseVersionString(XmlElement element) {
+        if (element.hasAttribute("version"))
+            return element.getAttribute("version");
+        Optional<XmlElement> versionElement = element.getOptionalElement("version");
+        if (versionElement.isPresent())
+            return versionElement.get().value();
+        return "*";
     }
 
     @Override
@@ -75,6 +99,6 @@ public class XmlStoredProduct implements Product {
 
     @Override
     public Stream<Product> features() {
-        return features.stream();
+        return features.stream().map(merged());
     }
 }

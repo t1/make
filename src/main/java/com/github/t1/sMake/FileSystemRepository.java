@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.*;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.xml.parsers.*;
 
@@ -28,7 +29,6 @@ public class FileSystemRepository implements Repository {
 
     private final Path path;
 
-
     @Override
     public void put(Product product) {
         throw new UnsupportedOperationException();
@@ -36,16 +36,33 @@ public class FileSystemRepository implements Repository {
 
     @Override
     public Optional<Product> get(@NonNull Version version) {
-        Path filePath = path.resolve(version.path()).resolve("product.xml");
+        return scan(version).map(path -> {
+            Xml xml = new Xml(loadXml(path.toUri()));
+            XmlStoredProduct product = new XmlStoredProduct(xml);
+            if (!version.equals(product.version()))
+                throw new IllegalStateException("unexpected version in " + path + "\n" //
+                        + "  expected: " + version + "\n" //
+                        + "     found: " + product.version());
+            return product;
+        });
+    }
+
+    private Optional<Path> scan(Version version) {
+        Path basePath = path.resolve(version.id().path());
+        if (!Files.exists(basePath))
+            return Optional.empty();
+        String resolvedVersion = version.resolve(versions(basePath));
+        Path filePath = basePath.resolve(resolvedVersion).resolve("product.xml");
         if (!Files.exists(filePath))
             return Optional.empty();
+        return Optional.of(filePath);
+    }
 
-        Xml xml = new Xml(loadXml(filePath.toUri()));
-        XmlStoredProduct product = new XmlStoredProduct(xml);
-        if (!version.equals(product.version()))
-            throw new IllegalStateException("unexpected version in " + filePath + "\n" //
-                    + "  expected: " + version + "\n" //
-                    + "     found: " + product.version());
-        return Optional.of(product);
+    private Stream<String> versions(Path basePath) {
+        try {
+            return Files.list(basePath).map(p -> p.getFileName().toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

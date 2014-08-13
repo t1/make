@@ -6,8 +6,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
 
-public class MergedProduct implements Product {
-
+public class MergedProduct extends Product {
     private final Product master;
     private final Product servant;
 

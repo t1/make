@@ -4,6 +4,7 @@ import static com.github.t1.sMake.Type.*;
 import static org.junit.Assert.*;
 
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 
 import org.junit.*;
 
@@ -70,7 +71,6 @@ public class XmlStoredProductTest extends AbstractTest {
     @Test
     public void shouldReadDependenciesWhenResolvingFromFileSystem() {
         Product product = newProduct(product("test:prod"), "1.0") //
-                .name("Test Product").description("A product used for tests") //
                 .add(newProduct(feature("com.github.t1:junit-hamcrest-mockito").version("1.0"))) //
         ;
 
@@ -82,7 +82,6 @@ public class XmlStoredProductTest extends AbstractTest {
     @Test
     public void shouldMergeDependenciesWhenResolvingFromFileSystem() {
         Product product = newProduct(product("test:prod"), "1.0") //
-                .name("Test Product").description("A product used for tests") //
                 .add(newProduct(feature("com.github.t1:junit-hamcrest-mockito").version("1.0")) //
                         .add(newProduct(LOMBOK_VERSION))) //
         ;
@@ -95,5 +94,16 @@ public class XmlStoredProductTest extends AbstractTest {
         assertEquals(LOMBOK_VERSION, lombok.version());
         assertEquals(LOMBOK_NAME, lombok.name());
         assertEquals(LOMBOK_DESCRIPTION, lombok.description());
+    }
+
+    @Test
+    public void shouldReadProductFromXmlFile() {
+        Version testProduct_1_0 = product("product:test-product").version("1.0");
+        Product product = Repositories.getInstance().get(testProduct_1_0).get();
+
+        assertEquals(testProduct_1_0, product.version());
+        assertEquals("Test Product", product.name());
+        assertEquals("A product used for tests", product.description());
+        assertEquals(LocalDateTime.of(2014, 8, 4, 15, 16, 59), product.releaseTimestamp());
     }
 }

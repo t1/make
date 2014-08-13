@@ -16,6 +16,10 @@ public class XmlElement {
         return element.getNodeName();
     }
 
+    public boolean hasAttribute(String name) {
+        return !element.getAttribute(name).isEmpty();
+    }
+
     public String getAttribute(String name) {
         return element.getAttribute(name);
     }
@@ -36,5 +40,11 @@ public class XmlElement {
             throw new IllegalArgumentException("found " + elements.getLength() + " elements by name " + name);
         Node sub = elements.item(0);
         return (sub == null) ? Optional.empty() : Optional.of(new XmlElement((Element) sub));
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() //
+                + "[" + getName() + (hasAttribute("id") ? ("@" + getAttribute("id")) : "") + "]";
     }
 }

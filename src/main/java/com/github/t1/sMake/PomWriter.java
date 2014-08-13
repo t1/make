@@ -76,7 +76,6 @@ public class PomWriter extends XmlWriter {
     private void dependencies() {
         tag("dependencies", () -> {
             product.features(p -> p.type().is("dependency")).forEach(dependency("compile"));
-            product.features(p -> p.type().is("testDependency")).forEach(dependency("test"));
         });
     }
 

@@ -16,10 +16,6 @@ public class Type {
         return type("dependency").id(id);
     }
 
-    public static Id testDependency(String id) {
-        return type("testDependency").id(id);
-    }
-
     @NonNull
     private final String typeName;
 

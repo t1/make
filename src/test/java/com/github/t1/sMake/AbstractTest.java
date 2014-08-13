@@ -26,10 +26,10 @@ public class AbstractTest {
                 .name("Test Product").description("A product used for tests") //
                 .releaseTimestamp(LocalDateTime.of(2014, 8, 4, 15, 16, 59)) //
                 .add(newProduct(feature("javaee-7").version("1.1"))) //
-                .add(newProduct(testDependency("ch.qos.logback:logback-classic").version("1.1.2"))) //
-                .add(newProduct(testDependency("junit:junit").version("4.11"))) //
-                .add(newProduct(testDependency("org.hamcrest:hamcrest-core").version("1.2.1"))) //
-                .add(newProduct(testDependency("org.mockito:mockito-all").version("1.9.5"))) //
+                .add(newProduct(dependency("ch.qos.logback:logback-classic").version("1.1.2"))) //
+                .add(newProduct(dependency("junit:junit").version("4.11"))) //
+                .add(newProduct(dependency("org.hamcrest:hamcrest-core").version("1.2.1"))) //
+                .add(newProduct(dependency("org.mockito:mockito-all").version("1.9.5"))) //
         ;
     }
 

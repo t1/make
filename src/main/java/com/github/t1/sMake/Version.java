@@ -1,6 +1,6 @@
 package com.github.t1.sMake;
 
-import java.nio.file.Path;
+import java.util.stream.Stream;
 
 import lombok.Value;
 
@@ -9,10 +9,6 @@ public class Version {
     Id id;
     String versionString;
 
-    public Path path() {
-        return id.path().resolve(versionString);
-    }
-
     public Type type() {
         return id.type();
     }
@@ -20,5 +16,9 @@ public class Version {
     @Override
     public String toString() {
         return id + ":" + versionString;
+    }
+
+    public String resolve(Stream<String> versions) {
+        return versionString;
     }
 }

@@ -8,6 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Id {
     private static final String DELIMITER = ":";
+
     @NonNull
     Type type;
     @NonNull
