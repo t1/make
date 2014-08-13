@@ -1,6 +1,6 @@
-package com.github.t1.sMake;
+package com.github.t1.somemake;
 
-import static com.github.t1.sMake.Type.*;
+import static com.github.t1.somemake.Type.*;
 
 import java.io.IOException;
 import java.nio.file.*;

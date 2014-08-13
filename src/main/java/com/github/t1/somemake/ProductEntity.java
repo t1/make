@@ -1,4 +1,4 @@
-package com.github.t1.sMake;
+package com.github.t1.somemake;
 
 import static lombok.AccessLevel.*;
 
