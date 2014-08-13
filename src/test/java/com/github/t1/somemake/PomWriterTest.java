@@ -4,13 +4,12 @@ import static com.github.t1.somemake.Type.*;
 import static org.junit.Assert.*;
 
 import java.io.StringWriter;
-import java.nio.file.*;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
 
 import org.junit.*;
 
 public class PomWriterTest extends AbstractTest {
-    private static final Path POM1_XML = Paths.get("src/test/resources/product1.pom.xml");
-
     private final FileSystemRepository repository = new FileSystemRepository(Paths.get("src", "test", "resources",
             "repository"));
 
@@ -45,13 +44,26 @@ public class PomWriterTest extends AbstractTest {
     }
 
     @Test
-    @Ignore
     public void shouldBuildBasicProduct() {
+        Product product = newProduct(product("product:test-product"), "1.0") //
+                .name("Test Product").description("A product used for tests") //
+                .releaseTimestamp(LocalDateTime.of(2014, 8, 4, 15, 16, 59)) //
+        ;
+        PomWriter writer = new PomWriter(product, target);
+
+        writer.write();
+
+        assertEquals(normalize(readFile(Paths.get("src/test/resources/basic-product.pom"))), target.toString());
+    }
+
+    @Test
+    @Ignore
+    public void shouldBuildProductWithDependencies() {
         Product product = Repositories.getInstance().get(product("product:test-product").version("1.0")).get();
         PomWriter writer = new PomWriter(product, target);
 
         writer.write();
 
-        assertEquals(normalize(readFile(POM1_XML)), target.toString());
+        assertEquals(normalize(readFile(Paths.get("src/test/resources/test-product.pom"))), target.toString());
     }
 }

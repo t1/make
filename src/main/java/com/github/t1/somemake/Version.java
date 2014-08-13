@@ -19,6 +19,12 @@ public class Version {
     }
 
     public String resolve(Stream<String> versions) {
+        if (!hasWildcards())
+            return versionString;
         return versionString;
+    }
+
+    private boolean hasWildcards() {
+        return versionString.contains("+") || versionString.contains("*");
     }
 }
