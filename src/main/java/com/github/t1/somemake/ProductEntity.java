@@ -21,14 +21,27 @@ public class ProductEntity extends Product {
     @Getter(NONE)
     private final List<Product> features = new ArrayList<>();
 
+    private Map<String, String> properties = new HashMap<>();
+
     @Override
-    public Stream<Product> features() {
-        return features.stream().map(merged());
+    public Stream<Product> unresolvedFeatures() {
+        return features.stream();
     }
 
     @Override
     public Product add(Product feature) {
         features.add(feature);
         return this;
+    }
+
+    @Override
+    public Product property(String name, String value) {
+        properties.put(name, value);
+        return this;
+    }
+
+    @Override
+    public String property(String name) {
+        return properties.get(name);
     }
 }

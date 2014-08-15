@@ -1,12 +1,22 @@
 package com.github.t1.somemake;
 
+import java.util.*;
 import java.util.stream.Stream;
 
-import lombok.Value;
+import lombok.*;
 
 @Value
 public class Version {
+    private static final Comparator<String> AS_VERSION = new Comparator<String>() {
+        @Override
+        public int compare(String version1, String version2) {
+            return 0;
+        }
+    };
+
+    @NonNull
     Id id;
+    @NonNull
     String versionString;
 
     public Type type() {
@@ -18,13 +28,23 @@ public class Version {
         return id + ":" + versionString;
     }
 
-    public String resolve(Stream<String> versions) {
-        if (!hasWildcards())
-            return versionString;
-        return versionString;
+    public Optional<String> resolve(Stream<String> versions) {
+        return versions.filter(v -> matches(v)).sorted(AS_VERSION).findFirst();
     }
 
-    private boolean hasWildcards() {
-        return versionString.contains("+") || versionString.contains("*");
+    public boolean matches(Version version) {
+        return matches(version.versionString());
+    }
+
+    public boolean matches(String version) {
+        System.out.println("match " + version + " against " + versionString);
+        if (versionString.endsWith("*"))
+            return starMatches(version);
+        return versionString.equals(version);
+    }
+
+    private boolean starMatches(String pattern) {
+        int i = versionString.indexOf('*');
+        return pattern.substring(0, i).equals(versionString.substring(0, i));
     }
 }

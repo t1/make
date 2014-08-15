@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.function.*;
 import java.util.stream.Stream;
 
-import org.jboss.weld.exceptions.UnsupportedOperationException;
-
 public abstract class Product {
     public Type type() {
         return id().type();
@@ -55,7 +53,9 @@ public abstract class Product {
     }
 
 
-    public abstract Stream<Product> features();
+    public Stream<Product> features() {
+        return unresolvedFeatures().map(merged());
+    }
 
     protected Function<? super Product, ? extends Product> merged() {
         return f -> Repositories.getInstance().merge(f);
@@ -65,6 +65,7 @@ public abstract class Product {
         throw new UnsupportedOperationException("adding features is not supported by " + getClass().getSimpleName());
     }
 
+    protected abstract Stream<Product> unresolvedFeatures();
 
     public Stream<Product> features(Predicate<? super Product> predicate) {
         return features().filter(predicate);
@@ -82,6 +83,12 @@ public abstract class Product {
 
     @Override
     public String toString() {
-        return id().toString();
+        return version().toString();
     }
+
+    public Product property(@SuppressWarnings("unused") String name, @SuppressWarnings("unused") String value) {
+        throw changeUnsupportet("property");
+    }
+
+    public abstract String property(String name);
 }

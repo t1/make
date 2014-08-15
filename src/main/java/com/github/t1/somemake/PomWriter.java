@@ -75,17 +75,17 @@ public class PomWriter extends XmlWriter {
 
     private void dependencies() {
         tag("dependencies", () -> {
-            product.features(p -> p.type().is("dependency")).forEach(dependency("compile"));
+            product.features(p -> p.type().is("dependency")).forEach(dependency());
         });
     }
 
-    private Consumer<? super Product> dependency(String scope) {
+    private Consumer<? super Product> dependency() {
         return p -> {
             tag("dependency", () -> {
                 tag("groupId", p.id().groupId());
                 tag("artifactId", p.id().artifactId());
                 tag("version", p.version().versionString());
-                tag("scope", scope);
+                tag("scope", p.property("scope"));
             });
         };
     }

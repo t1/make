@@ -1,5 +1,7 @@
 package com.github.t1.somemake;
 
+import static com.github.t1.somemake.Slum.*;
+
 import java.util.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -26,13 +28,7 @@ public class Repositories {
     }
 
     public Optional<Product> get(Version version) {
-        for (Repository repository : repositories) {
-            Optional<Product> result = repository.get(version);
-            if (result.isPresent()) {
-                return result;
-            }
-        }
-        return Optional.empty();
+        return repositories.stream().flatMap(r -> stream(r.get(version))).findAny();
     }
 
     public Product merge(Product product) {

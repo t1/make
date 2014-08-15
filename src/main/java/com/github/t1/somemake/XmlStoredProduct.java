@@ -7,18 +7,18 @@ import java.util.stream.Stream;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import com.github.t1.xml.*;
+import com.github.t1.xml.XmlElement;
 import com.google.common.collect.ImmutableList;
 
 @Slf4j
 public class XmlStoredProduct extends Product {
-    private final Xml xml;
+    private final XmlElement xml;
 
     @Getter
     private final Version version;
     private final List<Product> features;
 
-    public XmlStoredProduct(Xml xml) {
+    public XmlStoredProduct(XmlElement xml) {
         this.xml = xml;
         this.version = parseVersion();
         this.features = parseFeatures();
@@ -28,6 +28,8 @@ public class XmlStoredProduct extends Product {
         Type type = Type.type(xml.getName());
         String id = xml.getAttribute("id");
         String version = xml.getAttribute("version");
+        if (version.isEmpty())
+            version = "*";
         return type.id(id).version(version);
     }
 
@@ -37,8 +39,7 @@ public class XmlStoredProduct extends Product {
             switch (element.getName()) {
                 case "dependency":
                 case "feature":
-                    Version version = parseVersion(element);
-                    result.add(new ProductEntity(version));
+                    result.add(new XmlStoredProduct(element));
                     break;
                 case "name":
                 case "description":
@@ -49,30 +50,6 @@ public class XmlStoredProduct extends Product {
             }
         }
         return result.build();
-    }
-
-    private Version parseVersion(XmlElement element) {
-        try {
-            return parseId(element).version(parseVersionString(element));
-        } catch (RuntimeException e) {
-            throw new RuntimeException("can't parse version for " + element, e);
-        }
-    }
-
-    private Id parseId(XmlElement element) {
-        Type type = Type.type(element.getName());
-        if (element.hasAttribute("id"))
-            return type.id(element.getAttribute("id"));
-        return type.id(element.getValue("groupId"), element.getValue("artifactId"));
-    }
-
-    private String parseVersionString(XmlElement element) {
-        if (element.hasAttribute("version"))
-            return element.getAttribute("version");
-        Optional<XmlElement> versionElement = element.getOptionalElement("version");
-        if (versionElement.isPresent())
-            return versionElement.get().value();
-        return "*";
     }
 
     @Override
@@ -94,11 +71,16 @@ public class XmlStoredProduct extends Product {
     }
 
     private String element(String name) {
-        return xml.getValue(name);
+        return property(name);
     }
 
     @Override
-    public Stream<Product> features() {
-        return features.stream().map(merged());
+    public Stream<Product> unresolvedFeatures() {
+        return features.stream();
+    }
+
+    @Override
+    public String property(String name) {
+        return xml.getOptionalElement(name).map(e -> e.value()).orElse(null);
     }
 }

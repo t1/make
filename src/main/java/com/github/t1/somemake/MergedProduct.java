@@ -11,16 +11,20 @@ public class MergedProduct extends Product {
     private final Product servant;
 
     public MergedProduct(Product master, Product servant) {
+        check(master, servant);
+
         this.master = master;
         this.servant = servant;
+    }
 
+    private void check(Product master, Product servant) {
         if (!master.id().equals(servant.id()))
             throw new IllegalArgumentException("ids of products to be merged don't match\n" //
-                    + "master: " + master.id() //
+                    + "master: " + master.id() + "\n" //
                     + "servant: " + servant.id());
-        if (master.versionString() != null && !master.version().equals(servant.version()))
+        if (master.versionString() != null && !master.version().matches(servant.version()))
             throw new IllegalArgumentException("versions of products to be merged don't match\n" //
-                    + "master: " + master.versionString() //
+                    + "master: " + master.versionString() + "\n" //
                     + "servant: " + servant.versionString());
     }
 
@@ -59,5 +63,18 @@ public class MergedProduct extends Product {
                 result.add(p);
         });
         return result.stream();
+    }
+
+    @Override
+    protected Stream<Product> unresolvedFeatures() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String property(String name) {
+        String value = master.property(name);
+        if (value == null)
+            value = servant.property(name);
+        return value;
     }
 }

@@ -14,6 +14,8 @@ public class XmlWriter {
     }
 
     protected void tag(String tagName, String body) {
+        if (body == null)
+            return;
         indent();
         append("<" + tagName + ">");
         append(body);

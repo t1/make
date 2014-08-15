@@ -4,8 +4,9 @@ import java.util.Optional;
 
 import lombok.*;
 
-import org.jboss.weld.exceptions.IllegalArgumentException;
 import org.w3c.dom.*;
+
+import com.google.common.collect.ImmutableList;
 
 @Data
 @AllArgsConstructor
@@ -30,6 +31,20 @@ public class XmlElement {
 
     public String getValue(String name) {
         return getOptionalElement(name).map(e -> e.value()).get();
+    }
+
+    public ImmutableList<XmlElement> elements() {
+        ImmutableList.Builder<XmlElement> result = ImmutableList.builder();
+        // NodeIterator iterator = traversal.createNodeIterator(dom, NodeFilter.SHOW_ALL, null, false);
+        NodeList childNodes = element.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node child = childNodes.item(i);
+            if (child instanceof Element) {
+                Element element = (Element) child;
+                result.add(new XmlElement(element));
+            }
+        }
+        return result.build();
     }
 
     public Optional<XmlElement> getOptionalElement(String name) {

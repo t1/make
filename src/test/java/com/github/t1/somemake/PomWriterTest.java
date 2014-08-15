@@ -57,7 +57,6 @@ public class PomWriterTest extends AbstractTest {
     }
 
     @Test
-    @Ignore
     public void shouldBuildProductWithDependencies() {
         Product product = Repositories.getInstance().get(product("product:test-product").version("1.0")).get();
         PomWriter writer = new PomWriter(product, target);

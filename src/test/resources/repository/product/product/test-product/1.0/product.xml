@@ -8,8 +8,17 @@
     <feature id="javaee-7" />
     <feature id="org.projectlombok:lombok" version="1.12.6" />
     <feature id="com.github.t1:webresource-generator" />
-    <dependency id="ch.qos.logback:logback-classic" version="1.1+">
+    <dependency id="ch.qos.logback:logback-classic" version="1.1*">
         <scope>test</scope>
     </dependency>
-    <feature id="com.github.t1:junit-hamcrest-mockito" version="1.0" />
+    <!-- <feature id="com.github.t1:junit-hamcrest-mockito" version="1.0" /> -->
+    <dependency id="junit:junit" version="4.11">
+        <scope>test</scope>
+    </dependency>
+    <dependency id="org.hamcrest:hamcrest-core" version="1.2.1">
+        <scope>test</scope>
+    </dependency>
+    <dependency id="org.mockito:mockito-all" version="1.9.5">
+        <scope>test</scope>
+    </dependency>
 </product>

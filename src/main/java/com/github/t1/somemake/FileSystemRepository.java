@@ -10,7 +10,6 @@ import javax.xml.parsers.*;
 
 import lombok.*;
 
-import org.jboss.weld.exceptions.UnsupportedOperationException;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -27,7 +26,7 @@ public class FileSystemRepository implements Repository {
         }
     }
 
-    private final Path path;
+    private final Path repositoryRoot;
 
     @Override
     public void put(Product product) {
@@ -36,26 +35,25 @@ public class FileSystemRepository implements Repository {
 
     @Override
     public Optional<Product> get(@NonNull Version version) {
-        return scan(version).map(path -> {
-            Xml xml = new Xml(loadXml(path.toUri()));
-            XmlStoredProduct product = new XmlStoredProduct(xml);
-            if (!version.equals(product.version()))
-                throw new IllegalStateException("unexpected version in " + path + "\n" //
-                        + "  expected: " + version + "\n" //
-                        + "     found: " + product.version());
+        return resolvePath(version).map((Path path) -> {
+            XmlStoredProduct product = load(path);
+            checkVersion(version, product.version(), path);
             return product;
         });
     }
 
-    private Optional<Path> scan(Version version) {
-        Path basePath = path.resolve(version.id().path());
-        if (!Files.exists(basePath))
-            return Optional.empty();
-        String resolvedVersion = version.resolve(versions(basePath));
-        Path filePath = basePath.resolve(resolvedVersion).resolve("product.xml");
-        if (!Files.exists(filePath))
-            return Optional.empty();
-        return Optional.of(filePath);
+    private Optional<Path> resolvePath(Version version) {
+        Path idPath = repositoryRoot.resolve(version.id().path());
+        if (Files.exists(idPath)) {
+            Optional<String> resolvedVersion = version.resolve(versions(idPath));
+            if (resolvedVersion.isPresent()) {
+                Path versionPath = idPath.resolve(resolvedVersion.get());
+                if (Files.exists(versionPath)) {
+                    return Optional.of(versionPath.resolve("product.xml"));
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     private Stream<String> versions(Path basePath) {
@@ -64,5 +62,17 @@ public class FileSystemRepository implements Repository {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private XmlStoredProduct load(Path path) {
+        Xml xml = new Xml(loadXml(path.toUri()));
+        return new XmlStoredProduct(xml);
+    }
+
+    private void checkVersion(Version version, Version productVersion, Path path) {
+        if (!version.matches(productVersion))
+            throw new IllegalStateException("unexpected version in " + path + "\n" //
+                    + "  expected: " + version + "\n" //
+                    + "     found: " + productVersion);
     }
 }

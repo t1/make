@@ -3,22 +3,13 @@
     <name>JUnit, Hamcrest, and Mockito</name>
     <description>Bundles typical dependencies for unit tests</description>
 
-    <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>4.11</version>
+    <dependency id="junit:junit" version="4.11">
         <scope>test</scope>
     </dependency>
-    <dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest-core</artifactId>
-        <version>1.2.1</version>
+    <dependency id="org.hamcrest:hamcrest-core" version="1.2.1">
         <scope>test</scope>
     </dependency>
-    <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <version>1.9.5</version>
+    <dependency id="org.mockito:mockito-all" version="1.9.5">
         <scope>test</scope>
     </dependency>
 </feature>
