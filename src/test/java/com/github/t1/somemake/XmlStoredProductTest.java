@@ -1,5 +1,6 @@
 package com.github.t1.somemake;
 
+import static com.github.t1.somemake.Repositories.*;
 import static com.github.t1.somemake.Type.*;
 import static org.junit.Assert.*;
 
@@ -19,12 +20,12 @@ public class XmlStoredProductTest extends AbstractTest {
 
     @Before
     public void registerFileSystemRepository() {
-        Repositories.getInstance().register(repository);
+        repositories().register(repository);
     }
 
     @After
     public void deregisterFileSystemRepository() {
-        Repositories.getInstance().deregister(repository);
+        repositories().deregister(repository);
     }
 
     private void assertJunitHamcrestMockito(Product jhm) {
@@ -40,7 +41,7 @@ public class XmlStoredProductTest extends AbstractTest {
 
     @Test
     public void shouldReadDependencyFromXmlFile() {
-        Product lombok = Repositories.getInstance().get(LOMBOK_VERSION).get();
+        Product lombok = repositories().get(LOMBOK_VERSION).get();
 
         assertEquals(LOMBOK_VERSION, lombok.version());
         assertEquals(LOMBOK_NAME, lombok.name());
@@ -99,7 +100,7 @@ public class XmlStoredProductTest extends AbstractTest {
     @Test
     public void shouldReadProductFromXmlFile() {
         Version testProduct_1_0 = product("product:test-product").version("1.0");
-        Product product = Repositories.getInstance().get(testProduct_1_0).get();
+        Product product = repositories().get(testProduct_1_0).get();
 
         assertEquals(testProduct_1_0, product.version());
         assertEquals("Test Product", product.name());

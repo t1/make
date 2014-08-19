@@ -1,5 +1,6 @@
 package com.github.t1.somemake;
 
+import static com.github.t1.somemake.Repositories.*;
 import static com.github.t1.somemake.Type.*;
 
 import java.io.IOException;
@@ -13,12 +14,12 @@ public class AbstractTest {
 
     @Before
     public void registerInMemoryRepository() {
-        Repositories.getInstance().register(repository);
+        repositories().register(repository);
     }
 
     @After
     public void deregisterInMemoryRepository() {
-        Repositories.getInstance().deregister(repository);
+        repositories().deregister(repository);
     }
 
     protected Product createProduct() {

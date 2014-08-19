@@ -1,11 +1,13 @@
 package com.github.t1.somemake;
 
+import static com.github.t1.somemake.Repositories.*;
 import static java.util.stream.Collectors.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.*;
-import java.util.stream.Stream;
+import java.util.stream.*;
+import java.util.stream.Stream.Builder;
 
 public abstract class Product {
     public Type type() {
@@ -54,11 +56,25 @@ public abstract class Product {
 
 
     public Stream<Product> features() {
-        return unresolvedFeatures().map(merged());
+        Builder<Product> out = Stream.builder();
+        resolve(out, unresolvedFeatures());
+        return out.build().map(merged());
     }
 
-    protected Function<? super Product, ? extends Product> merged() {
-        return f -> Repositories.getInstance().merge(f);
+    /**
+     * Resolution is a two-step process: First the feature in this product is merged with the feature of the same name
+     * in a repository. Second all features in the merged feature and all features referenced from there are "pulled"
+     * into this product.
+     */
+    private void resolve(Builder<Product> out, Stream<Product> products) {
+        products.map(merged()).forEach(p -> {
+            out.add(p);
+            resolve(out, p.features().map(merged()));
+        });
+    }
+
+    protected Function<Product, Product> merged() {
+        return f -> repositories().merge(f);
     }
 
     public Product add(@SuppressWarnings("unused") Product feature) {

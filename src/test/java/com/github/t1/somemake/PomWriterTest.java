@@ -1,5 +1,6 @@
 package com.github.t1.somemake;
 
+import static com.github.t1.somemake.Repositories.*;
 import static com.github.t1.somemake.Type.*;
 import static org.junit.Assert.*;
 
@@ -10,17 +11,17 @@ import java.time.LocalDateTime;
 import org.junit.*;
 
 public class PomWriterTest extends AbstractTest {
-    private final FileSystemRepository repository = new FileSystemRepository(Paths.get("src", "test", "resources",
+    private final FileSystemRepository repository = new FileSystemRepository(Paths.get("target", "test-classes",
             "repository"));
 
     @Before
     public void registerFileSystemRepository() {
-        Repositories.getInstance().register(repository);
+        repositories().register(repository);
     }
 
     @After
     public void deregisterFileSystemRepository() {
-        Repositories.getInstance().deregister(repository);
+        repositories().deregister(repository);
     }
 
     private final StringWriter target = new StringWriter();
@@ -58,11 +59,21 @@ public class PomWriterTest extends AbstractTest {
 
     @Test
     public void shouldBuildProductWithDependencies() {
-        Product product = Repositories.getInstance().get(product("product:test-product").version("1.0")).get();
+        Product product = repositories().get(product("product:test-product").version("1.0")).get();
         PomWriter writer = new PomWriter(product, target);
 
         writer.write();
 
-        assertEquals(normalize(readFile(Paths.get("src/test/resources/test-product.pom"))), target.toString());
+        assertEquals(normalize(readFile(Paths.get("src/test/resources/test-product-1.0.pom"))), target.toString());
+    }
+
+    @Test
+    public void shouldBuildProductWithIndirectDependencies() {
+        Product product = repositories().get(product("product:test-product").version("1.1")).get();
+        PomWriter writer = new PomWriter(product, target);
+
+        writer.write();
+
+        assertEquals(normalize(readFile(Paths.get("src/test/resources/test-product-1.1.pom"))), target.toString());
     }
 }

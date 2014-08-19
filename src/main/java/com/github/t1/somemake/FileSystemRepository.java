@@ -43,13 +43,15 @@ public class FileSystemRepository implements Repository {
     }
 
     private Optional<Path> resolvePath(Version version) {
-        Path idPath = repositoryRoot.resolve(version.id().path());
-        if (Files.exists(idPath)) {
-            Optional<String> resolvedVersion = version.resolve(versions(idPath));
-            if (resolvedVersion.isPresent()) {
-                Path versionPath = idPath.resolve(resolvedVersion.get());
-                if (Files.exists(versionPath)) {
-                    return Optional.of(versionPath.resolve("product.xml"));
+        if (!version.id().idString().isEmpty()) {
+            Path idPath = repositoryRoot.resolve(version.id().path());
+            if (Files.exists(idPath)) {
+                Optional<String> resolvedVersion = version.resolve(versions(idPath));
+                if (resolvedVersion.isPresent()) {
+                    Path versionPath = idPath.resolve(resolvedVersion.get());
+                    if (Files.exists(versionPath)) {
+                        return Optional.of(versionPath.resolve("product.xml"));
+                    }
                 }
             }
         }

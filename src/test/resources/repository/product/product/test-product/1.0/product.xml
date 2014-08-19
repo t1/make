@@ -11,7 +11,6 @@
     <dependency id="ch.qos.logback:logback-classic" version="1.1*">
         <scope>test</scope>
     </dependency>
-    <!-- <feature id="com.github.t1:junit-hamcrest-mockito" version="1.0" /> -->
     <dependency id="junit:junit" version="4.11">
         <scope>test</scope>
     </dependency>

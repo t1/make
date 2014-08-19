@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Repositories {
     private static final Repositories INSTANCE = new Repositories();
 
-    public static Repositories getInstance() {
+    public static Repositories repositories() {
         return INSTANCE;
     }
 
