@@ -25,6 +25,7 @@ public class PomWriter extends XmlWriter {
 
     public void write() {
         tag("project", NAMESPACES, () -> {
+            comment("pom written by somemake; built from " + product.version());
             tag("modelVersion", "4.0.0");
             nl();
             tag("groupId", product.id().groupId());

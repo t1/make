@@ -49,8 +49,4 @@ public class AbstractTest {
             throw new RuntimeException(e);
         }
     }
-
-    protected String normalize(String xml) {
-        return xml.replace(" />", "/>").replaceAll("(?m)<!--.*-->", "");
-    }
 }

@@ -13,6 +13,13 @@ public class XmlWriter {
         append("\n");
     }
 
+    protected void comment(String text) {
+        if (text == null)
+            return;
+        indent();
+        append("<!-- " + text + " -->\n");
+    }
+
     protected void tag(String tagName, String body) {
         if (body == null)
             return;

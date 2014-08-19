@@ -54,7 +54,7 @@ public class PomWriterTest extends AbstractTest {
 
         writer.write();
 
-        assertEquals(normalize(readFile(Paths.get("src/test/resources/basic-product.pom"))), target.toString());
+        assertEquals(readFile(Paths.get("src/test/resources/basic-product.pom")), target.toString());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class PomWriterTest extends AbstractTest {
 
         writer.write();
 
-        assertEquals(normalize(readFile(Paths.get("src/test/resources/test-product-1.0.pom"))), target.toString());
+        assertEquals(readFile(Paths.get("src/test/resources/test-product-1.0.pom")), target.toString());
     }
 
     @Test
@@ -74,6 +74,6 @@ public class PomWriterTest extends AbstractTest {
 
         writer.write();
 
-        assertEquals(normalize(readFile(Paths.get("src/test/resources/test-product-1.1.pom"))), target.toString());
+        assertEquals(readFile(Paths.get("src/test/resources/test-product-1.1.pom")), target.toString());
     }
 }
