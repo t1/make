@@ -7,7 +7,7 @@ import lombok.*;
 
 @Value
 public class Version {
-    private static final Comparator<String> VERSION = new Comparator<String>() {
+    public static final Comparator<String> VERSION = new Comparator<String>() {
         @Override
         public int compare(String thisVersion, String thatVersion) {
             String[] thisParts = split(thisVersion);

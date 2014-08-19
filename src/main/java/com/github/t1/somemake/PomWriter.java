@@ -57,7 +57,9 @@ public class PomWriter extends XmlWriter {
                 tag("showDeprecation", "true");
                 tag("encoding", "utf8");
                 tag("fork", "true");
-                tag("compilerArgument", "-parameters");
+                if (Version.VERSION.compare(version, "1.8") >= 0) {
+                    tag("compilerArgument", "-parameters");
+                }
             });
         });
         tag("plugin", () -> {

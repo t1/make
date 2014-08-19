@@ -76,4 +76,45 @@ public class PomWriterTest extends AbstractTest {
 
         assertEquals(readFile(Paths.get("src/test/resources/test-product-1.1.pom")), target.toString());
     }
+
+    @Test
+    public void shouldWriteParametersCompilerArgumentOnJdk7() {
+        assertFalse(buildParametersCompilerArgumentOn("1.7"));
+    }
+
+    @Test
+    public void shouldWriteParametersCompilerArgumentOnJdk71() {
+        assertFalse(buildParametersCompilerArgumentOn("1.7.1"));
+    }
+
+    @Test
+    public void shouldWriteParametersCompilerArgumentOnJdk8() {
+        assertTrue(buildParametersCompilerArgumentOn("1.8"));
+    }
+
+    @Test
+    public void shouldWriteParametersCompilerArgumentOnJdk9() {
+        assertTrue(buildParametersCompilerArgumentOn("1.9"));
+    }
+
+    @Test
+    public void shouldWriteParametersCompilerArgumentOnJdk10() {
+        assertTrue(buildParametersCompilerArgumentOn("1.10"));
+    }
+
+    public boolean buildParametersCompilerArgumentOn(String jdk) {
+        String oldVersion = System.getProperty("java.specification.version");
+        try {
+            System.setProperty("java.specification.version", jdk);
+
+            Product product = repositories().get(product("product:test-product").version("1.1")).get();
+            PomWriter writer = new PomWriter(product, target);
+
+            writer.write();
+
+            return target.toString().contains("<compilerArgument>-parameters</compilerArgument>");
+        } finally {
+            System.setProperty("java.specification.version", oldVersion);
+        }
+    }
 }
