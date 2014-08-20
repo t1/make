@@ -11,6 +11,8 @@ import java.util.stream.Stream;
 import lombok.NonNull;
 
 public class PomWriter extends XmlWriter {
+    private static final Path CONFIGURATION = Paths.get("configuration");
+
     private static final String NAMESPACES =
             "xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" //
                     + "    xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\"";
@@ -67,32 +69,33 @@ public class PomWriter extends XmlWriter {
 
     private void plugin(Product p) {
         gav(p.version());
-        if (p.property("configuration") != null) {
+        if (p.property(CONFIGURATION) != null) {
             tag("configuration",
                     () -> {
                         if ("maven-jar-plugin".equals(p.id().artifactId())) {
                             tag("archive",
                                     () -> {
-                                        tag("addMavenDescriptor", p.property("configuration/addMavenDescriptor"));
+                                        tag("addMavenDescriptor",
+                                                p.property(CONFIGURATION.resolve("addMavenDescriptor")));
                                         tag("manifest",
                                                 () -> {
-                                                    tag("addDefaultImplementationEntries",
-                                                            p.property("configuration/manifest/addDefaultImplementationEntries"));
+                                                    tag("addDefaultImplementationEntries", p.property(CONFIGURATION
+                                                            .resolve("manifest/addDefaultImplementationEntries")));
                                                 });
                                     });
                         } else {
-                            copyProperties(p, Paths.get("configuration"));
+                            copyProperties(p, CONFIGURATION);
                         }
                     });
         }
     }
 
-    private void copyProperties(Product p, Path subPath) {
-        p.properties().forEach(property -> {
+    private void copyProperties(Product product, Path subPath) {
+        product.properties().forEach(property -> {
             Path path = Paths.get("/plugin/plugin/").resolve(subPath).relativize(property);
             String name = path.getFileName().toString();
             if (!name.isEmpty()) {
-                tag(name, p.property("configuration/" + path));
+                tag(name, product.property(CONFIGURATION.resolve(path)));
             }
         });
     }
@@ -103,8 +106,8 @@ public class PomWriter extends XmlWriter {
                 tag("dependency", () -> {
                     gav(dependency.version());
                     dependency.properties().forEach(property -> {
-                        String propertyName = property.getFileName().toString();
-                        tag(propertyName, dependency.property(propertyName));
+                        Path propertyName = property.getFileName();
+                        tag(propertyName.toString(), dependency.property(propertyName));
                     });
                 });
             });

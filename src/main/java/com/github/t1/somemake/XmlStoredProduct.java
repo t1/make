@@ -1,6 +1,6 @@
 package com.github.t1.somemake;
 
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
@@ -26,22 +26,22 @@ public class XmlStoredProduct extends Product {
 
     @Override
     public String name() {
-        return property("name");
+        return property(Paths.get("name"));
     }
 
     @Override
     public String description() {
-        return property("description");
+        return property(Paths.get("description"));
     }
 
     @Override
-    public String property(String name) {
+    public String property(Path name) {
         return xml.getOptionalElement(name).map(e -> e.value()).orElse(null);
     }
 
     @Override
     public LocalDateTime releaseTimestamp() {
-        return xml.getOptionalElement("releaseTimestamp") //
+        return xml.getOptionalElement(Paths.get("releaseTimestamp")) //
                 .map(releaseTimestamp -> LocalDateTime.parse(releaseTimestamp.value())) //
                 .orElse(null);
     }

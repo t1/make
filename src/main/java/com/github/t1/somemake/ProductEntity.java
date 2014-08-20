@@ -2,7 +2,7 @@ package com.github.t1.somemake;
 
 import static lombok.AccessLevel.*;
 
-import java.nio.file.*;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
@@ -22,7 +22,7 @@ public class ProductEntity extends Product {
     @Getter(NONE)
     private final List<Product> features = new ArrayList<>();
 
-    private Map<String, String> properties = new HashMap<>();
+    private Map<Path, String> properties = new HashMap<>();
 
     @Override
     public Stream<Product> unresolvedFeatures() {
@@ -36,18 +36,18 @@ public class ProductEntity extends Product {
     }
 
     @Override
-    public Product property(String name, String value) {
+    public Product property(Path name, String value) {
         properties.put(name, value);
         return this;
     }
 
     @Override
-    public String property(String name) {
+    public String property(Path name) {
         return properties.get(name);
     }
 
     @Override
     public Stream<Path> properties() {
-        return properties.keySet().stream().map(k -> Paths.get(k));
+        return properties.keySet().stream();
     }
 }

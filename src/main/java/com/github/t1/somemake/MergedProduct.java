@@ -72,7 +72,7 @@ public class MergedProduct extends Product {
     }
 
     @Override
-    public String property(String name) {
+    public String property(Path name) {
         String value = master.property(name);
         if (value == null)
             value = servant.property(name);

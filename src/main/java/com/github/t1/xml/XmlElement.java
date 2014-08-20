@@ -43,7 +43,7 @@ public class XmlElement {
     }
 
     public String getValue(String name) {
-        return getOptionalElement(name).map(e -> e.value()).get();
+        return getOptionalElement(Paths.get(name)).map(e -> e.value()).get();
     }
 
     public Stream<XmlElement> elements() {
@@ -80,10 +80,10 @@ public class XmlElement {
         });
     }
 
-    public Optional<XmlElement> getOptionalElement(String name) {
+    public Optional<XmlElement> getOptionalElement(Path name) {
         Element node = element;
-        for (String pathElement : name.split("/")) {
-            NodeList elements = node.getElementsByTagName(pathElement);
+        for (Path pathElement : name) {
+            NodeList elements = node.getElementsByTagName(pathElement.toString());
             if (elements.getLength() == 0)
                 return Optional.empty();
             if (elements.getLength() > 1)
