@@ -2,6 +2,7 @@ package com.github.t1.somemake;
 
 import static lombok.AccessLevel.*;
 
+import java.nio.file.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
@@ -43,5 +44,10 @@ public class ProductEntity extends Product {
     @Override
     public String property(String name) {
         return properties.get(name);
+    }
+
+    @Override
+    public Stream<Path> properties() {
+        return properties.keySet().stream().map(k -> Paths.get(k));
     }
 }

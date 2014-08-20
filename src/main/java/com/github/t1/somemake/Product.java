@@ -3,6 +3,7 @@ package com.github.t1.somemake;
 import static com.github.t1.somemake.Repositories.*;
 import static java.util.stream.Collectors.*;
 
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.*;
@@ -107,4 +108,6 @@ public abstract class Product {
     }
 
     public abstract String property(String name);
+
+    public abstract Stream<Path> properties();
 }

@@ -1,7 +1,11 @@
-<product id="ommmm" version="0.1-SNAPSHOT"><!-- this id can be used by features, e.g. as the name of the war -->
+<product id="com.github.t1:ommmm" version="0.1-SNAPSHOT">
+    <!-- the id can be composed of a group-id, colon, and artifact-id -->
+    <!-- some artifacts are so well known that the group-id is optional, e.g. java-ee -->
+    <!-- features can use the id with or without the group-id, e.g. as the name of the war -->
+
     <!-- basic principle: you can define sth. like this: -->
     <producer id="com.github.t1">
-        <!-- when you specify an id, it's stored in the repository -->
+        <!-- when you specify an id, it's can be resolved in a repository, and will be merged -->
         <team>
             <member id="t1">
                 <name>Rüdiger zu Dohna</name>
@@ -16,29 +20,35 @@
     <description>Web-App to manage meetings, agendas, participants, absentees, motions, minutes, etc.</description>
     <inceptionYear>2013</inceptionYear>
 
-    <!-- some features are so well known that the producer-id is optional -->
-    <feature id="javaee-7" /><!-- this feature implies the default packaging 'war' -->
-    <!-- but you could override the packaging -->
-    <feature id="javaee-7">
-        <packaging id="war" />
-    </feature>
-    <!-- the feature knows when to run -->
-    <feature id="org.projectlombok:lombok" version="1.12.6" />
     <!-- version defaults to the newest -->
     <feature id="com.github.t1:webresource-generator" />
     <!-- the version can be an expression like 1.12.* or 1.12+ -->
     <feature id="org.slf4j:slf4j-api" version="1.7+" />
+
+    <feature id="java-ee" version="7.*" /><!-- this feature activates the packaging 'war' -->
+    <!-- but you could override the packaging -->
+    <feature id="java-ee">
+        <packaging id="ear" />
+    </feature>
+    <!-- the feature knows when to run / the scope -->
+    <feature id="org.projectlombok:lombok" version="1.12.6" />
+    <!-- but you can (again) override -->
+    <feature id="org.projectlombok:lombok" version="1.12.6">
+        <scope>runtime</scope>
+    </feature>
+
     <!-- features can be just a group of other features: -->
     <feature id="t1-war">
-        <feature id="com.github.t1:logging-interceptor" />
-        <feature id="com.github.t1:cdi-config-client" />
-        <feature id="com.github.t1:webresource-codecs" />
+        <dependency id="com.github.t1:logging-interceptor" />
+        <dependency id="com.github.t1:cdi-config-client" />
+        <dependency id="com.github.t1:webresource-codecs" />
     </feature>
-    <!-- the scope is inherited by the grouped features -->
-    <feature id="testing" scope="test">
-        <feature id="junit:junit" version="4.11" />
-        <feature id="org.hamcrest:hamcrest-core" version="1.2.1" />
-        <feature id="org.mockito:mockito-all" version="1.9.5" />
+    <!-- the scope is used for all grouped features -->
+    <feature>
+        <scope>test</scope>
+        <dependency id="junit:junit" version="4.11" />
+        <dependency id="org.hamcrest:hamcrest-core" version="1.2.1" />
+        <dependency id="org.mockito:mockito-all" version="1.9.5" />
     </feature>
     <feature id="org.glassfish.jersey.core:jersey-client" version="2.5.1" />
         

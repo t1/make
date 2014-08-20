@@ -2,6 +2,7 @@ package com.github.t1.somemake;
 
 import static java.util.stream.Collectors.*;
 
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Stream;
@@ -76,5 +77,12 @@ public class MergedProduct extends Product {
         if (value == null)
             value = servant.property(name);
         return value;
+    }
+
+    @Override
+    public Stream<Path> properties() {
+        Set<Path> properties = master.properties().collect(toSet());
+        properties.addAll(servant.properties().collect(toSet()));
+        return properties.stream();
     }
 }

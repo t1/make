@@ -1,7 +1,12 @@
 package com.github.t1.somemake;
 
+import static com.github.t1.somemake.Repositories.*;
+import static com.github.t1.somemake.Type.*;
+
 import java.io.Writer;
-import java.util.function.Consumer;
+import java.nio.file.*;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import lombok.NonNull;
 
@@ -46,50 +51,73 @@ public class PomWriter extends XmlWriter {
     }
 
     private void plugins() {
-        tag("plugin", () -> {
-            tag("artifactId", "maven-compiler-plugin");
-            tag("version", "3.1");
-            tag("configuration", () -> {
-                String version = System.getProperty("java.specification.version");
-                tag("source", version);
-                tag("target", version);
-                tag("showWarnings", "true");
-                tag("showDeprecation", "true");
-                tag("encoding", "utf8");
-                tag("fork", "true");
-                if (Version.VERSION.compare(version, "1.8") >= 0) {
-                    tag("compilerArgument", "-parameters");
-                }
+        product.features(p -> p.type().is("plugin")).forEach(p -> {
+            System.out.println("##> " + p);
+        });
+        Stream.of( //
+                repositories().get(type("plugin").id("compiler.java").version("3.1")).get() //
+        ).forEach(p -> {
+            p.features().forEach(f -> {
+                tag("plugin", () -> {
+                    plugin(f);
+                });
             });
         });
-        tag("plugin", () -> {
-            tag("artifactId", "maven-jar-plugin");
-            tag("version", "2.4");
-            tag("configuration", () -> {
-                tag("archive", () -> {
-                    tag("addMavenDescriptor", "false");
-                    tag("manifest", () -> {
-                        tag("addDefaultImplementationEntries", "true");
+    }
+
+    private void plugin(Product p) {
+        gav(p.version());
+        if (p.property("configuration") != null) {
+            tag("configuration",
+                    () -> {
+                        if ("maven-jar-plugin".equals(p.id().artifactId())) {
+                            tag("archive",
+                                    () -> {
+                                        tag("addMavenDescriptor", p.property("configuration/addMavenDescriptor"));
+                                        tag("manifest",
+                                                () -> {
+                                                    tag("addDefaultImplementationEntries",
+                                                            p.property("configuration/manifest/addDefaultImplementationEntries"));
+                                                });
+                                    });
+                        } else {
+                            copyProperties(p, Paths.get("configuration"));
+                        }
+                    });
+        }
+    }
+
+    private void copyProperties(Product p, Path subPath) {
+        p.properties().forEach(property -> {
+            Path path = Paths.get("/plugin/plugin/").resolve(subPath).relativize(property);
+            String name = path.getFileName().toString();
+            if (!name.isEmpty()) {
+                tag(name, p.property("configuration/" + path));
+            }
+        });
+    }
+
+    private void dependencies() {
+        tag("dependencies", () -> {
+            product.features(ofType("dependency")).forEach(dependency -> {
+                tag("dependency", () -> {
+                    gav(dependency.version());
+                    dependency.properties().forEach(property -> {
+                        String propertyName = property.getFileName().toString();
+                        tag(propertyName, dependency.property(propertyName));
                     });
                 });
             });
         });
     }
 
-    private void dependencies() {
-        tag("dependencies", () -> {
-            product.features(p -> p.type().is("dependency")).forEach(dependency());
-        });
+    private Predicate<Product> ofType(String type) {
+        return feature -> feature.type().is(type);
     }
 
-    private Consumer<? super Product> dependency() {
-        return p -> {
-            tag("dependency", () -> {
-                tag("groupId", p.id().groupId());
-                tag("artifactId", p.id().artifactId());
-                tag("version", p.version().versionString());
-                tag("scope", p.property("scope"));
-            });
-        };
+    private void gav(Version version) {
+        tag("groupId", version.id().groupId());
+        tag("artifactId", version.id().artifactId());
+        tag("version", version.versionString());
     }
 }

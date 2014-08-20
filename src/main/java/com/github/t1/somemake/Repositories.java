@@ -32,6 +32,8 @@ public class Repositories {
     }
 
     public Product merge(Product product) {
+        if (product.id().idString().isEmpty())
+            return product;
         Optional<Product> referenced = get(product.version());
         if (referenced.isPresent()) {
             log.debug("merge {}", product.version());

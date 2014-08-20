@@ -78,11 +78,13 @@ public class PomWriterTest extends AbstractTest {
     }
 
     @Test
+    @Ignore
     public void shouldWriteParametersCompilerArgumentOnJdk7() {
         assertFalse(buildParametersCompilerArgumentOn("1.7"));
     }
 
     @Test
+    @Ignore
     public void shouldWriteParametersCompilerArgumentOnJdk71() {
         assertFalse(buildParametersCompilerArgumentOn("1.7.1"));
     }
