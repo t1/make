@@ -10,7 +10,7 @@ import org.w3c.dom.*;
 
 import com.google.common.collect.*;
 
-@Data
+@EqualsAndHashCode
 @AllArgsConstructor
 public class XmlElement {
     protected Element element;
@@ -52,7 +52,6 @@ public class XmlElement {
 
     private Stream<XmlElement> stream(NodeList childNodes) {
         Stream.Builder<XmlElement> result = Stream.builder();
-        // NodeIterator iterator = traversal.createNodeIterator(dom, NodeFilter.SHOW_ALL, null, false);
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node child = childNodes.item(i);
             if (child instanceof Element) {
@@ -97,5 +96,20 @@ public class XmlElement {
     public String toString() {
         return getClass().getSimpleName() //
                 + "[" + getName() + (hasAttribute("id") ? ("@" + getAttribute("id")) : "") + "]";
+    }
+
+    public boolean hasChildElements(Path path) {
+        return getOptionalElement(path).filter(e -> hasChildElements(e.element)).isPresent();
+    }
+
+    private boolean hasChildElements(Element element) {
+        NodeList childNodes = element.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node node = childNodes.item(i);
+            if (node instanceof Element) {
+                return true;
+            }
+        }
+        return false;
     }
 }

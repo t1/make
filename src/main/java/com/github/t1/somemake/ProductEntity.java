@@ -36,18 +36,23 @@ public class ProductEntity extends Product {
     }
 
     @Override
-    public Product property(Path name, String value) {
-        properties.put(name, value);
+    public Product property(Path path, String value) {
+        properties.put(path, value);
         return this;
     }
 
     @Override
-    public String property(Path name) {
-        return properties.get(name);
+    public String property(Path path) {
+        return properties.get(path);
     }
 
     @Override
     public Stream<Path> properties() {
         return properties.keySet().stream();
+    }
+
+    @Override
+    public boolean hasChildProperties(Path property) {
+        return properties.keySet().stream().filter(p -> p.getParent().equals(property)).findAny().isPresent();
     }
 }

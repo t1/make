@@ -35,8 +35,8 @@ public class XmlStoredProduct extends Product {
     }
 
     @Override
-    public String property(Path name) {
-        return xml.getOptionalElement(name).map(e -> e.value()).orElse(null);
+    public String property(Path path) {
+        return xml.getOptionalElement(path).map(e -> e.value()).orElse(null);
     }
 
     @Override
@@ -68,5 +68,10 @@ public class XmlStoredProduct extends Product {
     @Override
     public Stream<Path> properties() {
         return xml.elementPaths().stream();
+    }
+
+    @Override
+    public boolean hasChildProperties(Path property) {
+        return xml.hasChildElements(property);
     }
 }

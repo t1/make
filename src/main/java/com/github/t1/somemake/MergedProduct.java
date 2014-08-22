@@ -72,10 +72,10 @@ public class MergedProduct extends Product {
     }
 
     @Override
-    public String property(Path name) {
-        String value = master.property(name);
+    public String property(Path path) {
+        String value = master.property(path);
         if (value == null)
-            value = servant.property(name);
+            value = servant.property(path);
         return value;
     }
 
@@ -84,5 +84,10 @@ public class MergedProduct extends Product {
         Set<Path> properties = master.properties().collect(toSet());
         properties.addAll(servant.properties().collect(toSet()));
         return properties.stream();
+    }
+
+    @Override
+    public boolean hasChildProperties(Path property) {
+        return master.hasChildProperties(property) || servant.hasChildProperties(property);
     }
 }

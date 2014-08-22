@@ -11,11 +11,10 @@ import java.util.stream.Stream;
 import lombok.NonNull;
 
 public class PomWriter extends XmlWriter {
-    private static final Path CONFIGURATION = Paths.get("configuration");
-
     private static final String NAMESPACES =
             "xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" //
                     + "    xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\"";
+    private static final Path PLUGIN_ROOT = Paths.get("/plugin/plugin/");
 
     private final Product product;
 
@@ -67,37 +66,29 @@ public class PomWriter extends XmlWriter {
         });
     }
 
-    private void plugin(Product p) {
-        gav(p.version());
-        if (p.property(CONFIGURATION) != null) {
-            tag("configuration",
-                    () -> {
-                        if ("maven-jar-plugin".equals(p.id().artifactId())) {
-                            tag("archive",
-                                    () -> {
-                                        tag("addMavenDescriptor",
-                                                p.property(CONFIGURATION.resolve("addMavenDescriptor")));
-                                        tag("manifest",
-                                                () -> {
-                                                    tag("addDefaultImplementationEntries", p.property(CONFIGURATION
-                                                            .resolve("manifest/addDefaultImplementationEntries")));
-                                                });
-                                    });
-                        } else {
-                            copyProperties(p, CONFIGURATION);
-                        }
-                    });
-        }
+    private void plugin(Product plugin) {
+        gav(plugin.version());
+        copyProperties(plugin, Paths.get(""));
     }
 
-    private void copyProperties(Product product, Path subPath) {
-        product.properties().forEach(property -> {
-            Path path = Paths.get("/plugin/plugin/").resolve(subPath).relativize(property);
-            String name = path.getFileName().toString();
-            if (!name.isEmpty()) {
-                tag(name, product.property(CONFIGURATION.resolve(path)));
-            }
-        });
+    private void copyProperties(Product plugin, Path subPath) {
+        plugin.properties() //
+                .filter(isSiblingOf(subPath)) //
+                .forEach(property -> {
+                    String name = property.getFileName().toString();
+                    Path relative = PLUGIN_ROOT.relativize(property);
+                    if (plugin.hasChildProperties(relative)) {
+                        tag(name, () -> {
+                            copyProperties(plugin, relative);
+                        });
+                    } else {
+                        tag(name, plugin.property(relative));
+                    }
+                });
+    }
+
+    private Predicate<? super Path> isSiblingOf(Path path) {
+        return property -> property.getParent().equals(PLUGIN_ROOT.resolve(path));
     }
 
     private void dependencies() {

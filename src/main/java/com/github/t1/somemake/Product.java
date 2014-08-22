@@ -103,11 +103,13 @@ public abstract class Product {
         return version().toString();
     }
 
-    public Product property(@SuppressWarnings("unused") Path name, @SuppressWarnings("unused") String value) {
+    public Product property(@SuppressWarnings("unused") Path path, @SuppressWarnings("unused") String value) {
         throw changeUnsupportet("property");
     }
 
-    public abstract String property(Path name);
+    public abstract String property(Path path);
 
     public abstract Stream<Path> properties();
+
+    public abstract boolean hasChildProperties(Path property);
 }
