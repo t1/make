@@ -74,7 +74,7 @@ public abstract class Product {
         });
     }
 
-    protected Function<Product, Product> merged() {
+    private Function<Product, Product> merged() {
         return f -> repositories().merge(f);
     }
 

@@ -55,15 +55,14 @@ public class PomWriter extends XmlWriter {
         product.features(p -> p.type().is("plugin")).forEach(p -> {
             System.out.println("##> " + p);
         });
-        Stream.of( //
-                repositories().get(type("plugin").id("compiler.java").version("3.1")).get() //
-        ).forEach(p -> {
-            p.features().forEach(f -> {
-                tag("plugin", () -> {
-                    plugin(f);
-                });
-            });
-        });
+        Stream.of(repositories().get(type("plugin").id("compiler.java").version("3.1")).get()) //
+                .forEach(p -> p.features() //
+                        .filter(f -> !f.id().idString().isEmpty()) //
+                        .forEach(f -> {
+                            tag("plugin", () -> {
+                                plugin(f);
+                            });
+                        }));
     }
 
     private void plugin(Product plugin) {

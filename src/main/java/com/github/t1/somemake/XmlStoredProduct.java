@@ -5,11 +5,9 @@ import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 import com.github.t1.xml.XmlElement;
 
-@Slf4j
 @AllArgsConstructor
 public class XmlStoredProduct extends Product {
     private final XmlElement xml;
@@ -35,11 +33,6 @@ public class XmlStoredProduct extends Product {
     }
 
     @Override
-    public String property(Path path) {
-        return xml.getOptionalElement(path).map(e -> e.value()).orElse(null);
-    }
-
-    @Override
     public LocalDateTime releaseTimestamp() {
         return xml.getOptionalElement(Paths.get("releaseTimestamp")) //
                 .map(releaseTimestamp -> LocalDateTime.parse(releaseTimestamp.value())) //
@@ -47,22 +40,8 @@ public class XmlStoredProduct extends Product {
     }
 
     @Override
-    public Stream<Product> unresolvedFeatures() {
-        return xml.elements().filter(element -> {
-            switch (element.getName()) {
-                case "dependency":
-                case "feature":
-                case "plugin":
-                    return true;
-                case "name":
-                case "description":
-                case "releaseTimestamp":
-                    break; // ignore these
-                default:
-                    log.debug("ignoring element {} in {}", element.getName(), version());
-            }
-            return false;
-        }).map(element -> new XmlStoredProduct(element));
+    public String property(Path path) {
+        return xml.getOptionalElement(path).map(e -> e.value()).orElse(null);
     }
 
     @Override
@@ -73,5 +52,10 @@ public class XmlStoredProduct extends Product {
     @Override
     public boolean hasChildProperties(Path property) {
         return xml.hasChildElements(property);
+    }
+
+    @Override
+    public Stream<Product> unresolvedFeatures() {
+        return xml.elements().map(element -> new XmlStoredProduct(element));
     }
 }

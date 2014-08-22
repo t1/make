@@ -23,7 +23,8 @@ public class Id {
     }
 
     public String artifactId() {
-        return idSplit()[1];
+        String[] split = idSplit();
+        return split.length > 1 ? split[1] : "";
     }
 
     private String[] idSplit() {
