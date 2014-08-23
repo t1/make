@@ -4,19 +4,20 @@ import static com.github.t1.somemake.Repositories.*;
 import static com.github.t1.somemake.Type.*;
 import static org.junit.Assert.*;
 
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.time.LocalDateTime;
 
 import org.junit.*;
 
 public class XmlStoredProductTest extends AbstractTest {
+    private static final Path REPOSITORY_ROOT = Paths.get("src", "test", "resources", "repository");
+
     private static final Id LOMBOK_ID = dependency("org.projectlombok:lombok");
     private static final Version LOMBOK_VERSION = LOMBOK_ID.version("1.12.6");
     private static final String LOMBOK_NAME = "Project Lombok";
     private static final String LOMBOK_DESCRIPTION = "Simplify your code";
 
-    private final FileSystemRepository repository = new FileSystemRepository(Paths.get("src", "test", "resources",
-            "repository"));
+    private final FileSystemRepository repository = new FileSystemRepository(REPOSITORY_ROOT);
 
     @Before
     public void registerFileSystemRepository() {

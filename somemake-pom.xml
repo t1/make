@@ -33,25 +33,8 @@
                         <addMavenDescriptor>false</addMavenDescriptor>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <Main-Class>com.github.t1.somemake.Main</Main-Class>
                         </manifest>
                     </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
                 </configuration>
             </plugin>
             <plugin>
@@ -63,38 +46,12 @@
     </build>
 
     <dependencies>
-        <!-- scope: only during build -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.14.4</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- compile scope -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.1.2</version>
+            <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>17.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
-            <version>1.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.joda</groupId>
-            <artifactId>joda-convert</artifactId>
-            <version>1.6</version>
-        </dependency>
-
-        <!-- test scope -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

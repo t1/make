@@ -1,12 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <!-- pom written by somemake; built from product:com.github.t1:somemake:0.0.1-SNAPSHOT -->
+    <!-- pom written by somemake; built from product:product:test-product:1.2 -->
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.t1</groupId>
-    <artifactId>somemake</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <groupId>product</groupId>
+    <artifactId>test-product</artifactId>
+    <version>1.2</version>
 
+    <name>Test Product</name>
+    <description>A product used for tests</description>
 
     <build>
         <plugins>
@@ -40,22 +42,6 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9.1</version>
             </plugin>
@@ -63,38 +49,12 @@
     </build>
 
     <dependencies>
-        <!-- scope: only during build -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.14.4</version>
-            <scope>provided</scope>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- compile scope -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>1.1.2</version>
+            <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>17.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
-            <version>1.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.joda</groupId>
-            <artifactId>joda-convert</artifactId>
-            <version>1.6</version>
-        </dependency>
-
-        <!-- test scope -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

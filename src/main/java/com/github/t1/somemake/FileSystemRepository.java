@@ -8,16 +8,15 @@ import java.util.stream.Stream;
 
 import javax.xml.parsers.*;
 
-import lombok.*;
+import lombok.NonNull;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.github.t1.xml.Xml;
 
-@AllArgsConstructor
 public class FileSystemRepository implements Repository {
-    public static Document loadXml(URI uri) {
+    private static Document loadXml(URI uri) {
         try {
             return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(uri.toASCIIString());
             // JsonObject obj = Json.createReader(uri.toURL().openStream()).readObject();
@@ -27,6 +26,17 @@ public class FileSystemRepository implements Repository {
     }
 
     private final Path repositoryRoot;
+
+    public FileSystemRepository(Path repositoryRoot) {
+        this.repositoryRoot = check(repositoryRoot);
+    }
+
+    private Path check(Path repositoryRoot) {
+        if (!Files.isDirectory(repositoryRoot)) {
+            throw new IllegalArgumentException("repository path " + repositoryRoot + " not found");
+        }
+        return repositoryRoot;
+    }
 
     @Override
     public void put(Product product) {
@@ -66,7 +76,7 @@ public class FileSystemRepository implements Repository {
         }
     }
 
-    private XmlStoredProduct load(Path path) {
+    public XmlStoredProduct load(Path path) {
         Xml xml = new Xml(loadXml(path.toUri()));
         return new XmlStoredProduct(xml);
     }

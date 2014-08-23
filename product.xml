@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<product id="com.github.t1:somemake" version="0.0.1-SNAPSHOT">
+    <plugin id="org.apache.maven.plugins:maven-jar-plugin" version="2.4">
+        <configuration>
+            <archive>
+                <manifest>
+                    <Main-Class>com.github.t1.somemake.Main</Main-Class>
+                </manifest>
+            </archive>
+        </configuration>
+    </plugin>
+
+    <plugin id="org.apache.maven.plugins:maven-shade-plugin" version="2.3">
+        <executions>
+            <execution>
+                <phase>package</phase>
+                <goals>
+                    <goal>shade</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+
+    <feature id="org.projectlombok:lombok" version="1.12.6" />
+    <feature id="com.github.t1:webresource-generator" />
+    <dependency id="ch.qos.logback:logback-classic" version="1.1*">
+        <scope>test</scope>
+    </dependency>
+    <dependency id="junit:junit" version="4.11">
+        <scope>test</scope>
+    </dependency>
+    <dependency id="org.hamcrest:hamcrest-core" version="1.2.1">
+        <scope>test</scope>
+    </dependency>
+    <dependency id="org.mockito:mockito-all" version="1.9.5">
+        <scope>test</scope>
+    </dependency>
+</product>

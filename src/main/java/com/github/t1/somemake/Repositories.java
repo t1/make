@@ -34,13 +34,13 @@ public class Repositories {
     public Product merge(Product product) {
         if (product.id().idString().isEmpty())
             return product;
-        Optional<Product> referenced = get(product.version());
-        if (referenced.isPresent()) {
-            log.debug("merge {}", product.version());
-            product = new MergedProduct(product, referenced.get());
-        } else {
-            log.debug("{} not found in repositories", product.version());
-        }
-        return product;
+        return get(product.version()) //
+                .map(referenced -> merge(product, referenced)) //
+                .orElse(product);
+    }
+
+    private Product merge(Product product, Product referenced) {
+        log.debug("merge {}", product.version());
+        return new MergedProduct(product, referenced);
     }
 }

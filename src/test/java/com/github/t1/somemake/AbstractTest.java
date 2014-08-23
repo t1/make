@@ -10,6 +10,14 @@ import java.time.LocalDateTime;
 import org.junit.*;
 
 public class AbstractTest {
+    public static String readFile(Path path) {
+        try {
+            return new String(Files.readAllBytes(path));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     protected final Repository repository = new InMemoryRepository();
 
     @Before
@@ -40,13 +48,5 @@ public class AbstractTest {
 
     protected Product newProduct(Version version) {
         return new ProductEntity(version);
-    }
-
-    protected String readFile(Path path) {
-        try {
-            return new String(Files.readAllBytes(path));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

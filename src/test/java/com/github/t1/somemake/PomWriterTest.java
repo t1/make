@@ -79,6 +79,17 @@ public class PomWriterTest extends AbstractTest {
 
     @Test
     @Ignore
+    public void shouldOverwriteNestedPluginProperty() {
+        Product product = repositories().get(product("product:test-product").version("1.2")).get();
+        PomWriter writer = new PomWriter(product, target);
+
+        writer.write();
+
+        assertEquals(readFile(Paths.get("src/test/resources/test-product-1.2.pom")), target.toString());
+    }
+
+    @Test
+    @Ignore
     public void shouldWriteParametersCompilerArgumentOnJdk7() {
         assertFalse(buildParametersCompilerArgumentOn("1.7"));
     }

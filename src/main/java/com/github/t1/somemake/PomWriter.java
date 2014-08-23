@@ -52,17 +52,21 @@ public class PomWriter extends XmlWriter {
     }
 
     private void plugins() {
-        product.features(p -> p.type().is("plugin")).forEach(p -> {
-            System.out.println("##> " + p);
-        });
+        product.features(p -> p.type().is("plugin")).forEach(p -> copyPlugins(p));
         Stream.of(repositories().get(type("plugin").id("compiler.java").version("3.1")).get()) //
-                .forEach(p -> p.features() //
-                        .filter(f -> !f.id().idString().isEmpty()) //
-                        .forEach(f -> {
-                            tag("plugin", () -> {
-                                plugin(f);
-                            });
-                        }));
+                .forEach(p -> copyPlugins(p));
+    }
+
+    private void copyPlugins(Product p) {
+        p.features() //
+                .peek(f -> System.out.println("----> " + f)) //
+                .filter(f -> !f.id().idString().isEmpty()) //
+                .peek(f -> System.out.println(" has id ")) //
+                .forEach(f -> {
+                    tag("plugin", () -> {
+                        plugin(f);
+                    });
+                });
     }
 
     private void plugin(Product plugin) {

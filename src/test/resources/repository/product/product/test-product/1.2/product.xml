@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<product id="product:test-product" version="1.2">
+    <name>Test Product</name>
+    <description>A product used for tests</description>
+    <releaseTimestamp>2014-08-04T15:16:59</releaseTimestamp>
+
+    <plugin id="org.apache.maven.plugins:maven-jar-plugin" version="2.4">
+        <configuration>
+            <archive>
+                <manifest>
+                    <Main-Class>com.github.t1.somemake.Main</Main-Class>
+                </manifest>
+            </archive>
+        </configuration>
+    </plugin>
+
+    <feature id="javaee-7" />
+    <feature id="org.projectlombok:lombok" version="1.12.6" />
+    <feature id="com.github.t1:webresource-generator" />
+    <feature>
+        <dependency id="ch.qos.logback:logback-classic" version="1.1*">
+            <scope>test</scope>
+        </dependency>
+    </feature>
+    <feature id="com.github.t1:junit-hamcrest-mockito" version="1.0" />
+</product>
