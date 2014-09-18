@@ -115,7 +115,7 @@ public class PomWriterTest extends AbstractTest {
         assertTrue(buildParametersCompilerArgumentOn("1.10"));
     }
 
-    public boolean buildParametersCompilerArgumentOn(String jdk) {
+    private boolean buildParametersCompilerArgumentOn(String jdk) {
         String oldVersion = System.getProperty("java.specification.version");
         try {
             System.setProperty("java.specification.version", jdk);

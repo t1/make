@@ -6,9 +6,11 @@ import java.io.*;
 import java.nio.file.*;
 
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
 @Getter
 @Setter
+@Slf4j
 public class BuildCommand implements Runnable {
     @CliArgument
     private Path repository = Paths.get("~/.somemake");
@@ -21,6 +23,10 @@ public class BuildCommand implements Runnable {
     public void run() {
         FileSystemRepository fileSystemRepository = new FileSystemRepository(repository);
         repositories().register(fileSystemRepository);
+
+        log.debug("build {} to {} repository {}", input.toAbsolutePath(), output, repository);
+        long t = System.currentTimeMillis();
+
         Product product = fileSystemRepository.load(input);
 
         try (FileWriter out = new FileWriter(output.toFile())) {
@@ -28,5 +34,7 @@ public class BuildCommand implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        log.debug("done building {} after {}ms", input, System.currentTimeMillis() - t);
     }
 }

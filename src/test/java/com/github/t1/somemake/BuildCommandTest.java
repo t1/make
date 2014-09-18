@@ -5,18 +5,18 @@ import static org.junit.Assert.*;
 
 import java.nio.file.*;
 
-import org.junit.*;
+import org.junit.Test;
 
 public class BuildCommandTest {
     private static final Path REPOSITORY = Paths.get("src", "test", "resources", "repository");
+    private static final Path POM = Paths.get("pom.xml");
 
     @Test
-    @Ignore
     public void shouldRun() {
         BuildCommand buildCommand = new BuildCommand().repository(REPOSITORY);
 
         buildCommand.run();
 
-        assertEquals(readFile(Paths.get("pom.xml")), readFile(buildCommand.output()));
+        assertEquals(readFile(POM), readFile(buildCommand.output()));
     }
 }

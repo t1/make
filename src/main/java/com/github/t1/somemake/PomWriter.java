@@ -41,11 +41,7 @@ public class PomWriter extends XmlWriter {
             tag("name", product.name());
             tag("description", product.description());
             nl();
-            tag("build", () -> {
-                tag("plugins", () -> {
-                    plugins();
-                });
-            });
+            tag("build", () -> tag("plugins", () -> plugins()));
             nl();
             dependencies();
         });
@@ -53,20 +49,18 @@ public class PomWriter extends XmlWriter {
 
     private void plugins() {
         product.features(p -> p.type().is("plugin")).forEach(p -> copyPlugins(p));
+        // TODO activate the compiler plugin automatically
         Stream.of(repositories().get(type("plugin").id("compiler.java").version("3.1")).get()) //
                 .forEach(p -> copyPlugins(p));
     }
 
     private void copyPlugins(Product p) {
+        System.out.println("# " + p.getClass() + ": " + p.version());
         p.features() //
-                .peek(f -> System.out.println("----> " + f)) //
-                .filter(f -> !f.id().idString().isEmpty()) //
-                .peek(f -> System.out.println(" has id ")) //
-                .forEach(f -> {
-                    tag("plugin", () -> {
-                        plugin(f);
-                    });
-                });
+                // .peek(f -> System.out.println(". " + f)) //
+                // .filter(f -> !f.id().idString().isEmpty()) //
+                .peek(f -> System.out.println("-> " + f)) //
+                .forEach(f -> tag("plugin", () -> plugin(f)));
     }
 
     private void plugin(Product plugin) {
@@ -81,9 +75,7 @@ public class PomWriter extends XmlWriter {
                     String name = property.getFileName().toString();
                     Path relative = PLUGIN_ROOT.relativize(property);
                     if (plugin.hasChildProperties(relative)) {
-                        tag(name, () -> {
-                            copyProperties(plugin, relative);
-                        });
+                        tag(name, () -> copyProperties(plugin, relative));
                     } else {
                         tag(name, plugin.property(relative));
                     }

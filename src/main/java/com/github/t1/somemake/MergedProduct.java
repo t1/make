@@ -8,6 +8,10 @@ import java.util.*;
 import java.util.stream.Stream;
 
 public class MergedProduct extends Product {
+    public static Product merged(Product product, Product referenced) {
+        return new MergedProduct(product, referenced);
+    }
+
     private final Product master;
     private final Product servant;
 
