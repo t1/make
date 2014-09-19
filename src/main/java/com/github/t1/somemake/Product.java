@@ -1,14 +1,13 @@
 package com.github.t1.somemake;
 
 import static com.github.t1.somemake.Repositories.*;
-import static java.util.stream.Collectors.*;
 
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.function.*;
-import java.util.stream.*;
-import java.util.stream.Stream.Builder;
+import java.util.function.Predicate;
+
+import com.google.common.collect.ImmutableList;
 
 public abstract class Product {
     public Type type() {
@@ -56,10 +55,12 @@ public abstract class Product {
     }
 
 
-    public Stream<Product> features() {
-        Builder<Product> out = Stream.builder();
-        resolve(out, unresolvedFeatures());
-        return out.build().map(merged());
+    public ImmutableList<Product> features() {
+        ImmutableList.Builder<Product> out = ImmutableList.builder();
+        for (Product product : unresolvedFeatures()) {
+            resolve(out, product);
+        }
+        return out.build();
     }
 
     /**
@@ -67,29 +68,34 @@ public abstract class Product {
      * in a repository. Second all features in the merged feature and all features referenced from there are "pulled"
      * into this product.
      */
-    private void resolve(Builder<Product> out, Stream<Product> products) {
-        products.map(merged()).forEach(p -> {
-            out.add(p);
-            resolve(out, p.features().map(merged()));
-        });
-    }
-
-    private Function<Product, Product> merged() {
-        return f -> repositories().merge(f);
+    private void resolve(ImmutableList.Builder<Product> out, Product product) {
+        if (product.id().isEmpty())
+            return;
+        Product merged = merge(product);
+        out.add(merged);
+        for (Product sub : merged.features()) {
+            resolve(out, sub);
+        }
     }
 
     public Product add(@SuppressWarnings("unused") Product feature) {
         throw new UnsupportedOperationException("adding features is not supported by " + getClass().getSimpleName());
     }
 
-    protected abstract Stream<Product> unresolvedFeatures();
+    protected abstract ImmutableList<Product> unresolvedFeatures();
 
-    public Stream<Product> features(Predicate<? super Product> predicate) {
-        return features().filter(predicate);
+    public ImmutableList<Product> features(Predicate<? super Product> predicate) {
+        ImmutableList.Builder<Product> out = ImmutableList.builder();
+        for (Product feature : features()) {
+            if (predicate.test(feature)) {
+                out.add(feature);
+            }
+        }
+        return out.build();
     }
 
     public Product get(Id id) {
-        List<Product> matching = features(f -> id.equals(f.id())).collect(toList());
+        List<Product> matching = features(f -> id.equals(f.id()));
         if (matching.size() == 0)
             throw new IllegalArgumentException("not found: " + id + " in " + this.version());
         if (matching.size() > 1)
@@ -109,7 +115,7 @@ public abstract class Product {
 
     public abstract String property(Path path);
 
-    public abstract Stream<Path> properties();
+    public abstract ImmutableList<Path> properties();
 
     public abstract boolean hasChildProperties(Path property);
 }

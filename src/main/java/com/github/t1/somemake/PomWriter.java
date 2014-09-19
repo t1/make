@@ -56,7 +56,7 @@ public class PomWriter extends XmlWriter {
 
     private void copyPlugins(Product p) {
         System.out.println("# " + p.getClass() + ": " + p.version());
-        p.features() //
+        p.features().stream() //
                 // .peek(f -> System.out.println(". " + f)) //
                 // .filter(f -> !f.id().idString().isEmpty()) //
                 .peek(f -> System.out.println("-> " + f)) //
@@ -69,7 +69,7 @@ public class PomWriter extends XmlWriter {
     }
 
     private void copyProperties(Product plugin, Path subPath) {
-        plugin.properties() //
+        plugin.properties().stream() //
                 .filter(isSiblingOf(subPath)) //
                 .forEach(property -> {
                     String name = property.getFileName().toString();

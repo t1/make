@@ -47,4 +47,8 @@ public class Id {
     private String[] idPath() {
         return idString.split("(\\.|" + DELIMITER + ")");
     }
+
+    public boolean isEmpty() {
+        return idString.isEmpty();
+    }
 }

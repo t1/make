@@ -1,12 +1,15 @@
 package com.github.t1.somemake;
 
 import static com.github.t1.somemake.MergedProduct.*;
-import static com.github.t1.somemake.Slum.*;
 
 import java.util.*;
 
 public class Repositories {
     private static final Repositories INSTANCE = new Repositories();
+
+    public static Product merge(Product product) {
+        return repositories().doMerge(product);
+    }
 
     public static Repositories repositories() {
         return INSTANCE;
@@ -25,12 +28,16 @@ public class Repositories {
     }
 
     public Optional<Product> get(Version version) {
-        return repositories.stream().flatMap(r -> stream(r.get(version))).findAny();
+        for (Repository repository : repositories) {
+            Optional<Product> product = repository.get(version);
+            if (product.isPresent()) {
+                return product;
+            }
+        }
+        return Optional.empty();
     }
 
-    public Product merge(Product product) {
-        if (product.id().idString().isEmpty())
-            return product;
+    private Product doMerge(Product product) {
         return get(product.version()) //
                 .map(referenced -> merged(product, referenced)) //
                 .orElse(product);

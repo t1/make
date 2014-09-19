@@ -4,8 +4,9 @@ import static java.util.stream.Collectors.*;
 
 import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableList;
 
 public class MergedProduct extends Product {
     public static Product merged(Product product, Product referenced) {
@@ -60,18 +61,21 @@ public class MergedProduct extends Product {
     }
 
     @Override
-    public Stream<Product> features() {
-        Set<Id> ids = master.features().map(p -> p.id()).collect(toSet());
-        List<Product> result = master.features().collect(toList());
-        servant.features().forEach(p -> {
-            if (!ids.contains(p.id()))
+    public ImmutableList<Product> features() {
+        Set<Id> ids = master.features().stream().map(p -> p.id()).collect(toSet());
+        ImmutableList.Builder<Product> result = ImmutableList.builder();
+        result.addAll(master.features());
+
+        for (Product p : servant.features()) {
+            if (!ids.contains(p.id())) {
                 result.add(p);
-        });
-        return result.stream();
+            }
+        }
+        return result.build();
     }
 
     @Override
-    protected Stream<Product> unresolvedFeatures() {
+    protected ImmutableList<Product> unresolvedFeatures() {
         throw new UnsupportedOperationException();
     }
 
@@ -84,10 +88,11 @@ public class MergedProduct extends Product {
     }
 
     @Override
-    public Stream<Path> properties() {
-        Set<Path> properties = master.properties().collect(toSet());
-        properties.addAll(servant.properties().collect(toSet()));
-        return properties.stream();
+    public ImmutableList<Path> properties() {
+        ImmutableList.Builder<Path> result = ImmutableList.builder();
+        result.addAll(master.properties());
+        result.addAll(servant.properties());
+        return result.build();
     }
 
     @Override

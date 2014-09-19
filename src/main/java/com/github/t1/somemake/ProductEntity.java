@@ -5,9 +5,10 @@ import static lombok.AccessLevel.*;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Stream;
 
 import lombok.*;
+
+import com.google.common.collect.ImmutableList;
 
 @Getter
 @Setter
@@ -25,8 +26,8 @@ public class ProductEntity extends Product {
     private Map<Path, String> properties = new HashMap<>();
 
     @Override
-    public Stream<Product> unresolvedFeatures() {
-        return features.stream();
+    public ImmutableList<Product> unresolvedFeatures() {
+        return ImmutableList.copyOf(features);
     }
 
     @Override
@@ -47,8 +48,8 @@ public class ProductEntity extends Product {
     }
 
     @Override
-    public Stream<Path> properties() {
-        return properties.keySet().stream();
+    public ImmutableList<Path> properties() {
+        return ImmutableList.copyOf(properties.keySet());
     }
 
     @Override

@@ -2,13 +2,12 @@ package com.github.t1.xml;
 
 import java.nio.file.*;
 import java.util.*;
-import java.util.stream.Stream;
 
 import lombok.*;
 
 import org.w3c.dom.*;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
 
 @EqualsAndHashCode
 @AllArgsConstructor
@@ -46,12 +45,12 @@ public class XmlElement {
         return getOptionalElement(Paths.get(name)).map(e -> e.value()).get();
     }
 
-    public Stream<XmlElement> elements() {
-        return stream(element.getChildNodes());
+    public List<XmlElement> elements() {
+        return list(element.getChildNodes());
     }
 
-    private Stream<XmlElement> stream(NodeList childNodes) {
-        Stream.Builder<XmlElement> result = Stream.builder();
+    private List<XmlElement> list(NodeList childNodes) {
+        ImmutableList.Builder<XmlElement> result = ImmutableList.builder();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node child = childNodes.item(i);
             if (child instanceof Element) {
@@ -62,18 +61,22 @@ public class XmlElement {
         return result.build();
     }
 
-    public Set<Path> elementPaths() {
-        ImmutableList.Builder<XmlElement> list = ImmutableList.builder();
-        addChildNodes(element.getChildNodes(), list);
-        ImmutableSet.Builder<Path> map = ImmutableSet.builder();
-        for (XmlElement element : list.build()) {
-            map.add(element.getPath());
+    public ImmutableList<Path> elementPaths() {
+        ImmutableList.Builder<Path> result = ImmutableList.builder();
+        for (XmlElement element : getChildNodes()) {
+            result.add(element.getPath());
         }
-        return map.build();
+        return result.build();
+    }
+
+    private List<XmlElement> getChildNodes() {
+        ImmutableList.Builder<XmlElement> result = ImmutableList.builder();
+        addChildNodes(element.getChildNodes(), result);
+        return result.build();
     }
 
     private void addChildNodes(NodeList childNodes, ImmutableList.Builder<XmlElement> result) {
-        stream(childNodes).forEach(e -> {
+        list(childNodes).forEach(e -> {
             result.add(e);
             addChildNodes(e.element.getChildNodes(), result);
         });
