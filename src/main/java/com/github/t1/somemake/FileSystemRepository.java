@@ -1,30 +1,15 @@
 package com.github.t1.somemake;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.*;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import javax.xml.parsers.*;
-
 import lombok.NonNull;
-
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 import com.github.t1.xml.Xml;
 
 public class FileSystemRepository implements Repository {
-    private static Document loadXml(URI uri) {
-        try {
-            return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(uri.toASCIIString());
-            // JsonObject obj = Json.createReader(uri.toURL().openStream()).readObject();
-        } catch (SAXException | IOException | ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private final Path repositoryRoot;
 
     public FileSystemRepository(Path repositoryRoot) {
@@ -77,7 +62,7 @@ public class FileSystemRepository implements Repository {
     }
 
     public XmlStoredProduct load(Path path) {
-        Xml xml = new Xml(loadXml(path.toUri()));
+        Xml xml = Xml.load(path.toUri());
         return new XmlStoredProduct(xml);
     }
 

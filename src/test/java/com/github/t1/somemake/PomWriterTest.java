@@ -54,7 +54,7 @@ public class PomWriterTest extends AbstractTest {
 
         writer.write();
 
-        assertEquals(readFile(Paths.get("src/test/resources/basic-product.pom")), target.toString());
+        assertEquals(readFile(Paths.get("src/test/resources/test-product-0.9.pom")), target.toString());
     }
 
     @Test
@@ -68,9 +68,7 @@ public class PomWriterTest extends AbstractTest {
     }
 
     @Test
-    // FIXME
-    @Ignore
-    public void shouldBuildProductWithIndirectDependencies() {
+    public void shouldBuildProductWithNestedDependency() {
         Product product = repositories().get(product("product:test-product").version("1.1")).get();
         PomWriter writer = new PomWriter(product, target);
 
@@ -80,7 +78,6 @@ public class PomWriterTest extends AbstractTest {
     }
 
     @Test
-    @Ignore
     public void shouldOverwriteNestedPluginProperty() {
         Product product = repositories().get(product("product:test-product").version("1.2")).get();
         PomWriter writer = new PomWriter(product, target);
@@ -91,12 +88,14 @@ public class PomWriterTest extends AbstractTest {
     }
 
     @Test
+    // FIXME
     @Ignore
     public void shouldWriteParametersCompilerArgumentOnJdk7() {
         assertFalse(buildParametersCompilerArgumentOn("1.7"));
     }
 
     @Test
+    // FIXME
     @Ignore
     public void shouldWriteParametersCompilerArgumentOnJdk71() {
         assertFalse(buildParametersCompilerArgumentOn("1.7.1"));

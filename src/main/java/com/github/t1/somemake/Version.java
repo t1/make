@@ -7,6 +7,8 @@ import lombok.*;
 
 @Value
 public class Version {
+    public static final String ANY = "*";
+
     public static final Comparator<String> VERSION = new Comparator<String>() {
         @Override
         public int compare(String thisVersion, String thatVersion) {
@@ -66,9 +68,7 @@ public class Version {
     }
 
     public Optional<String> resolve(Stream<String> versions) {
-        return versions.filter(v -> matches(v)) //
-                // .sorted().peek(v -> System.out.println(v)) //
-                .max(VERSION);
+        return versions.filter(v -> matches(v)).max(VERSION);
     }
 
     public boolean matches(Version version) {
@@ -76,13 +76,13 @@ public class Version {
     }
 
     public boolean matches(String version) {
-        if (versionString.endsWith("*"))
+        if (versionString.endsWith(ANY))
             return wildcardMatches(version);
         return versionString.equals(version);
     }
 
     private boolean wildcardMatches(String pattern) {
-        int i = versionString.indexOf('*');
+        int i = versionString.indexOf(ANY);
         return pattern.substring(0, i).equals(versionString.substring(0, i));
     }
 }

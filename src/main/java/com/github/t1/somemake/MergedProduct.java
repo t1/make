@@ -2,9 +2,8 @@ package com.github.t1.somemake;
 
 import static java.util.stream.Collectors.*;
 
-import java.nio.file.Path;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.*;
 
 import com.google.common.collect.ImmutableList;
 
@@ -40,22 +39,22 @@ public class MergedProduct extends Product {
     }
 
     @Override
-    public String name() {
-        if (master.name() != null)
+    public Optional<String> name() {
+        if (master.name().isPresent())
             return master.name();
         return servant.name();
     }
 
     @Override
-    public String description() {
-        if (master.description() != null)
+    public Optional<String> description() {
+        if (master.description().isPresent())
             return master.description();
         return servant.description();
     }
 
     @Override
-    public LocalDateTime releaseTimestamp() {
-        if (master.releaseTimestamp() != null)
+    public Optional<LocalDateTime> releaseTimestamp() {
+        if (master.releaseTimestamp().isPresent())
             return master.releaseTimestamp();
         return servant.releaseTimestamp();
     }
@@ -80,23 +79,9 @@ public class MergedProduct extends Product {
     }
 
     @Override
-    public String property(Path path) {
-        String value = master.property(path);
-        if (value == null)
-            value = servant.property(path);
-        return value;
-    }
-
-    @Override
-    public ImmutableList<Path> properties() {
-        ImmutableList.Builder<Path> result = ImmutableList.builder();
-        result.addAll(master.properties());
-        result.addAll(servant.properties());
-        return result.build();
-    }
-
-    @Override
-    public boolean hasChildProperties(Path property) {
-        return master.hasChildProperties(property) || servant.hasChildProperties(property);
+    public Optional<String> value() {
+        if (master.value().isPresent())
+            return master.value();
+        return servant.value();
     }
 }

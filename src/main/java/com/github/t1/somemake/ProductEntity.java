@@ -1,29 +1,27 @@
 package com.github.t1.somemake;
 
-import static lombok.AccessLevel.*;
+import static com.github.t1.somemake.Version.*;
 
-import java.nio.file.Path;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import lombok.*;
 
 import com.google.common.collect.ImmutableList;
 
-@Getter
-@Setter
 @RequiredArgsConstructor
 public class ProductEntity extends Product {
+    @Getter
     private final Version version;
 
-    private String name;
-    private String description;
-    private LocalDateTime releaseTimestamp;
+    @Setter
+    private String value;
 
-    @Getter(NONE)
+    @Override
+    public Optional<String> value() {
+        return Optional.ofNullable(value);
+    }
+
     private final List<Product> features = new ArrayList<>();
-
-    private Map<Path, String> properties = new HashMap<>();
 
     @Override
     public ImmutableList<Product> unresolvedFeatures() {
@@ -37,23 +35,9 @@ public class ProductEntity extends Product {
     }
 
     @Override
-    public Product property(Path path, String value) {
-        properties.put(path, value);
-        return this;
-    }
-
-    @Override
-    public String property(Path path) {
-        return properties.get(path);
-    }
-
-    @Override
-    public ImmutableList<Path> properties() {
-        return ImmutableList.copyOf(properties.keySet());
-    }
-
-    @Override
-    public boolean hasChildProperties(Path property) {
-        return properties.keySet().stream().filter(p -> p.getParent().equals(property)).findAny().isPresent();
+    public Product set(Id id, String value) {
+        ProductEntity feature = new ProductEntity(id.version(ANY));
+        feature.value(value);
+        return add(feature);
     }
 }

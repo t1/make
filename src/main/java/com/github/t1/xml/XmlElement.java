@@ -14,18 +14,22 @@ import com.google.common.collect.ImmutableList;
 public class XmlElement {
     protected Element element;
 
+    protected Document document() {
+        return element.getOwnerDocument();
+    }
+
     public String getName() {
         return element.getNodeName();
     }
 
     public Path getPath() {
-        return appendName(element, Paths.get("/"));
+        return buildPath(element, Paths.get("/"));
     }
 
-    private Path appendName(Node e, Path out) {
+    private Path buildPath(Node e, Path out) {
         Node parentNode = e.getParentNode();
         if (parentNode != null && parentNode instanceof Element)
-            out = appendName(parentNode, out);
+            out = buildPath(parentNode, out);
         return out.resolve(e.getNodeName());
     }
 
@@ -37,12 +41,8 @@ public class XmlElement {
         return element.getAttribute(name);
     }
 
-    public String value() {
-        return element.getTextContent();
-    }
-
-    public String getValue(String name) {
-        return getOptionalElement(Paths.get(name)).map(e -> e.value()).get();
+    public Optional<String> value() {
+        return Optional.ofNullable(element.getTextContent());
     }
 
     public List<XmlElement> elements() {
@@ -82,14 +82,15 @@ public class XmlElement {
         });
     }
 
-    public Optional<XmlElement> getOptionalElement(Path name) {
+    public Optional<XmlElement> getOptionalElement(Path path) {
         Element node = element;
-        for (Path pathElement : name) {
+        for (Path pathElement : path) {
             NodeList elements = node.getElementsByTagName(pathElement.toString());
             if (elements.getLength() == 0)
                 return Optional.empty();
             if (elements.getLength() > 1)
-                throw new IllegalArgumentException("found " + elements.getLength() + " elements by name " + pathElement);
+                throw new IllegalArgumentException("found " + elements.getLength() + " elements '" + pathElement
+                        + "' in '" + getPath() + "'");
             node = (Element) elements.item(0);
         }
         return Optional.ofNullable(node).map(e -> new XmlElement(e));
@@ -101,7 +102,7 @@ public class XmlElement {
                 + "[" + getName() + (hasAttribute("id") ? ("@" + getAttribute("id")) : "") + "]";
     }
 
-    public boolean hasChildElements(Path path) {
+    public boolean hasChildElement(Path path) {
         return getOptionalElement(path).filter(e -> hasChildElements(e.element)).isPresent();
     }
 

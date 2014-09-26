@@ -1,7 +1,6 @@
 package com.github.t1.somemake;
 
-import java.nio.file.*;
-import java.time.LocalDateTime;
+import java.util.Optional;
 
 import lombok.AllArgsConstructor;
 
@@ -16,42 +15,12 @@ public class XmlStoredProduct extends Product {
     public Version version() {
         Type type = Type.type(xml.getName());
         String id = xml.getAttribute("id");
+        if (id == null)
+            id = Id.EMPTY;
         String version = xml.getAttribute("version");
-        if (version.isEmpty())
-            version = "*";
+        if (version == null || version.isEmpty())
+            version = Version.ANY;
         return type.id(id).version(version);
-    }
-
-    @Override
-    public String name() {
-        return property(Paths.get("name"));
-    }
-
-    @Override
-    public String description() {
-        return property(Paths.get("description"));
-    }
-
-    @Override
-    public LocalDateTime releaseTimestamp() {
-        return xml.getOptionalElement(Paths.get("releaseTimestamp")) //
-                .map(releaseTimestamp -> LocalDateTime.parse(releaseTimestamp.value())) //
-                .orElse(null);
-    }
-
-    @Override
-    public String property(Path path) {
-        return xml.getOptionalElement(path).map(e -> e.value()).orElse(null);
-    }
-
-    @Override
-    public ImmutableList<Path> properties() {
-        return xml.elementPaths();
-    }
-
-    @Override
-    public boolean hasChildProperties(Path property) {
-        return xml.hasChildElements(property);
     }
 
     @Override
@@ -61,5 +30,10 @@ public class XmlStoredProduct extends Product {
             result.add(new XmlStoredProduct(element));
         }
         return result.build();
+    }
+
+    @Override
+    public Optional<String> value() {
+        return xml.value();
     }
 }

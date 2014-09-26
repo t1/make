@@ -26,7 +26,7 @@ public class ProductBuildTest extends AbstractTest {
         Product product = newProduct(product("foo"), "1.0") //
                 .add(newProduct(feature("bar"), "1.1"));
 
-        assertEquals("feature:bar", product.get(feature("bar")).id().toString());
+        assertEquals("feature:bar", product.feature(feature("bar")).id().toString());
     }
 
     @Test
@@ -35,7 +35,7 @@ public class ProductBuildTest extends AbstractTest {
                 .add(newProduct(feature("baz"), "2.0"));
         Product product = newProduct(product("foo"), "3.0").add(bar);
 
-        assertEquals("feature:baz", product.get(feature("bar")).get(feature("baz")).id().toString());
+        assertEquals("feature:baz", product.feature(feature("bar")).feature(feature("baz")).id().toString());
     }
 
     @Test
@@ -47,8 +47,8 @@ public class ProductBuildTest extends AbstractTest {
 
         Product product = newProduct(product("baz"), "3.0").add(foo1);
 
-        assertEquals(now, product.get(feature("foo")).releaseTimestamp());
-        assertEquals(now.plusDays(3), product.get(feature("foo")).get(feature("bar")).releaseTimestamp());
+        assertEquals(now, product.feature(feature("foo")).releaseTimestamp());
+        assertEquals(now.plusDays(3), product.feature(feature("foo")).feature(feature("bar")).releaseTimestamp());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class ProductBuildTest extends AbstractTest {
         Product product = newProduct(product("baz"), "2.0") //
                 .add(newProduct(feature("foo"), "2.0"));
 
-        assertEquals(null, product.get(feature("foo")).releaseTimestamp());
+        assertEquals(null, product.feature(feature("foo")).releaseTimestamp());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class ProductBuildTest extends AbstractTest {
                         .releaseTimestamp(now.plusDays(5))) //
         ;
 
-        assertEquals(now, product.get(feature("foo")).releaseTimestamp());
-        assertEquals(now.plusDays(5), product.get(type("packaging").id("foo")).releaseTimestamp());
+        assertEquals(now, product.feature(feature("foo")).releaseTimestamp());
+        assertEquals(now.plusDays(5), product.feature(type("packaging").id("foo")).releaseTimestamp());
     }
 }

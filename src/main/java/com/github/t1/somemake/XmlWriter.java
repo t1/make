@@ -1,6 +1,7 @@
 package com.github.t1.somemake;
 
 import java.io.*;
+import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +27,15 @@ public class XmlWriter {
         indent();
         append("<" + tagName + ">");
         append(body);
+        append("</" + tagName + ">\n");
+    }
+
+    protected void tag(String tagName, Optional<String> body) {
+        if (!body.isPresent())
+            return;
+        indent();
+        append("<" + tagName + ">");
+        append(body.get());
         append("</" + tagName + ">\n");
     }
 

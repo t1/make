@@ -47,6 +47,11 @@ public class AbstractTest {
     }
 
     protected Product newProduct(Version version) {
-        return new ProductEntity(version);
+        return new ProductEntity(version).add(javac());
+    }
+
+    // TODO activate javac automatically
+    private static Product javac() {
+        return repositories().get(Type.type("plugin").id("compiler.java").version("3.1")).get();
     }
 }

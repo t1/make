@@ -30,13 +30,13 @@ public class XmlStoredProductTest extends AbstractTest {
     }
 
     private void assertJunitHamcrestMockito(Product jhm) {
-        Product junit = jhm.get(dependency("junit:junit"));
+        Product junit = jhm.feature(dependency("junit:junit"));
         assertEquals("4.11", junit.version().versionString());
 
-        Product hamcrest = jhm.get(dependency("org.hamcrest:hamcrest-core"));
+        Product hamcrest = jhm.feature(dependency("org.hamcrest:hamcrest-core"));
         assertEquals("1.2.1", hamcrest.version().versionString());
 
-        Product mockito = jhm.get(dependency("org.mockito:mockito-all"));
+        Product mockito = jhm.feature(dependency("org.mockito:mockito-all"));
         assertEquals("1.9.5", mockito.version().versionString());
     }
 
@@ -54,7 +54,7 @@ public class XmlStoredProductTest extends AbstractTest {
     public void shouldResolveDependencyFromFileSystem() {
         Product product = createProduct().add(newProduct(LOMBOK_VERSION));
 
-        Product lombok = product.get(LOMBOK_ID);
+        Product lombok = product.feature(LOMBOK_ID);
         assertEquals(LOMBOK_VERSION, lombok.version());
         assertEquals(LOMBOK_NAME, lombok.name());
         assertEquals(LOMBOK_DESCRIPTION, lombok.description());
@@ -64,7 +64,7 @@ public class XmlStoredProductTest extends AbstractTest {
     public void shouldRetainNameWhenResolvingDependencyFromFileSystem() {
         Product product = createProduct().add(newProduct(LOMBOK_VERSION).name("foo"));
 
-        Product lombok = product.get(LOMBOK_ID);
+        Product lombok = product.feature(LOMBOK_ID);
         assertEquals(LOMBOK_VERSION, lombok.version());
         assertEquals("foo", lombok.name());
         assertEquals(LOMBOK_DESCRIPTION, lombok.description());
@@ -76,7 +76,7 @@ public class XmlStoredProductTest extends AbstractTest {
                 .add(newProduct(feature("com.github.t1:junit-hamcrest-mockito").version("1.0"))) //
         ;
 
-        Product jhm = product.get(feature("com.github.t1:junit-hamcrest-mockito"));
+        Product jhm = product.feature(feature("com.github.t1:junit-hamcrest-mockito"));
 
         assertJunitHamcrestMockito(jhm);
     }
@@ -88,11 +88,11 @@ public class XmlStoredProductTest extends AbstractTest {
                         .add(newProduct(LOMBOK_VERSION))) //
         ;
 
-        Product jhm = product.get(feature("com.github.t1:junit-hamcrest-mockito"));
+        Product jhm = product.feature(feature("com.github.t1:junit-hamcrest-mockito"));
 
         assertJunitHamcrestMockito(jhm);
 
-        Product lombok = jhm.get(LOMBOK_ID);
+        Product lombok = jhm.feature(LOMBOK_ID);
         assertEquals(LOMBOK_VERSION, lombok.version());
         assertEquals(LOMBOK_NAME, lombok.name());
         assertEquals(LOMBOK_DESCRIPTION, lombok.description());
