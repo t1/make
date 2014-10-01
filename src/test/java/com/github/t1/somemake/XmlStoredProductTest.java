@@ -22,6 +22,7 @@ public class XmlStoredProductTest extends AbstractTest {
     @Before
     public void registerFileSystemRepository() {
         repositories().register(repository);
+        activatedProducts.add(javac());
     }
 
     @After
@@ -45,9 +46,9 @@ public class XmlStoredProductTest extends AbstractTest {
         Product lombok = repositories().get(LOMBOK_VERSION).get();
 
         assertEquals(LOMBOK_VERSION, lombok.version());
-        assertEquals(LOMBOK_NAME, lombok.name());
-        assertEquals(LOMBOK_DESCRIPTION, lombok.description());
-        assertEquals(null, lombok.releaseTimestamp());
+        assertEquals(LOMBOK_NAME, lombok.name().get());
+        assertEquals(LOMBOK_DESCRIPTION, lombok.description().get());
+        assertFalse(lombok.releaseTimestamp().isPresent());
     }
 
     @Test
@@ -56,8 +57,9 @@ public class XmlStoredProductTest extends AbstractTest {
 
         Product lombok = product.feature(LOMBOK_ID);
         assertEquals(LOMBOK_VERSION, lombok.version());
-        assertEquals(LOMBOK_NAME, lombok.name());
-        assertEquals(LOMBOK_DESCRIPTION, lombok.description());
+        assertEquals(LOMBOK_NAME, lombok.name().get());
+        assertEquals(LOMBOK_DESCRIPTION, lombok.description().get());
+        assertFalse(lombok.releaseTimestamp().isPresent());
     }
 
     @Test
@@ -66,8 +68,8 @@ public class XmlStoredProductTest extends AbstractTest {
 
         Product lombok = product.feature(LOMBOK_ID);
         assertEquals(LOMBOK_VERSION, lombok.version());
-        assertEquals("foo", lombok.name());
-        assertEquals(LOMBOK_DESCRIPTION, lombok.description());
+        assertEquals("foo", lombok.name().get());
+        assertEquals(LOMBOK_DESCRIPTION, lombok.description().get());
     }
 
     @Test
@@ -83,29 +85,40 @@ public class XmlStoredProductTest extends AbstractTest {
 
     @Test
     public void shouldMergeDependenciesWhenResolvingFromFileSystem() {
-        Product product = newProduct(product("test:prod"), "1.0") //
-                .add(newProduct(feature("com.github.t1:junit-hamcrest-mockito").version("1.0")) //
-                        .add(newProduct(LOMBOK_VERSION))) //
+        Product container = new ProductEntity(product("test:prod").version("1.0")) //
+                .add(new ProductEntity(feature("com.github.t1:junit-hamcrest-mockito").version("1.0")) //
+                        .add(new ProductEntity(LOMBOK_VERSION))) //
         ;
 
-        Product jhm = product.feature(feature("com.github.t1:junit-hamcrest-mockito"));
+        Product jhm = container.feature(feature("com.github.t1:junit-hamcrest-mockito"));
 
         assertJunitHamcrestMockito(jhm);
 
         Product lombok = jhm.feature(LOMBOK_ID);
         assertEquals(LOMBOK_VERSION, lombok.version());
-        assertEquals(LOMBOK_NAME, lombok.name());
-        assertEquals(LOMBOK_DESCRIPTION, lombok.description());
+        assertEquals(LOMBOK_NAME, lombok.name().get());
+        assertEquals(LOMBOK_DESCRIPTION, lombok.description().get());
+    }
+
+    @Test
+    public void shouldOverwriteScopeWhenMerging() {
+        ProductEntity jhm2 = new ProductEntity(feature("com.github.t1:junit-hamcrest-mockito").version("1.0"));
+        // .set(LOMBOK_ID, LOMBOK_DESCRIPTION);
+        Product container = new ProductEntity(product("test:prod").version("1.0")).add(jhm2);
+
+        Product jhm = container.feature(feature("com.github.t1:junit-hamcrest-mockito"));
+
+        assertJunitHamcrestMockito(jhm);
     }
 
     @Test
     public void shouldReadProductFromXmlFile() {
-        Version testProduct_1_0 = product("product:test-product").version("1.0");
-        Product product = repositories().get(testProduct_1_0).get();
+        Version version = product("product:test-product").version("1.0");
+        Product product = repositories().get(version).get();
 
-        assertEquals(testProduct_1_0, product.version());
-        assertEquals("Test Product", product.name());
-        assertEquals("A product used for tests", product.description());
-        assertEquals(LocalDateTime.of(2014, 8, 4, 15, 16, 59), product.releaseTimestamp());
+        assertEquals(version, product.version());
+        assertEquals("Test Product", product.name().get());
+        assertEquals("A product used for tests", product.description().get());
+        assertEquals(LocalDateTime.of(2014, 8, 4, 15, 16, 59), product.releaseTimestamp().get());
     }
 }

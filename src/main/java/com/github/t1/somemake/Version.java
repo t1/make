@@ -1,5 +1,6 @@
 package com.github.t1.somemake;
 
+import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -62,6 +63,10 @@ public class Version {
         return id.type();
     }
 
+    public boolean isAny() {
+        return Version.ANY.equals(versionString);
+    }
+
     @Override
     public String toString() {
         return id + ":" + versionString;
@@ -84,5 +89,9 @@ public class Version {
     private boolean wildcardMatches(String pattern) {
         int i = versionString.indexOf(ANY);
         return pattern.substring(0, i).equals(versionString.substring(0, i));
+    }
+
+    public Path path() {
+        return id.path().resolve(versionString);
     }
 }

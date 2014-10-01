@@ -1,5 +1,7 @@
 package com.github.t1.xml;
 
+import static lombok.AccessLevel.*;
+
 import java.nio.file.*;
 import java.util.*;
 
@@ -10,9 +12,13 @@ import org.w3c.dom.*;
 import com.google.common.collect.ImmutableList;
 
 @EqualsAndHashCode
-@AllArgsConstructor
+@RequiredArgsConstructor(access = PROTECTED)
 public class XmlElement {
-    protected Element element;
+    protected final Element element;
+    private final int indent;
+
+    private String indentString;
+    private Text finalText;
 
     protected Document document() {
         return element.getOwnerDocument();
@@ -55,7 +61,7 @@ public class XmlElement {
             Node child = childNodes.item(i);
             if (child instanceof Element) {
                 Element element = (Element) child;
-                result.add(new XmlElement(element));
+                result.add(new XmlElement(element, indent + 1));
             }
         }
         return result.build();
@@ -93,7 +99,7 @@ public class XmlElement {
                         + "' in '" + getPath() + "'");
             node = (Element) elements.item(0);
         }
-        return Optional.ofNullable(node).map(e -> new XmlElement(e));
+        return Optional.ofNullable(node).map(e -> new XmlElement(e, indent));
     }
 
     @Override
@@ -115,5 +121,66 @@ public class XmlElement {
             }
         }
         return false;
+    }
+
+    public XmlElement addElement(String name) {
+        Element node = document().createElement(name);
+        addIndent();
+        append(node);
+        return new XmlElement(node, indent + 1);
+    }
+
+    private void append(Node node) {
+        element.insertBefore(node, finalText());
+    }
+
+    private Text finalText() {
+        if (finalText == null) {
+            finalText = createText(indentString(indent - 1));
+            element.insertBefore(finalText, null);
+        }
+        return finalText;
+    }
+
+    private void addIndent() {
+        element.insertBefore(createText(indentString()), finalText());
+    }
+
+    private String indentString() {
+        if (indentString == null)
+            this.indentString = indentString(indent);
+        return indentString;
+    }
+
+    private String indentString(int n) {
+        StringBuilder builder = new StringBuilder("\n");
+        for (int i = 0; i < n; i++) {
+            builder.append("    ");
+        }
+        return builder.toString();
+    }
+
+    private Text createText(String text) {
+        return document().createTextNode(text);
+    }
+
+    public XmlElement addAttribute(String name, String value) {
+        element.setAttribute(name, value);
+        return this;
+    }
+
+    public XmlElement addComment(String text) {
+        addIndent();
+        append(document().createComment(" " + text + " "));
+        return this;
+    }
+
+    public XmlElement nl() {
+        return addText("\n");
+    }
+
+    public XmlElement addText(String string) {
+        element.insertBefore(createText(string), finalText);
+        return this;
     }
 }

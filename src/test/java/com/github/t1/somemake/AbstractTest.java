@@ -6,10 +6,13 @@ import static com.github.t1.somemake.Type.*;
 import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
+import java.util.*;
 
 import org.junit.*;
 
-public class AbstractTest {
+public abstract class AbstractTest {
+    protected List<Product> activatedProducts = new ArrayList<>();
+
     public static String readFile(Path path) {
         try {
             return new String(Files.readAllBytes(path));
@@ -47,11 +50,15 @@ public class AbstractTest {
     }
 
     protected Product newProduct(Version version) {
-        return new ProductEntity(version).add(javac());
+        ProductEntity result = new ProductEntity(version);
+        for (Product product : activatedProducts) {
+            result.add(product);
+        }
+        return result;
     }
 
     // TODO activate javac automatically
-    private static Product javac() {
+    protected static Product javac() {
         return repositories().get(Type.type("plugin").id("compiler.java").version("3.1")).get();
     }
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <feature id="com.github.t1:junit-hamcrest-mockito" version="1.0">
     <name>JUnit, Hamcrest, and Mockito</name>
-    <description>Bundles typical dependencies for unit tests</description>
+    <description>bundle of typical dependencies for unit tests</description>
 
     <dependency id="junit:junit" version="4.11">
         <scope>test</scope>

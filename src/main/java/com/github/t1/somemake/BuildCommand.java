@@ -30,7 +30,7 @@ public class BuildCommand implements Runnable {
         Product product = fileSystemRepository.load(input);
 
         try (FileWriter out = new FileWriter(output.toFile())) {
-            new PomWriter(product, out).write();
+            new PomWriter(product).writeTo(out);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

@@ -1,89 +1,103 @@
 package com.github.t1.somemake;
 
-import java.io.Writer;
-import java.nio.file.*;
-import java.util.function.Predicate;
+import static java.util.stream.Collectors.*;
 
-import lombok.NonNull;
+import java.io.*;
+import java.util.*;
 
-import com.google.common.collect.ImmutableList;
+import lombok.*;
 
-public class PomWriter extends XmlWriter {
-    private static final String NAMESPACES =
-            "xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" //
-                    + "    xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\"";
-    private static final Path PLUGIN_ROOT = Paths.get("/plugin/plugin/");
+import com.github.t1.xml.*;
 
+@RequiredArgsConstructor
+public class PomWriter {
+    private static final String NAMESPACE_NAME = "http://maven.apache.org/POM/4.0.0";
+
+    @NonNull
     private final Product product;
 
-    public PomWriter(@NonNull Product product, @NonNull Writer target) {
-        super(target);
-        this.product = checked(product);
+    public String writeToString() {
+        StringWriter out = new StringWriter();
+        writeTo(out);
+        return out.toString();
     }
 
-    private Product checked(Product product) {
-        if (!product.type().is("product"))
-            throw new IllegalArgumentException("can't produce a pom.xml for type " + product.type());
-        return product;
+    public void writeTo(Writer writer) {
+        build().writeTo(writer);
     }
 
-    public void write() {
-        tag("project", NAMESPACES, () -> {
-            comment("pom written by somemake; built from " + product.version());
-            tag("modelVersion", "4.0.0");
-            nl();
-            gav(product);
-            nl();
-            tag("name", product.name());
-            tag("description", product.description());
-            nl();
-            tag("build", () -> tag("plugins", () -> plugins()));
-            nl();
-            dependencies();
-        });
+    private Xml build() {
+        Xml out = Xml.createWithRootElement("project");
+        out.addAttribute("xmlns", NAMESPACE_NAME);
+        out.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        out.addAttribute("xsi:schemaLocation", NAMESPACE_NAME + " http://maven.apache.org/xsd/maven-4.0.0.xsd");
+
+        out.addComment("pom written by somemake; built from " + product.version());
+
+        out.addElement("modelVersion").addText("4.0.0");
+        out.nl();
+        gav(product, out);
+        out.nl();
+        addProperty(out, "name", product.name());
+        addProperty(out, "description", product.description());
+
+        addBuildSection(out);
+        addDependencies(out);
+        return out;
     }
 
-    private void plugins() {
-        for (Product plugin : product.features()) {
-            if (plugin.type().is("plugin")) {
-                tag("plugin", () -> plugin(plugin));
+    private void addProperty(XmlElement element, String name, Optional<String> value) {
+        if (value.isPresent()) {
+            element.addElement(name).addText(value.get());
+        }
+    }
+
+    private void addBuildSection(XmlElement out) {
+        List<Product> pluginList = featuresOfType("plugin");
+        if (pluginList.isEmpty())
+            return;
+        out.nl();
+        XmlElement pluginsElement = out.addElement("build").addElement("plugins");
+        for (Product plugin : pluginList) {
+            copy(plugin, pluginsElement.addElement("plugin"));
+        }
+    }
+
+    private List<Product> featuresOfType(String type) {
+        return product.features().stream().filter(p -> p.type().is(type)).collect(toList());
+    }
+
+    private void copy(Product from, XmlElement to) {
+        gav(from, to);
+        copyProperties(from, to);
+    }
+
+    private void gav(Product from, XmlElement to) {
+        Version version = from.version();
+        to.addElement("groupId").addText(version.id().groupId());
+        to.addElement("artifactId").addText(version.id().artifactId());
+        to.addElement("version").addText(version.versionString());
+    }
+
+    private void copyProperties(Product from, XmlElement to) {
+        for (Product property : from.features()) {
+            Optional<String> value = property.value();
+            if (value.isPresent()) {
+                to.addElement(property.type().typeName()).addText(value.get());
             }
         }
     }
 
-    private void plugin(Product plugin) {
-        gav(plugin);
-        copyProperties(plugin);
-    }
-
-    private void copyProperties(Product plugin) {
-        for (Product property : plugin.features()) {
-            // tag(property.name().get(), () -> copyProperties(plugin));
+    private void addDependencies(XmlElement out) {
+        List<Product> dependencyList = featuresOfType("dependency");
+        if (dependencyList.isEmpty())
+            return;
+        out.nl();
+        XmlElement dependenciesElement = out.addElement("dependencies");
+        for (Product dependency : dependencyList) {
+            XmlElement dependencyElement = dependenciesElement.addElement("dependency");
+            gav(dependency, dependencyElement);
+            copyProperties(dependency, dependencyElement);
         }
-    }
-
-    private void dependencies() {
-        tag("dependencies", () -> {
-            ImmutableList<Product> dependencies = product.features(ofType("dependency"));
-            for (Product dependency : dependencies) {
-                tag("dependency", () -> {
-                    gav(dependency);
-                    for (Product property : dependency.features()) {
-                        tag(property.name().get(), property.value());
-                    }
-                });
-            }
-        });
-    }
-
-    private Predicate<Product> ofType(String type) {
-        return feature -> feature.type().is(type);
-    }
-
-    private void gav(Product product) {
-        Version version = product.version();
-        tag("groupId", version.id().groupId());
-        tag("artifactId", version.id().artifactId());
-        tag("version", version.versionString());
     }
 }

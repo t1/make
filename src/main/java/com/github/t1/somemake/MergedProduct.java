@@ -74,14 +74,20 @@ public class MergedProduct extends Product {
     }
 
     @Override
+    public Optional<String> value() {
+        if (master.value().isPresent())
+            return master.value();
+        return servant.value();
+    }
+
+    @Override
     protected ImmutableList<Product> unresolvedFeatures() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Optional<String> value() {
-        if (master.value().isPresent())
-            return master.value();
-        return servant.value();
+    public String toString() {
+        return "merged master: " + master.getClass().getSimpleName() + ": " + master + "\n" //
+                + "merged servant: " + servant.getClass().getSimpleName() + ": " + servant;
     }
 }

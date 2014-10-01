@@ -1,10 +1,11 @@
 package com.github.t1.somemake;
 
 import static com.github.t1.somemake.Id.*;
+import static java.util.stream.Collectors.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
 
@@ -41,6 +42,8 @@ public abstract class Product {
 
 
     public Optional<String> name() {
+        if (!hasFeature(NAME))
+            return Optional.empty();
         return feature(NAME).value();
     }
 
@@ -50,6 +53,8 @@ public abstract class Product {
 
 
     public Optional<String> description() {
+        if (!hasFeature(DESCRIPTION))
+            return Optional.empty();
         return feature(DESCRIPTION).value();
     }
 
@@ -59,6 +64,8 @@ public abstract class Product {
 
 
     public Optional<LocalDateTime> releaseTimestamp() {
+        if (!hasFeature(RELEASETIMESTAMP))
+            return Optional.empty();
         Product feature = feature(RELEASETIMESTAMP);
         Optional<String> stringValue = feature.value();
         return stringValue.map(releaseTimestamp -> LocalDateTime.parse(releaseTimestamp));
@@ -76,6 +83,7 @@ public abstract class Product {
 
 
     public ImmutableList<Product> features() {
+        // TODO cache features, probably
         List<Product> out = new ArrayList<>();
         for (Product feature : unresolvedFeatures()) {
             resolve(out, feature);
@@ -90,7 +98,8 @@ public abstract class Product {
      */
     private void resolve(List<Product> out, Product feature) {
         if (feature.id().isEmpty()) {
-            out.add(feature);
+            if (!out.stream().anyMatch(p -> p.id().equals(feature.id())))
+                out.add(feature);
             resolveSub(out, feature);
         } else {
             Product merged = Repositories.merge(feature);
@@ -107,18 +116,6 @@ public abstract class Product {
 
     protected abstract ImmutableList<Product> unresolvedFeatures();
 
-    public ImmutableList<Product> features(Predicate<? super Product> predicate) {
-        // TODO cache features, probably
-        List<Product> out = new ArrayList<>();
-        // merge(out, JAVAC); // TODO activate plugins automatically
-        for (Product feature : features()) {
-            if (predicate.test(feature)) {
-                merge(out, feature);
-            }
-        }
-        return ImmutableList.copyOf(out);
-    }
-
     private void merge(List<Product> out, Product feature) {
         for (Product product : out) {
             if (product.id().equals(feature.id())) {
@@ -130,13 +127,23 @@ public abstract class Product {
     }
 
     public Product feature(Id id) {
-        List<Product> matching = features(f -> id.equals(f.id()));
-        if (matching.size() == 0)
-            throw new IllegalArgumentException("not found: " + id + " in " + this.version());
+        List<Product> matching = features().stream().filter(f -> id.equals(f.id())).collect(toList());
+        if (matching.size() < 1)
+            throw new IllegalArgumentException("no features found with id '" + id + "' in " + this.version());
         if (matching.size() > 1)
-            throw new IllegalArgumentException("multiple features with id " + id + " in " + this.version() + ":\n"
-                    + matching);
+            throw new IllegalArgumentException("multiple features with id '" + id + "' in " + this.version() + ":\n"
+                    + info(matching));
         return matching.get(0);
+    }
+
+    private String info(List<Product> matching) {
+        Function<Product, String> mapper;
+        if (matching.stream().allMatch(p -> p.version().isAny())) {
+            mapper = p -> p.value().orElse("?");
+        } else {
+            mapper = p -> p.id().toString();
+        }
+        return matching.stream().map(mapper).collect(toList()).toString();
     }
 
     public boolean hasFeature(Id id) {

@@ -4,19 +4,18 @@ import static com.github.t1.somemake.Repositories.*;
 import static com.github.t1.somemake.Type.*;
 import static org.junit.Assert.*;
 
-import java.io.StringWriter;
-import java.nio.file.Paths;
-import java.time.LocalDateTime;
+import java.nio.file.*;
 
 import org.junit.*;
 
 public class PomWriterTest extends AbstractTest {
-    private final FileSystemRepository repository = new FileSystemRepository(Paths.get("target", "test-classes",
-            "repository"));
+    private static final Path REPOSITORY_ROOT = Paths.get("target", "test-classes", "repository");
+    private final FileSystemRepository repository = new FileSystemRepository(REPOSITORY_ROOT);
 
     @Before
     public void registerFileSystemRepository() {
         repositories().register(repository);
+        activatedProducts.add(javac());
     }
 
     @After
@@ -24,67 +23,70 @@ public class PomWriterTest extends AbstractTest {
         repositories().deregister(repository);
     }
 
-    private final StringWriter target = new StringWriter();
+    private void shouldConvertTestProductWithVersion(String versionString) {
+        Version version = product("product:test-product").version(versionString);
+
+        String pom = convert(version);
+
+        assertPomFile(version, pom);
+    }
+
+    private String convert(Version version) {
+        Product product = repositories().get(version).get();
+
+        PomWriter writer = new PomWriter(product);
+
+        return writer.writeToString();
+    }
+
+    private void assertPomFile(Version version, String pom) {
+        assertEquals(readFile(REPOSITORY_ROOT.resolve(version.path()).resolve("pom.xml")), pom);
+    }
 
     @SuppressWarnings("unused")
     @Test(expected = NullPointerException.class)
     public void shouldFailToBuildNullProduct() {
-        new PomWriter(null, target);
-    }
-
-    @SuppressWarnings("unused")
-    @Test(expected = NullPointerException.class)
-    public void shouldFailToBuildNullTarget() {
-        new PomWriter(createProduct(), null);
-    }
-
-    @SuppressWarnings("unused")
-    @Test(expected = IllegalArgumentException.class)
-    public void shouldFailToBuildFeature() {
-        new PomWriter(newProduct(feature("test-feature"), "1.0"), target);
+        new PomWriter(null);
     }
 
     @Test
-    public void shouldBuildBasicProduct() {
-        Product product = newProduct(product("product:test-product"), "1.0") //
-                .name("Test Product").description("A product used for tests") //
-                .releaseTimestamp(LocalDateTime.of(2014, 8, 4, 15, 16, 59)) //
+    public void shouldBuildSimpleProductEntity() {
+        Version version = product("product:test-product").version("0.9");
+        Product product = new ProductEntity(version) //
+                .name("Test Product") //
+                .description("A product used for tests") //
         ;
-        PomWriter writer = new PomWriter(product, target);
+        PomWriter writer = new PomWriter(product);
 
-        writer.write();
+        String pom = writer.writeToString();
 
-        assertEquals(readFile(Paths.get("src/test/resources/test-product-0.9.pom")), target.toString());
+        assertPomFile(version, pom);
     }
 
     @Test
-    public void shouldBuildProductWithDependencies() {
-        Product product = repositories().get(product("product:test-product").version("1.0")).get();
-        PomWriter writer = new PomWriter(product, target);
-
-        writer.write();
-
-        assertEquals(readFile(Paths.get("src/test/resources/test-product-1.0.pom")), target.toString());
+    public void shouldLoadSimpleProduct() {
+        shouldConvertTestProductWithVersion("0.9");
     }
 
     @Test
-    public void shouldBuildProductWithNestedDependency() {
-        Product product = repositories().get(product("product:test-product").version("1.1")).get();
-        PomWriter writer = new PomWriter(product, target);
-
-        writer.write();
-
-        assertEquals(readFile(Paths.get("src/test/resources/test-product-1.1.pom")), target.toString());
+    public void shouldLoadProductWithDependencyWithOverwrittenScope() {
+        shouldConvertTestProductWithVersion("1.0");
     }
 
     @Test
+    public void shouldInheritNamePropertyFromNestedFeature() {
+        shouldConvertTestProductWithVersion("1.1");
+    }
+
+    @Test
+    public void shouldOverwriteNamePropertyOverNestedFeature() {
+        shouldConvertTestProductWithVersion("1.2");
+    }
+
+    @Test
+    @Ignore
     public void shouldOverwriteNestedPluginProperty() {
-        Product product = repositories().get(product("product:test-product").version("1.2")).get();
-        PomWriter writer = new PomWriter(product, target);
-
-        writer.write();
-
-        assertEquals(readFile(Paths.get("src/test/resources/test-product-1.2.pom")), target.toString());
+        shouldConvertTestProductWithVersion("1.3");
     }
 
     @Test
@@ -102,16 +104,19 @@ public class PomWriterTest extends AbstractTest {
     }
 
     @Test
+    @Ignore
     public void shouldWriteParametersCompilerArgumentOnJdk8() {
         assertTrue(buildParametersCompilerArgumentOn("1.8"));
     }
 
     @Test
+    @Ignore
     public void shouldWriteParametersCompilerArgumentOnJdk9() {
         assertTrue(buildParametersCompilerArgumentOn("1.9"));
     }
 
     @Test
+    @Ignore
     public void shouldWriteParametersCompilerArgumentOnJdk10() {
         assertTrue(buildParametersCompilerArgumentOn("1.10"));
     }
@@ -122,11 +127,11 @@ public class PomWriterTest extends AbstractTest {
             System.setProperty("java.specification.version", jdk);
 
             Product product = repositories().get(product("product:test-product").version("1.1")).get();
-            PomWriter writer = new PomWriter(product, target);
+            PomWriter writer = new PomWriter(product);
 
-            writer.write();
+            String pom = writer.writeToString();
 
-            return target.toString().contains("<compilerArgument>-parameters</compilerArgument>");
+            return pom.contains("<compilerArgument>-parameters</compilerArgument>");
         } finally {
             System.setProperty("java.specification.version", oldVersion);
         }
