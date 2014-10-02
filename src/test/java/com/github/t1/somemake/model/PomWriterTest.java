@@ -84,8 +84,18 @@ public class PomWriterTest extends AbstractTest {
     }
 
     @Test
+    public void shouldLoadProductWithTwoDependencies() {
+        shouldConvertTestProductWithVersion("1.0.3");
+    }
+
+    @Test
     public void shouldInheritNamePropertyFromNestedFeature() {
         shouldConvertTestProductWithVersion("1.1");
+    }
+
+    @Test
+    public void shouldInheritNamePropertyFromDoublyNestedFeature() {
+        shouldConvertTestProductWithVersion("1.1.1");
     }
 
     @Test
