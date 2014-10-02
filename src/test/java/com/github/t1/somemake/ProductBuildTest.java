@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 
 import java.time.LocalDateTime;
 
-import org.junit.*;
+import org.junit.Test;
 
 public class ProductBuildTest extends AbstractTest {
     private final LocalDateTime now = LocalDateTime.now();
@@ -37,7 +37,6 @@ public class ProductBuildTest extends AbstractTest {
     }
 
     @Test
-    @Ignore
     public void shouldFetchFeatureTimestampAndFeatures() {
         Product foo1 = newProduct(feature("foo"), "1.0");
         Product bar2 = newProduct(feature("bar"), "2.0");

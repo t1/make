@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <product id="com.github.t1:somemake" version="0.0.1-SNAPSHOT">
+    <name>some make</name>
+    <description>simplifies the description of project build processes</description>
+
     <plugin id="org.apache.maven.plugins:maven-jar-plugin" version="2.4">
         <configuration>
             <archive>

@@ -81,9 +81,14 @@ public class PomWriter {
 
     private void copyProperties(Product from, XmlElement to) {
         for (Product property : from.features()) {
-            Optional<String> value = property.value();
-            if (value.isPresent()) {
-                to.addElement(property.type().typeName()).addText(value.get());
+            if (property.features().isEmpty()) {
+                Optional<String> value = property.value();
+                if (value.isPresent()) {
+                    to.addElement(property.type().typeName()).addText(value.get());
+                }
+            } else {
+                XmlElement propertyElement = to.addElement(property.type().typeName());
+                copyProperties(property, propertyElement);
             }
         }
     }

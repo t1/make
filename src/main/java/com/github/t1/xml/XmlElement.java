@@ -2,12 +2,14 @@ package com.github.t1.xml;
 
 import static lombok.AccessLevel.*;
 
+import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
 import lombok.*;
 
 import org.w3c.dom.*;
+import org.w3c.dom.ls.*;
 
 import com.google.common.collect.ImmutableList;
 
@@ -48,7 +50,9 @@ public class XmlElement {
     }
 
     public Optional<String> value() {
-        return Optional.ofNullable(element.getTextContent());
+        if (elements().isEmpty())
+            return Optional.ofNullable(element.getTextContent());
+        return Optional.empty();
     }
 
     public List<XmlElement> elements() {
@@ -100,12 +104,6 @@ public class XmlElement {
             node = (Element) elements.item(0);
         }
         return Optional.ofNullable(node).map(e -> new XmlElement(e, indent));
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() //
-                + "[" + getName() + (hasAttribute("id") ? ("@" + getAttribute("id")) : "") + "]";
     }
 
     public boolean hasChildElement(Path path) {
@@ -182,5 +180,48 @@ public class XmlElement {
     public XmlElement addText(String string) {
         element.insertBefore(createText(string), finalText);
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() //
+                + "[" + getName() + (hasAttribute("id") ? ("@" + getAttribute("id")) : "") + "]\n" //
+                + toXmlString();
+    }
+
+    public String toXmlString() {
+        StringWriter out = new StringWriter();
+        writeTo(out);
+        return out.toString();
+    }
+
+    public void writeTo(Writer writer) {
+        serializer().write(element, createOutput(writer));
+        nl(writer);
+    }
+
+    protected LSSerializer serializer() {
+        return domLs().createLSSerializer();
+    }
+
+    protected DOMImplementationLS domLs() {
+        DOMImplementationLS domLs = (DOMImplementationLS) (document().getImplementation()).getFeature("LS", "3.0");
+        if (domLs == null)
+            throw new UnsupportedOperationException("dom load and save not supported");
+        return domLs;
+    }
+
+    private LSOutput createOutput(Writer writer) {
+        LSOutput output = domLs().createLSOutput();
+        output.setCharacterStream(writer);
+        return output;
+    }
+
+    private void nl(Writer writer) {
+        try {
+            writer.append('\n');
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
