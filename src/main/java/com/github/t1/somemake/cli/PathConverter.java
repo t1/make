@@ -1,4 +1,4 @@
-package com.github.t1.somemake.model;
+package com.github.t1.somemake.cli;
 
 import java.nio.file.*;
 

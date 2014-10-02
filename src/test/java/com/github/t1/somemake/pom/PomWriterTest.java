@@ -1,4 +1,4 @@
-package com.github.t1.somemake.model;
+package com.github.t1.somemake.pom;
 
 import static com.github.t1.somemake.model.Repositories.*;
 import static com.github.t1.somemake.model.Type.*;
@@ -7,6 +7,8 @@ import static org.junit.Assert.*;
 import java.nio.file.*;
 
 import org.junit.*;
+
+import com.github.t1.somemake.model.*;
 
 public class PomWriterTest extends AbstractTest {
     private static final Path REPOSITORY_ROOT = Paths.get("target", "test-classes", "repository");
@@ -43,10 +45,9 @@ public class PomWriterTest extends AbstractTest {
         assertEquals(readFile(REPOSITORY_ROOT.resolve(version.path()).resolve("pom.xml")), pom);
     }
 
-    @SuppressWarnings("unused")
     @Test(expected = NullPointerException.class)
     public void shouldFailToBuildNullProduct() {
-        new PomWriter(null);
+        new PomWriter(null).writeToString();
     }
 
     @Test
@@ -104,9 +105,14 @@ public class PomWriterTest extends AbstractTest {
     }
 
     @Test
+    public void shouldLoadSimplePlugin() {
+        shouldConvertTestProductWithVersion("2.0");
+    }
+
+    @Test
     @Ignore
-    public void shouldOverwriteNestedPluginProperty() {
-        shouldConvertTestProductWithVersion("1.3");
+    public void shouldLoadSimplePluginWithConfiguration() {
+        shouldConvertTestProductWithVersion("2.1");
     }
 
     @Test

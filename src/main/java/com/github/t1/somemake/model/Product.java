@@ -58,7 +58,7 @@ public abstract class Product {
         return feature(DESCRIPTION).value();
     }
 
-    Product description(String description) {
+    public Product description(String description) {
         return set(DESCRIPTION, description);
     }
 

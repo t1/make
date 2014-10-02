@@ -10,8 +10,6 @@ import java.util.function.*;
 
 import org.joda.convert.StringConvert;
 
-import com.github.t1.somemake.model.PathConverter;
-
 public class Main implements Runnable {
     private final String[] DEFAULT_ARGS = { "help" };
 

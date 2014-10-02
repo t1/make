@@ -9,6 +9,7 @@ import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import com.github.t1.somemake.model.*;
+import com.github.t1.somemake.pom.PomWriter;
 
 @Getter
 @Setter

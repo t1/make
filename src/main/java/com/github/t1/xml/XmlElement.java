@@ -121,6 +121,14 @@ public class XmlElement {
         return false;
     }
 
+    public XmlElement addElement(Path path) {
+        XmlElement out = this;
+        for (Path item : path) {
+            out = out.addElement(item.toString());
+        }
+        return out;
+    }
+
     public XmlElement addElement(String name) {
         Element node = document().createElement(name);
         addIndent();
