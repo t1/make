@@ -1,4 +1,4 @@
-package com.github.t1.somemake;
+package com.github.t1.somemake.cli;
 
 import static java.lang.annotation.RetentionPolicy.*;
 

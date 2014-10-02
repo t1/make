@@ -1,10 +1,13 @@
-package com.github.t1.somemake;
+package com.github.t1.somemake.cli;
 
-import static com.github.t1.somemake.HelpCommand.*;
+import static com.github.t1.somemake.cli.HelpCommand.*;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 import org.junit.*;
+
+import com.github.t1.somemake.SystemOutRule;
+import com.github.t1.somemake.cli.Main;
 
 public class MainTest {
     @Rule

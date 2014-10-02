@@ -1,12 +1,14 @@
-package com.github.t1.somemake;
+package com.github.t1.somemake.model;
 
-import static com.github.t1.somemake.Type.*;
+import static com.github.t1.somemake.model.Type.*;
 import static org.junit.Assert.*;
 
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.junit.Test;
+
+import com.github.t1.somemake.model.Version;
 
 public class VersionTest {
     private Optional<String> resolve(String pattern, String... matches) {

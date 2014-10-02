@@ -1,11 +1,13 @@
-package com.github.t1.somemake;
+package com.github.t1.somemake.model;
 
-import static com.github.t1.somemake.Type.*;
+import static com.github.t1.somemake.model.Type.*;
 import static org.junit.Assert.*;
 
 import java.time.LocalDateTime;
 
 import org.junit.Test;
+
+import com.github.t1.somemake.model.Product;
 
 public class ProductBuildTest extends AbstractTest {
     private final LocalDateTime now = LocalDateTime.now();

@@ -1,7 +1,7 @@
-package com.github.t1.somemake;
+package com.github.t1.somemake.model;
 
-import static com.github.t1.somemake.Repositories.*;
-import static com.github.t1.somemake.Type.*;
+import static com.github.t1.somemake.model.Repositories.*;
+import static com.github.t1.somemake.model.Type.*;
 
 import java.io.IOException;
 import java.nio.file.*;

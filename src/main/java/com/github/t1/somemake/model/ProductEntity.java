@@ -1,6 +1,6 @@
-package com.github.t1.somemake;
+package com.github.t1.somemake.model;
 
-import static com.github.t1.somemake.Version.*;
+import static com.github.t1.somemake.model.Version.*;
 
 import java.util.*;
 

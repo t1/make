@@ -1,4 +1,4 @@
-package com.github.t1.somemake;
+package com.github.t1.somemake.cli;
 
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.function.*;
 
 import org.joda.convert.StringConvert;
+
+import com.github.t1.somemake.model.PathConverter;
 
 public class Main implements Runnable {
     private final String[] DEFAULT_ARGS = { "help" };

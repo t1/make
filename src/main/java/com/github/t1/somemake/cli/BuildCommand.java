@@ -1,12 +1,14 @@
-package com.github.t1.somemake;
+package com.github.t1.somemake.cli;
 
-import static com.github.t1.somemake.Repositories.*;
+import static com.github.t1.somemake.model.Repositories.*;
 
 import java.io.*;
 import java.nio.file.*;
 
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+
+import com.github.t1.somemake.model.*;
 
 @Getter
 @Setter

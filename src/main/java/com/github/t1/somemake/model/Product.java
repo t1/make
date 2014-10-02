@@ -1,6 +1,6 @@
-package com.github.t1.somemake;
+package com.github.t1.somemake.model;
 
-import static com.github.t1.somemake.Id.*;
+import static com.github.t1.somemake.model.Id.*;
 import static java.util.stream.Collectors.*;
 
 import java.time.LocalDateTime;
