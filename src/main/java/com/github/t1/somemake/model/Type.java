@@ -16,6 +16,10 @@ public class Type {
         return type("dependency").id(id);
     }
 
+    public static Id property(String type) {
+        return type(type).id(Id.EMPTY);
+    }
+
     @NonNull
     private final String typeName;
 

@@ -16,6 +16,10 @@
             <artifactId>logback-classic</artifactId>
             <version>1.1.2</version>
             <scope>test</scope>
+            <classifier>cls</classifier>
+            <optional>true</optional>
+            <systemPath>sys</systemPath>
+            <type>type</type>
         </dependency>
     </dependencies>
 </project>

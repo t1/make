@@ -74,6 +74,16 @@ public class PomWriterTest extends AbstractTest {
     }
 
     @Test
+    public void shouldLoadProductWithDependencyWithOverwrittenScopeAndOneExclusion() {
+        shouldConvertTestProductWithVersion("1.0.1");
+    }
+
+    @Test
+    public void shouldLoadProductWithDependencyWithOverwrittenScopeAndTwoExclusions() {
+        shouldConvertTestProductWithVersion("1.0.2");
+    }
+
+    @Test
     public void shouldInheritNamePropertyFromNestedFeature() {
         shouldConvertTestProductWithVersion("1.1");
     }

@@ -127,13 +127,17 @@ public abstract class Product {
     }
 
     public Product feature(Id id) {
-        List<Product> matching = features().stream().filter(f -> id.equals(f.id())).collect(toList());
+        List<Product> matching = features(id);
         if (matching.size() < 1)
             throw new IllegalArgumentException("no features found with id '" + id + "' in " + this.version());
         if (matching.size() > 1)
             throw new IllegalArgumentException("multiple features with id '" + id + "' in " + this.version() + ":\n"
                     + info(matching));
         return matching.get(0);
+    }
+
+    public List<Product> features(Id id) {
+        return features().stream().filter(f -> id.equals(f.id())).collect(toList());
     }
 
     private String info(List<Product> matching) {

@@ -1,5 +1,6 @@
 package com.github.t1.somemake.model;
 
+import static com.github.t1.somemake.model.Type.*;
 import static java.util.stream.Collectors.*;
 
 import java.io.*;
@@ -101,8 +102,35 @@ public class PomWriter {
         XmlElement dependenciesElement = out.addElement("dependencies");
         for (Product dependency : dependencyList) {
             XmlElement dependencyElement = dependenciesElement.addElement("dependency");
+
             gav(dependency, dependencyElement);
-            copyProperties(dependency, dependencyElement);
+
+            addProperty(dependency, dependencyElement, property("scope"));
+            addProperty(dependency, dependencyElement, property("classifier"));
+            addProperty(dependency, dependencyElement, property("optional"));
+            addProperty(dependency, dependencyElement, property("systemPath"));
+            addProperty(dependency, dependencyElement, property("type"));
+
+            copyExlusions(dependency, dependencyElement);
+        }
+    }
+
+    private void addProperty(Product from, XmlElement to, Id id) {
+        if (from.hasFeature(id)) {
+            to.addElement(id.type().typeName()).addText(from.feature(id).value().get());
+        }
+    }
+
+    private void copyExlusions(Product dependency, XmlElement dependencyElement) {
+        XmlElement exclusionsElement = null;
+        for (Product exclusion : dependency.features()) {
+            if (exclusion.id().type().is("exclusion")) {
+                if (exclusionsElement == null)
+                    exclusionsElement = dependencyElement.addElement("exclusions");
+                XmlElement exclusionElement = exclusionsElement.addElement("exclusion");
+                exclusionElement.addElement("groupId").addText(exclusion.id().groupId());
+                exclusionElement.addElement("artifactId").addText(exclusion.id().artifactId());
+            }
         }
     }
 }

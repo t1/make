@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <!-- pom written by somemake; built from product:product:test-product:1.1 -->
+    <!-- pom written by somemake; built from product:product:test-product:1.0.1 -->
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>product</groupId>
     <artifactId>test-product</artifactId>
-    <version>1.1</version>
+    <version>1.0.1</version>
 
-    <name>Feature-Name</name>
+    <name>Test Product</name>
     <description>A product used for tests</description>
 
     <dependencies>
@@ -16,6 +16,16 @@
             <artifactId>logback-classic</artifactId>
             <version>1.1.2</version>
             <scope>test</scope>
+            <classifier>cls</classifier>
+            <optional>true</optional>
+            <systemPath>sys</systemPath>
+            <type>type</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>excl-grp</groupId>
+                    <artifactId>excl-art</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>

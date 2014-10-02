@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<product id="product:test-product" version="1.0">
+<product id="product:test-product" version="1.0.2">
     <name>Test Product</name>
     <description>A product used for tests</description>
     <releaseTimestamp>2014-08-04T15:16:59</releaseTimestamp>
@@ -10,5 +10,7 @@
         <optional>true</optional>
         <systemPath>sys</systemPath>
         <type>type</type>
+        <exclusion id="excl-grp1:excl-art1"/>
+        <exclusion id="excl-grp2:excl-art2"/>
     </dependency>
 </product>
