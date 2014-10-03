@@ -18,6 +18,10 @@ public abstract class Product {
         return id().type();
     }
 
+    public boolean hasId() {
+        return !id().isEmpty();
+    }
+
     public Id id() {
         return version().id();
     }
@@ -91,26 +95,12 @@ public abstract class Product {
         return ImmutableList.copyOf(out);
     }
 
-    /**
-     * Resolution is a two-step process: First a feature in this product is merged with the feature of the same id and
-     * matching version in any repository. Second all features in the merged feature and all features referenced from
-     * there are "pulled" into this product.
-     */
     private void resolve(List<Product> out, Product feature) {
-        if (feature.id().isEmpty()) {
-            if (!out.stream().anyMatch(p -> p.id().equals(feature.id())))
-                out.add(feature);
-            resolveSub(out, feature);
-        } else {
+        if (feature.hasId()) {
             Product merged = Repositories.merge(feature);
             merge(out, merged);
-            resolveSub(out, merged);
-        }
-    }
-
-    private void resolveSub(List<Product> out, Product feature) {
-        for (Product sub : feature.features()) {
-            resolve(out, sub);
+        } else {
+            out.add(feature);
         }
     }
 
@@ -148,6 +138,10 @@ public abstract class Product {
             mapper = p -> p.id().toString();
         }
         return matching.stream().map(mapper).collect(toList()).toString();
+    }
+
+    public boolean hasFeatures() {
+        return !features().isEmpty();
     }
 
     public boolean hasFeature(Id id) {

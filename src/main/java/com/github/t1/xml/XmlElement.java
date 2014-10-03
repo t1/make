@@ -50,8 +50,10 @@ public class XmlElement {
     }
 
     public Optional<String> value() {
-        if (elements().isEmpty())
-            return Optional.ofNullable(element.getTextContent());
+        if (elements().isEmpty()) {
+            String text = element.getTextContent();
+            return text.isEmpty() ? Optional.empty() : Optional.of(text);
+        }
         return Optional.empty();
     }
 

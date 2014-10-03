@@ -89,15 +89,15 @@ public class PomWriterTest extends AbstractTest {
         shouldConvertTestProductWithVersion("1.0.3");
     }
 
-    @Test
-    public void shouldInheritNamePropertyFromNestedFeature() {
-        shouldConvertTestProductWithVersion("1.1");
-    }
-
-    @Test
-    public void shouldInheritNamePropertyFromDoublyNestedFeature() {
-        shouldConvertTestProductWithVersion("1.1.1");
-    }
+    // @Test
+    // public void shouldInheritNamePropertyFromNestedFeature() {
+    // shouldConvertTestProductWithVersion("1.1");
+    // }
+    //
+    // @Test
+    // public void shouldInheritNamePropertyFromDoublyNestedFeature() {
+    // shouldConvertTestProductWithVersion("1.1.1");
+    // }
 
     @Test
     public void shouldOverwriteNamePropertyOverNestedFeature() {
@@ -110,7 +110,6 @@ public class PomWriterTest extends AbstractTest {
     }
 
     @Test
-    @Ignore
     public void shouldLoadSimplePluginWithConfiguration() {
         shouldConvertTestProductWithVersion("2.1");
     }

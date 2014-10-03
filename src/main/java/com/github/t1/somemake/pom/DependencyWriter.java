@@ -15,26 +15,26 @@ class DependencyWriter extends AbstractPomBuilder {
     }
 
     @Override
-    public void addTo(XmlElement dependenciesElement) {
-        XmlElement dependencyElement = dependenciesElement.addElement("dependency");
+    public void addTo(XmlElement out) {
+        XmlElement element = out.addElement("dependency");
 
-        gav(dependencyElement);
+        gav(element);
 
-        addProperty(dependencyElement, property("scope"));
-        addProperty(dependencyElement, property("classifier"));
-        addProperty(dependencyElement, property("optional"));
-        addProperty(dependencyElement, property("systemPath"));
-        addProperty(dependencyElement, property("type"));
+        addProperty(element, property("scope"));
+        addProperty(element, property("classifier"));
+        addProperty(element, property("optional"));
+        addProperty(element, property("systemPath"));
+        addProperty(element, property("type"));
 
-        copyExlusions(dependencyElement);
+        copyExlusions(element);
     }
 
-    private void copyExlusions(XmlElement dependencyElement) {
+    private void copyExlusions(XmlElement element) {
         XmlElement exclusionsElement = null;
         for (Product exclusion : product.features()) {
             if (exclusion.id().type().is("exclusion")) {
                 if (exclusionsElement == null)
-                    exclusionsElement = dependencyElement.addElement("exclusions");
+                    exclusionsElement = element.addElement("exclusions");
                 XmlElement exclusionElement = exclusionsElement.addElement("exclusion");
                 exclusionElement.addElement("groupId").addText(exclusion.id().groupId());
                 exclusionElement.addElement("artifactId").addText(exclusion.id().artifactId());
