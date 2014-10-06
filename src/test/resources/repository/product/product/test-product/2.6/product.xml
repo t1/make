@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<product id="product:test-product" version="2.6">
+    <name>Test Product</name>
+    <description>A product used for tests</description>
+    <releaseTimestamp>2014-08-04T15:16:59</releaseTimestamp>
+
+    <plugin id="org.apache.maven.plugins:maven-jar-plugin" version="2.4">
+        <inherited>true</inherited>
+    </plugin>
+</product>

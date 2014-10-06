@@ -19,15 +19,19 @@ class PluginWriter extends AbstractPomBuilder {
 
         gav(element);
 
-        copyConfiguration(element);
+        copyProperties(element);
     }
 
-    private void copyConfiguration(XmlElement element) {
+    private void copyProperties(XmlElement element) {
         XmlElement configurationElement = null;
-        for (Product configuration : product.features()) {
-            if (configurationElement == null)
-                configurationElement = element.addElement("configuration");
-            copy(configuration, configurationElement);
+        for (Product property : product.features()) {
+            if (property.type().is("inherited")) {
+                element.addElement("inherited").addText(property.value().orElse("true"));
+            } else {
+                if (configurationElement == null)
+                    configurationElement = element.addElement("configuration");
+                copy(property, configurationElement);
+            }
         }
     }
 

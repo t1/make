@@ -110,8 +110,28 @@ public class PomWriterTest extends AbstractTest {
     }
 
     @Test
-    public void shouldLoadSimplePluginWithConfiguration() {
+    public void shouldLoadPluginWithConfiguration() {
         shouldConvertTestProductWithVersion("2.1");
+    }
+
+    @Test
+    public void shouldLoadPluginWithTwoConfigurations() {
+        shouldConvertTestProductWithVersion("2.1.1");
+    }
+
+    // dependencies 2.2
+    // executions 2.3
+    // extensions 2.4
+    // goals 2.5
+
+    @Test
+    public void shouldLoadPluginWithInherited() {
+        shouldConvertTestProductWithVersion("2.6");
+    }
+
+    @Test
+    public void shouldLoadPluginWithDefaultInherited() {
+        shouldConvertTestProductWithVersion("2.6.1");
     }
 
     @Test

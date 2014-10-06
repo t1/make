@@ -20,6 +20,8 @@ public class XmlElement {
     private final int indent;
 
     private String indentString;
+
+    /** The text before the closing tag. Everything else goes before this. */
     private Text finalText;
 
     protected Document document() {
@@ -188,6 +190,8 @@ public class XmlElement {
     }
 
     public XmlElement addText(String string) {
+        // we don't use finalText here, as this may be an element without linebreaks
+        // i.e. finalText may be null so the new text is inserted before the closing tag
         element.insertBefore(createText(string), finalText);
         return this;
     }
