@@ -17,7 +17,6 @@ public class PomWriterTest extends AbstractTest {
     @Before
     public void registerFileSystemRepository() {
         repositories().register(repository);
-        activatedProducts.add(javac());
     }
 
     @After

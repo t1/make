@@ -7,8 +7,6 @@ import java.nio.file.*;
 
 import org.junit.*;
 
-import com.github.t1.somemake.cli.BuildCommand;
-
 public class BuildCommandTest {
     private static final Path REPOSITORY = Paths.get("src", "test", "resources", "repository");
     private static final Path POM = Paths.get("pom.xml");

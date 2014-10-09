@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <plugin id="compiler.java" version="3.1">
-    <activation>folder("src/main/java")</activation>
+    <activation>folder(src/main/java)</activation>
+    <name>Java Compiler</name>
 
     <plugin id="org.apache.maven.plugins:maven-compiler-plugin" version="3.1">
         <configuration>

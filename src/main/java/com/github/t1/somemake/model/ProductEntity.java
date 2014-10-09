@@ -35,6 +35,12 @@ public class ProductEntity extends Product {
     }
 
     @Override
+    public Product remove(Product feature) {
+        features.remove(feature);
+        return this;
+    }
+
+    @Override
     public Product set(Id id, String value) {
         ProductEntity feature = new ProductEntity(id.version(ANY));
         feature.value(value);

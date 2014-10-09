@@ -7,10 +7,6 @@ import java.util.*;
 public class Repositories {
     private static final Repositories INSTANCE = new Repositories();
 
-    public static Product merge(Product product) {
-        return repositories().doMerge(product);
-    }
-
     public static Repositories repositories() {
         return INSTANCE;
     }
@@ -37,7 +33,7 @@ public class Repositories {
         return Optional.empty();
     }
 
-    private Product doMerge(Product product) {
+    public Product merge(Product product) {
         return get(product.version()) //
                 .map(referenced -> merged(product, referenced)) //
                 .orElse(product);

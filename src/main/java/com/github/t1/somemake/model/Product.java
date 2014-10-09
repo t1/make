@@ -1,6 +1,6 @@
 package com.github.t1.somemake.model;
 
-import static com.github.t1.somemake.model.Id.*;
+import static com.github.t1.somemake.model.Repositories.*;
 import static java.util.stream.Collectors.*;
 
 import java.time.LocalDateTime;
@@ -10,9 +10,9 @@ import java.util.function.Function;
 import com.google.common.collect.ImmutableList;
 
 public abstract class Product {
-    private static final Id NAME = Type.type("name").id(EMPTY);
-    private static final Id DESCRIPTION = Type.type("description").id(EMPTY);
-    private static final Id RELEASETIMESTAMP = Type.type("releaseTimestamp").id(EMPTY);
+    private static final Id NAME = Type.property("name");
+    private static final Id DESCRIPTION = Type.property("description");
+    private static final Id RELEASETIMESTAMP = Type.property("releaseTimestamp");
 
     public Type type() {
         return id().type();
@@ -81,8 +81,12 @@ public abstract class Product {
 
 
     public UnsupportedOperationException changeUnsupportet(String what) {
-        return new UnsupportedOperationException("changing the " + what + " is not supported by "
-                + getClass().getSimpleName() + ": " + version());
+        return unsupported("changing the " + what);
+    }
+
+    private UnsupportedOperationException unsupported(String what) {
+        return new UnsupportedOperationException(what //
+                + " is not supported by " + getClass().getSimpleName() + ": " + version());
     }
 
 
@@ -97,7 +101,7 @@ public abstract class Product {
 
     private void resolve(List<Product> out, Product feature) {
         if (feature.hasId()) {
-            Product merged = Repositories.merge(feature);
+            Product merged = repositories().merge(feature);
             merge(out, merged);
         } else {
             out.add(feature);
@@ -149,12 +153,15 @@ public abstract class Product {
     }
 
     public Product set(Id id, @SuppressWarnings("unused") String value) {
-        throw new UnsupportedOperationException("setting feature '" + id + "' is not supported by "
-                + getClass().getSimpleName());
+        throw unsupported("setting feature '" + id + "'");
     }
 
     public Product add(@SuppressWarnings("unused") Product feature) {
-        throw new UnsupportedOperationException("adding features is not supported by " + getClass().getSimpleName());
+        throw unsupported("adding features");
+    }
+
+    public Product remove(@SuppressWarnings("unused") Product feature) {
+        throw unsupported("removing features");
     }
 
     public abstract Optional<String> value();

@@ -2,24 +2,25 @@ package com.github.t1.somemake.model;
 
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import lombok.NonNull;
 
 import com.github.t1.xml.Xml;
+import com.google.common.collect.ImmutableList;
 
 public class FileSystemRepository implements Repository {
     private final Path repositoryRoot;
+    private final Map<Activation, Version> activations = new HashMap<>();
 
     public FileSystemRepository(Path repositoryRoot) {
         this.repositoryRoot = check(repositoryRoot);
     }
 
     private Path check(Path repositoryRoot) {
-        if (!Files.isDirectory(repositoryRoot)) {
+        if (!Files.isDirectory(repositoryRoot))
             throw new IllegalArgumentException("repository path " + repositoryRoot + " not found");
-        }
         return repositoryRoot;
     }
 
@@ -30,11 +31,14 @@ public class FileSystemRepository implements Repository {
 
     @Override
     public Optional<Product> get(@NonNull Version version) {
-        return resolvePath(version).map((Path path) -> {
-            XmlStoredProduct product = load(path);
-            checkVersion(version, product.version(), path);
-            return product;
-        });
+        Optional<Path> resolvedPath = resolvePath(version);
+        if (!resolvedPath.isPresent())
+            return Optional.empty();
+        Path path = resolvedPath.get();
+        Product product = load(path);
+        checkVersion(version, product.version(), path);
+        product = withActivations(product);
+        return Optional.of(product);
     }
 
     private Optional<Path> resolvePath(Version version) {
@@ -61,6 +65,23 @@ public class FileSystemRepository implements Repository {
         }
     }
 
+    private Product withActivations(Product product) {
+        Product productActivations = null;
+        for (Map.Entry<Activation, Version> entry : activations.entrySet()) {
+            Version version = entry.getValue();
+            if (version.equals(product.version()))
+                continue;
+            if (entry.getKey().active()) {
+                if (productActivations == null)
+                    productActivations = new ProductEntity(product.version());
+                productActivations.add(get(version).get());
+            }
+        }
+        if (productActivations == null)
+            return product;
+        return new MergedProduct(product, productActivations);
+    }
+
     public XmlStoredProduct load(Path path) {
         Xml xml = Xml.load(path.toUri());
         return new XmlStoredProduct(xml);
@@ -71,5 +92,24 @@ public class FileSystemRepository implements Repository {
             throw new IllegalStateException("unexpected version in " + path + "\n" //
                     + "  expected: " + version + "\n" //
                     + "     found: " + productVersion);
+    }
+
+    @Override
+    public ImmutableList<Version> activations() {
+        return ImmutableList.copyOf(activations.values());
+    }
+
+    @Override
+    public void clearActivations() {
+        activations.clear();
+    }
+
+    @Override
+    public void activate(Id id) {
+        Optional<Product> optional = get(id.version(Version.ANY));
+        if (!optional.isPresent())
+            throw new IllegalStateException("product to activate not found: " + id);
+        Product product = optional.get();
+        activations.put(Activation.of(product), product.version());
     }
 }

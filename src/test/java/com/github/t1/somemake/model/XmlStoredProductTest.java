@@ -4,32 +4,11 @@ import static com.github.t1.somemake.model.Repositories.*;
 import static com.github.t1.somemake.model.Type.*;
 import static org.junit.Assert.*;
 
-import java.nio.file.*;
 import java.time.LocalDateTime;
 
-import org.junit.*;
+import org.junit.Test;
 
-public class XmlStoredProductTest extends AbstractTest {
-    private static final Path REPOSITORY_ROOT = Paths.get("src", "test", "resources", "repository");
-
-    private static final Id LOMBOK_ID = dependency("org.projectlombok:lombok");
-    private static final Version LOMBOK_VERSION = LOMBOK_ID.version("1.12.6");
-    private static final String LOMBOK_NAME = "Project Lombok";
-    private static final String LOMBOK_DESCRIPTION = "Simplify your code";
-
-    private final FileSystemRepository repository = new FileSystemRepository(REPOSITORY_ROOT);
-
-    @Before
-    public void registerFileSystemRepository() {
-        repositories().register(repository);
-        activatedProducts.add(javac());
-    }
-
-    @After
-    public void deregisterFileSystemRepository() {
-        repositories().deregister(repository);
-    }
-
+public class XmlStoredProductTest extends AbstractFileRepositoryTest {
     private void assertJunitHamcrestMockito(Product jhm) {
         Product junit = jhm.feature(dependency("junit:junit"));
         assertEquals("4.11", junit.version().versionString());

@@ -42,7 +42,7 @@ public class ProductBuildTest extends AbstractTest {
     public void shouldFetchFeatureTimestampAndFeatures() {
         Product foo1 = newProduct(feature("foo"), "1.0");
         Product bar2 = newProduct(feature("bar"), "2.0");
-        repository.put(foo1.releaseTimestamp(now) //
+        memRepository.put(foo1.releaseTimestamp(now) //
                 .add(bar2.releaseTimestamp(now.plusDays(3))));
 
         Product product = newProduct(product("baz"), "3.0").add(foo1);
@@ -53,7 +53,7 @@ public class ProductBuildTest extends AbstractTest {
 
     @Test
     public void shouldIgnoreSameTypeAndIdButDifferentVersion() {
-        repository.put(newProduct(feature("foo"), "1.0").releaseTimestamp(now));
+        memRepository.put(newProduct(feature("foo"), "1.0").releaseTimestamp(now));
 
         Product product = newProduct(product("baz"), "2.0") //
                 .add(newProduct(feature("foo"), "2.0"));
@@ -65,7 +65,7 @@ public class ProductBuildTest extends AbstractTest {
     @Test
     public void shouldIgnoreDifferentTypeButSameIdAndVersion() {
         Product foo1 = newProduct(feature("foo"), "1.0");
-        repository.put(foo1.releaseTimestamp(now));
+        memRepository.put(foo1.releaseTimestamp(now));
 
         Product product = newProduct(product("baz"), "3.0") //
                 .add(foo1).add(newProduct(type("packaging").id("foo"), "1.0") //
