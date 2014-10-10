@@ -5,10 +5,14 @@ import java.nio.file.*;
 
 public interface Activation {
     public static final class FolderActivation implements Activation {
+        public static boolean matches(String expression) {
+            return expression.startsWith("folder(") && expression.endsWith(")");
+        }
+
         private final Path path;
 
-        public FolderActivation(String path) {
-            this.path = Paths.get(path);
+        public FolderActivation(String expression) {
+            this.path = Paths.get(expression.substring(7, expression.length() - 1));
         }
 
         @Override
@@ -26,8 +30,8 @@ public interface Activation {
 
     public static Activation of(Product product) {
         String activationExpression = product.feature(ACTIVATION).value().get();
-        if (activationExpression.startsWith("folder(") && activationExpression.endsWith(")"))
-            return new FolderActivation(activationExpression.substring(7, activationExpression.length() - 1));
+        if (FolderActivation.matches(activationExpression))
+            return new FolderActivation(activationExpression);
         throw new IllegalArgumentException("unsupported activation expression [" + activationExpression + "]");
     }
 

@@ -40,6 +40,41 @@ public class FileActivationsTest extends AbstractActivationsTest {
     }
 
     @Test
+    public void shouldLoadEmptyActivations() {
+        Xml.createWithRootElement("activations").save(ACTIVATIONS_XML.toUri());
+
+        fileRepository.loadActivations();
+
+        assertTrue(fileRepository.activations().isEmpty());
+    }
+
+    @Test
+    public void shouldLoadOneActivation() {
+        Xml xml = Xml.createWithRootElement("activations");
+        xml.addElement("activation").addAttribute("id", JAVAC_3_1.toString()).addText("folder(src/main/java)");
+        xml.save(ACTIVATIONS_XML.toUri());
+
+        fileRepository.loadActivations();
+
+        assertEquals(1, fileRepository.activations().size());
+        assertEquals(JAVAC_3_1, fileRepository.activations().get(0));
+    }
+
+    @Test
+    public void shouldLoadTwoActivations() {
+        Xml xml = Xml.createWithRootElement("activations");
+        xml.addElement("activation").addAttribute("id", JAVAC_3_1.toString()).addText("folder(src/main/java)");
+        xml.addElement("activation").addAttribute("id", SCALA_0_1.toString()).addText("folder(src/main/scala)");
+        xml.save(ACTIVATIONS_XML.toUri());
+
+        fileRepository.loadActivations();
+
+        assertEquals(2, fileRepository.activations().size());
+        assertEquals(JAVAC_3_1, fileRepository.activations().get(0));
+        assertEquals(SCALA_0_1, fileRepository.activations().get(1));
+    }
+
+    @Test
     public void shouldSaveEmptyActivations() {
         fileRepository.saveActivations();
 
@@ -68,5 +103,17 @@ public class FileActivationsTest extends AbstractActivationsTest {
         xml.addElement("activation").addAttribute("id", JAVAC_3_1.toString()).addText("folder(src/main/java)");
         xml.addElement("activation").addAttribute("id", SCALA_0_1.toString()).addText("folder(src/main/scala)");
         assertEquals(xml.toXmlString().trim(), readFile(ACTIVATIONS_XML));
+    }
+
+    @Test
+    public void shouldLoadActivationsWhenCreatingFileSystemRepository() {
+        Xml xml = Xml.createWithRootElement("activations");
+        xml.addElement("activation").addAttribute("id", JAVAC_3_1.toString()).addText("folder(src/main/java)");
+        xml.save(ACTIVATIONS_XML.toUri());
+
+        fileRepository.loadActivations();
+
+        assertEquals(1, fileRepository.activations().size());
+        assertEquals(JAVAC_3_1, fileRepository.activations().get(0));
     }
 }

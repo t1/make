@@ -9,15 +9,27 @@ import java.util.stream.Stream;
 
 import lombok.NonNull;
 
-import com.github.t1.xml.Xml;
+import com.github.t1.xml.*;
 import com.google.common.collect.ImmutableList;
 
 public class FileSystemRepository implements Repository {
     private final Path repositoryRoot;
-    private final Map<Activation, Version> activations = new HashMap<>();
+    private final Map<Activation, Version> activations = new LinkedHashMap<>();
 
     public FileSystemRepository(Path repositoryRoot) {
         this.repositoryRoot = check(repositoryRoot);
+
+        if (Files.isReadable(activationsPath())) {
+            loadActivations();
+        }
+    }
+
+    private URI activationsUri() {
+        return activationsPath().toUri();
+    }
+
+    private Path activationsPath() {
+        return repositoryRoot.resolve("activations.xml");
     }
 
     private Path check(Path repositoryRoot) {
@@ -126,6 +138,16 @@ public class FileSystemRepository implements Repository {
         activations.clear();
     }
 
+    public void loadActivations() {
+        Xml xml = Xml.load(activationsUri());
+        for (XmlElement element : xml.elements()) {
+            Version version = Version.parse(element.getAttribute("id"));
+            Optional<Product> product = get(version);
+            Activation activation = Activation.of(product.get());
+            activations.put(activation, version);
+        }
+    }
+
     public void saveActivations() {
         Xml xml = Xml.createWithRootElement("activations");
         xml.uri(activationsUri());
@@ -137,9 +159,5 @@ public class FileSystemRepository implements Repository {
         }
 
         xml.save();
-    }
-
-    private URI activationsUri() {
-        return repositoryRoot.resolve("activations.xml").toUri();
     }
 }

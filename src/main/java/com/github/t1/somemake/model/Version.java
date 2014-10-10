@@ -94,4 +94,11 @@ public class Version {
     public Path path() {
         return id.path().resolve(versionString);
     }
+
+    public static Version parse(String string) {
+        String[] parts = string.split(":", 3);
+        if (parts.length != 3)
+            throw new IllegalArgumentException("unparseable version string [" + string + "]");
+        return Type.type(parts[0]).id(parts[1]).version(parts[2]);
+    }
 }
