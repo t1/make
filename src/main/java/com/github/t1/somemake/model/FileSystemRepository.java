@@ -1,8 +1,10 @@
 package com.github.t1.somemake.model;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.*;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import lombok.NonNull;
@@ -122,5 +124,22 @@ public class FileSystemRepository implements Repository {
     @Override
     public void clearAllActivations() {
         activations.clear();
+    }
+
+    public void saveActivations() {
+        Xml xml = Xml.createWithRootElement("activations");
+        xml.uri(activationsUri());
+
+        for (Entry<Activation, Version> activation : activations.entrySet()) {
+            xml.addElement("activation") //
+                    .addAttribute("id", activation.getValue().toString()) //
+                    .addText(activation.getKey().toString());
+        }
+
+        xml.save();
+    }
+
+    private URI activationsUri() {
+        return repositoryRoot.resolve("activations.xml").toUri();
     }
 }

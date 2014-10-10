@@ -43,6 +43,20 @@ public class Xml extends XmlElement {
         super(document.getDocumentElement(), 1);
     }
 
+    public URI uri() {
+        String uri = document().getDocumentURI();
+        return (uri == null) ? null : URI.create(uri);
+    }
+
+    public void uri(URI uri) {
+        document().setDocumentURI((uri == null) ? null : uri.toString());
+    }
+
+    public void save(URI uri) {
+        uri(uri);
+        save();
+    }
+
     public void save() {
         Document document = document();
         serializer().writeToURI(document, document.getDocumentURI());

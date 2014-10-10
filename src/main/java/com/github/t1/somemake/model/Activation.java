@@ -15,6 +15,11 @@ public interface Activation {
         public boolean active() {
             return Files.isDirectory(path);
         }
+
+        @Override
+        public String toString() {
+            return "folder(" + path + ")";
+        }
     }
 
     public static final Id ACTIVATION = Type.property("activation");
