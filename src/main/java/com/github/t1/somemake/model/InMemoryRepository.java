@@ -3,7 +3,6 @@ package com.github.t1.somemake.model;
 import static java.util.stream.Collectors.*;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableList;
 
@@ -36,18 +35,9 @@ public class InMemoryRepository implements Repository {
     }
 
     @Override
-    public void activate(Id id) {
-        Version version = resolve(id, id.version(Version.ANY));
+    public void addActivation(Version version) {
         Product product = get(version).get();
         activate(product);
-    }
-
-    private Version resolve(Id id, Version version) {
-        Stream<String> versionStrings = products.keySet().stream().map(v -> v.versionString());
-        Optional<String> matchingVersion = version.resolve(versionStrings);
-        if (!matchingVersion.isPresent())
-            throw new IllegalStateException("no version matches: " + version);
-        return id.version(matchingVersion.get());
     }
 
     private void activate(Product product) {
@@ -61,7 +51,18 @@ public class InMemoryRepository implements Repository {
     }
 
     @Override
-    public void clearActivations() {
+    public void removeActivation(Version version) {
+        Iterator<Map.Entry<Activation, Product>> iter = activations.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<Activation, Product> entry = iter.next();
+            if (entry.getValue().version().equals(version)) {
+                iter.remove();
+            }
+        }
+    }
+
+    @Override
+    public void clearAllActivations() {
         activations.clear();
     }
 }

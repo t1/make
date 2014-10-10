@@ -9,9 +9,11 @@ public interface Repository {
 
     public Optional<Product> get(Version version);
 
-    public void clearActivations();
+    public void addActivation(Version version);
 
-    public void activate(Id id);
+    public void removeActivation(Version version);
+
+    public void clearAllActivations();
 
     public ImmutableList<Version> activations();
 }

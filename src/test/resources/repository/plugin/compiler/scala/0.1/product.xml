@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<plugin id="compiler.scala" version="0.1">
+    <activation>folder(src/main/scala)</activation>
+    <name>Scala Compiler</name>
+
+    <plugin id="org.apache.maven.plugins:maven-compiler-plugin" version="3.1">
+    </plugin>
+</plugin>

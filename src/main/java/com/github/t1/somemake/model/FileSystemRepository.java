@@ -26,7 +26,7 @@ public class FileSystemRepository implements Repository {
 
     @Override
     public void put(Product product) {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("can't put into file repository");
     }
 
     @Override
@@ -100,16 +100,27 @@ public class FileSystemRepository implements Repository {
     }
 
     @Override
-    public void clearActivations() {
-        activations.clear();
+    public void addActivation(Version version) {
+        Optional<Product> optional = get(version);
+        if (!optional.isPresent())
+            throw new IllegalStateException("version to activate not found: " + version);
+        Product product = optional.get();
+        activations.put(Activation.of(product), product.version());
     }
 
     @Override
-    public void activate(Id id) {
-        Optional<Product> optional = get(id.version(Version.ANY));
-        if (!optional.isPresent())
-            throw new IllegalStateException("product to activate not found: " + id);
-        Product product = optional.get();
-        activations.put(Activation.of(product), product.version());
+    public void removeActivation(Version version) {
+        Iterator<Map.Entry<Activation, Version>> iter = activations.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<Activation, Version> entry = iter.next();
+            if (entry.getValue().equals(version)) {
+                iter.remove();
+            }
+        }
+    }
+
+    @Override
+    public void clearAllActivations() {
+        activations.clear();
     }
 }
