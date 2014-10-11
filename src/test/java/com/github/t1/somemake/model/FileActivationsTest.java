@@ -12,6 +12,19 @@ import com.github.t1.xml.Xml;
 public class FileActivationsTest extends AbstractActivationsTest {
     private static final Path ACTIVATIONS_XML = REPOSITORY_ROOT.resolve("activations.xml");
 
+    private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+
+    private static final String NO_ACTIVATION = XML_HEADER + "<activations/>";
+    private static final String ONE_ACTIVATION = XML_HEADER //
+            + "<activations>\n" //
+            + "    <activation id=\"" + JAVAC_3_1 + "\">folder(src/main/java)</activation>\n" //
+            + "</activations>";
+    private static final String TWO_ACTIVATIONS = XML_HEADER //
+            + "<activations>\n" //
+            + "    <activation id=\"" + JAVAC_3_1 + "\">folder(src/main/java)</activation>\n" //
+            + "    <activation id=\"" + SCALA_0_1 + "\">folder(src/main/scala)</activation>\n" //
+            + "</activations>";
+
     @Before
     @After
     public void cleanActivationsXml() throws IOException {
@@ -40,8 +53,8 @@ public class FileActivationsTest extends AbstractActivationsTest {
     }
 
     @Test
-    public void shouldLoadEmptyActivations() {
-        Xml.createWithRootElement("activations").save(ACTIVATIONS_XML.toUri());
+    public void shouldLoadEmptyActivations() throws IOException {
+        Files.write(ACTIVATIONS_XML, NO_ACTIVATION.getBytes());
 
         fileRepository.loadActivations();
 
@@ -49,10 +62,8 @@ public class FileActivationsTest extends AbstractActivationsTest {
     }
 
     @Test
-    public void shouldLoadOneActivation() {
-        Xml xml = Xml.createWithRootElement("activations");
-        xml.addElement("activation").addAttribute("id", JAVAC_3_1.toString()).addText("folder(src/main/java)");
-        xml.save(ACTIVATIONS_XML.toUri());
+    public void shouldLoadOneActivation() throws IOException {
+        Files.write(ACTIVATIONS_XML, ONE_ACTIVATION.getBytes());
 
         fileRepository.loadActivations();
 
@@ -61,11 +72,8 @@ public class FileActivationsTest extends AbstractActivationsTest {
     }
 
     @Test
-    public void shouldLoadTwoActivations() {
-        Xml xml = Xml.createWithRootElement("activations");
-        xml.addElement("activation").addAttribute("id", JAVAC_3_1.toString()).addText("folder(src/main/java)");
-        xml.addElement("activation").addAttribute("id", SCALA_0_1.toString()).addText("folder(src/main/scala)");
-        xml.save(ACTIVATIONS_XML.toUri());
+    public void shouldLoadTwoActivations() throws IOException {
+        Files.write(ACTIVATIONS_XML, TWO_ACTIVATIONS.getBytes());
 
         fileRepository.loadActivations();
 
@@ -78,7 +86,7 @@ public class FileActivationsTest extends AbstractActivationsTest {
     public void shouldSaveEmptyActivations() {
         fileRepository.saveActivations();
 
-        assertEquals(Xml.createWithRootElement("activations").toXmlString().trim(), readFile(ACTIVATIONS_XML));
+        assertEquals(NO_ACTIVATION, readFile(ACTIVATIONS_XML));
     }
 
     @Test
@@ -87,9 +95,7 @@ public class FileActivationsTest extends AbstractActivationsTest {
 
         fileRepository.saveActivations();
 
-        Xml xml = Xml.createWithRootElement("activations");
-        xml.addElement("activation").addAttribute("id", JAVAC_3_1.toString()).addText("folder(src/main/java)");
-        assertEquals(xml.toXmlString().trim(), readFile(ACTIVATIONS_XML));
+        assertEquals(ONE_ACTIVATION, readFile(ACTIVATIONS_XML));
     }
 
     @Test
@@ -99,10 +105,7 @@ public class FileActivationsTest extends AbstractActivationsTest {
 
         fileRepository.saveActivations();
 
-        Xml xml = Xml.createWithRootElement("activations");
-        xml.addElement("activation").addAttribute("id", JAVAC_3_1.toString()).addText("folder(src/main/java)");
-        xml.addElement("activation").addAttribute("id", SCALA_0_1.toString()).addText("folder(src/main/scala)");
-        assertEquals(xml.toXmlString().trim(), readFile(ACTIVATIONS_XML));
+        assertEquals(TWO_ACTIVATIONS, readFile(ACTIVATIONS_XML));
     }
 
     @Test

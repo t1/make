@@ -8,10 +8,12 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import com.github.t1.xml.*;
 import com.google.common.collect.ImmutableList;
 
+@Slf4j
 public class FileSystemRepository implements Repository {
     private final Path repositoryRoot;
     private final Map<Activation, Version> activations = new LinkedHashMap<>();
@@ -88,6 +90,7 @@ public class FileSystemRepository implements Repository {
             if (entry.getKey().active()) {
                 if (productActivations == null)
                     productActivations = new ProductEntity(product.version());
+                log.debug("activate {}", version);
                 productActivations.add(get(version).get());
             }
         }
