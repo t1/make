@@ -36,4 +36,9 @@ public class XmlStoredProduct extends Product {
     public Optional<String> value() {
         return xml.value();
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\n# " + xml.uri();
+    }
 }

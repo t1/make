@@ -1,9 +1,12 @@
 package com.github.t1.somemake.model;
 
 import static com.github.t1.somemake.model.Type.*;
+import static java.util.stream.Collectors.*;
 import static org.junit.Assert.*;
 
 import org.junit.*;
+
+import com.google.common.collect.ImmutableList;
 
 public abstract class AbstractActivationsTest extends AbstractFileRepositoryTest {
     protected static final Id JAVAC = plugin("compiler.java");
@@ -31,7 +34,12 @@ public abstract class AbstractActivationsTest extends AbstractFileRepositoryTest
 
         repository().addActivation(JAVAC_3_1);
 
-        assertTrue(repository().activations().contains(JAVAC_3_1));
+        assertTrue(activatedVersions().contains(JAVAC_3_1));
+    }
+
+    public ImmutableList<Version> activatedVersions() {
+        return ImmutableList.copyOf(repository().activations().stream() //
+                .map(a -> repository().version(a)).collect(toList()));
     }
 
     @Test
@@ -40,7 +48,7 @@ public abstract class AbstractActivationsTest extends AbstractFileRepositoryTest
 
         repository().removeActivation(JAVAC_3_1);
 
-        assertFalse("activation not removed", repository().activations().contains(JAVAC_3_1));
+        assertFalse("activation not removed", activatedVersions().contains(JAVAC_3_1));
     }
 
     @Test
@@ -49,7 +57,7 @@ public abstract class AbstractActivationsTest extends AbstractFileRepositoryTest
 
         repository().clearAllActivations();
 
-        assertTrue(repository().activations().isEmpty());
+        assertTrue(activatedVersions().isEmpty());
     }
 
     @Test
@@ -57,7 +65,7 @@ public abstract class AbstractActivationsTest extends AbstractFileRepositoryTest
         givenActivation(JAVAC_3_1);
         givenProduct(TEST_PRODUCT_VERSION);
 
-        Product product = repository().get(TEST_PRODUCT_VERSION).get();
+        Product product = repository().get(TEST_PRODUCT_VERSION);
 
         assertTrue("did not activate javac", product.hasFeature(JAVAC));
         assertEquals(JAVAC_3_1, product.feature(JAVAC).version());
@@ -68,7 +76,7 @@ public abstract class AbstractActivationsTest extends AbstractFileRepositoryTest
         givenActivation(SCALA_0_1);
         givenProduct(TEST_PRODUCT_VERSION);
 
-        Product product = repository().get(TEST_PRODUCT_VERSION).get();
+        Product product = repository().resolve(TEST_PRODUCT_VERSION).get();
 
         assertFalse("didn't expect to activate javac", product.hasFeature(JAVAC));
     }
@@ -78,7 +86,7 @@ public abstract class AbstractActivationsTest extends AbstractFileRepositoryTest
         givenActivation(JAVAC_0_0);
         givenProduct(TEST_PRODUCT_VERSION);
 
-        Product product = repository().get(TEST_PRODUCT_VERSION).get();
+        Product product = repository().resolve(TEST_PRODUCT_VERSION).get();
 
         assertFalse("didn't expect to activate javac", product.hasFeature(JAVAC));
     }

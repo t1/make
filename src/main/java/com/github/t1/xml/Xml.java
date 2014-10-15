@@ -9,6 +9,8 @@ import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 public class Xml extends XmlElement {
+    private static final URI NIL = URI.create("nil:--");
+
     public static Xml createWithRootElement(String rootElementName) {
         Document document = newDocument();
         Element rootElement = document.createElement(rootElementName);
@@ -40,12 +42,13 @@ public class Xml extends XmlElement {
     }
 
     public Xml(Document document) {
-        super(document.getDocumentElement(), 1);
+        super(null, document.getDocumentElement(), 1);
     }
 
+    @Override
     public URI uri() {
         String uri = document().getDocumentURI();
-        return (uri == null) ? null : URI.create(uri);
+        return (uri == null) ? NIL : URI.create(uri);
     }
 
     public void uri(URI uri) {

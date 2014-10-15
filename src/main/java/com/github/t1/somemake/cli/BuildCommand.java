@@ -31,6 +31,7 @@ public class BuildCommand implements Runnable {
         long t = System.currentTimeMillis();
 
         Product product = fileSystemRepository.load(input);
+        product = fileSystemRepository.withActivations(product);
 
         try (FileWriter out = new FileWriter(output.toFile())) {
             new PomWriter(product).writeTo(out);

@@ -8,13 +8,11 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 
 import com.github.t1.xml.*;
 import com.google.common.collect.ImmutableList;
 
-@Slf4j
-public class FileSystemRepository implements Repository {
+public class FileSystemRepository extends Repository {
     private final Path repositoryRoot;
     private final Map<Activation, Version> activations = new LinkedHashMap<>();
 
@@ -26,11 +24,11 @@ public class FileSystemRepository implements Repository {
         }
     }
 
-    private URI activationsUri() {
+    public URI activationsUri() {
         return activationsPath().toUri();
     }
 
-    private Path activationsPath() {
+    public Path activationsPath() {
         return repositoryRoot.resolve("activations.xml");
     }
 
@@ -46,15 +44,21 @@ public class FileSystemRepository implements Repository {
     }
 
     @Override
-    public Optional<Product> get(@NonNull Version version) {
+    public Optional<Product> resolve(@NonNull Version version) {
+        Product product = load(version);
+        if (product == null)
+            return Optional.empty();
+        return Optional.of(product);
+    }
+
+    private Product load(Version version) {
         Optional<Path> resolvedPath = resolvePath(version);
         if (!resolvedPath.isPresent())
-            return Optional.empty();
+            return null;
         Path path = resolvedPath.get();
         Product product = load(path);
         checkVersion(version, product.version(), path);
-        product = withActivations(product);
-        return Optional.of(product);
+        return product;
     }
 
     private Optional<Path> resolvePath(Version version) {
@@ -81,22 +85,14 @@ public class FileSystemRepository implements Repository {
         }
     }
 
-    private Product withActivations(Product product) {
-        Product productActivations = null;
-        for (Map.Entry<Activation, Version> entry : activations.entrySet()) {
-            Version version = entry.getValue();
-            if (version.equals(product.version()))
-                continue;
-            if (entry.getKey().active()) {
-                if (productActivations == null)
-                    productActivations = new ProductEntity(product.version());
-                log.debug("activate {}", version);
-                productActivations.add(get(version).get());
-            }
-        }
-        if (productActivations == null)
-            return product;
-        return new MergedProduct(product, productActivations);
+    @Override
+    public ImmutableList<Activation> activations() {
+        return ImmutableList.copyOf(activations.keySet());
+    }
+
+    @Override
+    public Version version(Activation activation) {
+        return activations.get(activation);
     }
 
     public XmlStoredProduct load(Path path) {
@@ -112,13 +108,8 @@ public class FileSystemRepository implements Repository {
     }
 
     @Override
-    public ImmutableList<Version> activations() {
-        return ImmutableList.copyOf(activations.values());
-    }
-
-    @Override
     public void addActivation(Version version) {
-        Optional<Product> optional = get(version);
+        Optional<Product> optional = resolve(version);
         if (!optional.isPresent())
             throw new IllegalStateException("version to activate not found: " + version);
         Product product = optional.get();
@@ -145,7 +136,7 @@ public class FileSystemRepository implements Repository {
         Xml xml = Xml.load(activationsUri());
         for (XmlElement element : xml.elements()) {
             Version version = Version.parse(element.getAttribute("id"));
-            Optional<Product> product = get(version);
+            Optional<Product> product = resolve(version);
             Activation activation = Activation.of(product.get());
             activations.put(activation, version);
         }

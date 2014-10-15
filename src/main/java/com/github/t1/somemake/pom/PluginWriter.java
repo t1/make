@@ -1,6 +1,7 @@
 package com.github.t1.somemake.pom;
 
 import java.nio.file.*;
+import java.util.Optional;
 
 import com.github.t1.somemake.model.Product;
 import com.github.t1.xml.XmlElement;
@@ -43,7 +44,10 @@ class PluginWriter extends AbstractPomBuilder {
                 copy(subFrom, subTo);
             }
         } else {
-            subTo.addText(from.value().get());
+            Optional<String> value = from.value();
+            if (value.isPresent()) {
+                subTo.addText(value.get());
+            }
         }
     }
 }

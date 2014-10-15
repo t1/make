@@ -3,6 +3,7 @@ package com.github.t1.xml;
 import static lombok.AccessLevel.*;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.file.*;
 import java.util.*;
 
@@ -16,6 +17,7 @@ import com.google.common.collect.ImmutableList;
 @EqualsAndHashCode
 @RequiredArgsConstructor(access = PROTECTED)
 public class XmlElement {
+    private final XmlElement parent;
     protected final Element element;
     private final int indent;
 
@@ -69,7 +71,7 @@ public class XmlElement {
             Node child = childNodes.item(i);
             if (child instanceof Element) {
                 Element element = (Element) child;
-                result.add(new XmlElement(element, indent + 1));
+                result.add(new XmlElement(this, element, indent + 1));
             }
         }
         return result.build();
@@ -107,7 +109,7 @@ public class XmlElement {
                         + "' in '" + getPath() + "'");
             node = (Element) elements.item(0);
         }
-        return Optional.ofNullable(node).map(e -> new XmlElement(e, indent));
+        return Optional.ofNullable(node).map(e -> new XmlElement(this, e, indent));
     }
 
     public boolean hasChildElement(Path path) {
@@ -137,7 +139,7 @@ public class XmlElement {
         Element node = document().createElement(name);
         addIndent();
         append(node);
-        return new XmlElement(node, indent + 1);
+        return new XmlElement(this, node, indent + 1);
     }
 
     private void append(Node node) {
@@ -194,6 +196,18 @@ public class XmlElement {
         // i.e. finalText may be null so the new text is inserted before the closing tag
         element.insertBefore(createText(string), finalText);
         return this;
+    }
+
+    public URI uri() {
+        return URI.create(parent.uri() + uriDelimiter() + getName() + id());
+    }
+
+    private String uriDelimiter() {
+        return (parent.parent == null) ? "#" : "/";
+    }
+
+    private String id() {
+        return hasAttribute("id") ? (";id=" + getAttribute("id")) : "";
     }
 
     @Override

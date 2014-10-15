@@ -25,7 +25,7 @@ public class Repositories {
 
     public Optional<Product> get(Version version) {
         for (Repository repository : repositories) {
-            Optional<Product> product = repository.get(version);
+            Optional<Product> product = repository.resolve(version);
             if (product.isPresent()) {
                 return product;
             }
