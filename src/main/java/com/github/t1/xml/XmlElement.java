@@ -71,10 +71,14 @@ public class XmlElement {
             Node child = childNodes.item(i);
             if (child instanceof Element) {
                 Element element = (Element) child;
-                result.add(new XmlElement(this, element, indent + 1));
+                result.add(newChildXmlElement(element));
             }
         }
         return result.build();
+    }
+
+    private XmlElement newChildXmlElement(Element e) {
+        return new XmlElement(this, e, indent + 1);
     }
 
     public ImmutableList<Path> elementPaths() {
@@ -127,6 +131,22 @@ public class XmlElement {
         return false;
     }
 
+    /** Gets the first element with that name or creates one, if it doesn't exist */
+    public XmlElement getOrCreateElement(Path path) {
+        XmlElement out = this;
+        for (Path item : path) {
+            out = out.getOrCreateElement(item.toString());
+        }
+        return out;
+    }
+
+    public XmlElement getOrCreateElement(String name) {
+        NodeList list = element.getElementsByTagName(name);
+        if (list.getLength() >= 1)
+            return newChildXmlElement((Element) list.item(0));
+        return addElement(name);
+    }
+
     public XmlElement addElement(Path path) {
         XmlElement out = this;
         for (Path item : path) {
@@ -139,7 +159,7 @@ public class XmlElement {
         Element node = document().createElement(name);
         addIndent();
         append(node);
-        return new XmlElement(this, node, indent + 1);
+        return newChildXmlElement(node);
     }
 
     private void append(Node node) {

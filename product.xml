@@ -3,15 +3,9 @@
     <name>some make</name>
     <description>simplifies the description of project build processes</description>
 
-    <plugin id="org.apache.maven.plugins:maven-jar-plugin" version="2.4">
-        <configuration>
-            <archive>
-                <manifest>
-                    <Main-Class>com.github.t1.somemake.Main</Main-Class>
-                </manifest>
-            </archive>
-        </configuration>
-    </plugin>
+    <packaging id="jar">
+        <Main-Class>com.github.t1.somemake.Main</Main-Class>
+    </packaging>
 
     <plugin id="org.apache.maven.plugins:maven-shade-plugin" version="2.3" />
 

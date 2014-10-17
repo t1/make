@@ -2,14 +2,11 @@ package com.github.t1.somemake.pom;
 
 import static com.github.t1.somemake.model.Type.*;
 
-import java.nio.file.*;
-
 import com.github.t1.somemake.model.Product;
 import com.github.t1.xml.XmlElement;
 
-class DependencyWriter extends AbstractPomBuilder {
-    public static final Path PATH = Paths.get("dependencies");
-
+@PomSection(from = "dependency", to = "dependencies")
+class DependencyWriter extends PomSectionWriter {
     public DependencyWriter(Product product) {
         super(product);
     }

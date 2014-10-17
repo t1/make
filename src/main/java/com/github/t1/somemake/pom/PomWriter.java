@@ -5,7 +5,7 @@ import java.io.*;
 import com.github.t1.somemake.model.Product;
 import com.github.t1.xml.*;
 
-public class PomWriter extends AbstractPomBuilder {
+public class PomWriter extends PomSectionWriter {
     private static final String NAMESPACE_NAME = "http://maven.apache.org/POM/4.0.0";
 
     public PomWriter(Product product) {
@@ -43,15 +43,8 @@ public class PomWriter extends AbstractPomBuilder {
         addProperty(out, "name", product.name());
         addProperty(out, "description", product.description());
 
-        addBuildSection(out);
-        addDependencies(out);
-    }
-
-    private void addBuildSection(XmlElement out) {
-        addSection(out, "plugin", PluginWriter.PATH, (plugin) -> new PluginWriter(plugin));
-    }
-
-    private void addDependencies(XmlElement out) {
-        addSection(out, "dependency", DependencyWriter.PATH, (plugin) -> new DependencyWriter(plugin));
+        addSection(out, PluginWriter.class);
+        addSection(out, PackagingWriter.class);
+        addSection(out, DependencyWriter.class);
     }
 }

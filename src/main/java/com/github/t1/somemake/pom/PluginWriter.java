@@ -1,15 +1,13 @@
 package com.github.t1.somemake.pom;
 
-import java.nio.file.*;
 import java.util.Optional;
 
 import com.github.t1.somemake.model.Product;
 import com.github.t1.xml.XmlElement;
 import com.google.common.collect.ImmutableList;
 
-class PluginWriter extends AbstractPomBuilder {
-    public static final Path PATH = Paths.get("build/plugins");
-
+@PomSection(from = "plugin", to = "build/plugins")
+class PluginWriter extends PomSectionWriter {
     public PluginWriter(Product product) {
         super(product);
     }
