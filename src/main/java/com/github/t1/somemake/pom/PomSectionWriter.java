@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 
 import com.github.t1.somemake.model.*;
 import com.github.t1.xml.XmlElement;
+import com.google.common.collect.ImmutableList;
 
 @RequiredArgsConstructor
 abstract class PomSectionWriter {
@@ -18,10 +19,13 @@ abstract class PomSectionWriter {
     protected abstract void addTo(XmlElement out);
 
     protected void gav(XmlElement to) {
-        Version version = product.version();
-        to.addElement("groupId").addText(version.id().groupId());
-        to.addElement("artifactId").addText(version.id().artifactId());
-        to.addElement("version").addText(version.versionString());
+        gav(product.version(), to);
+    }
+
+    protected void gav(Version from, XmlElement to) {
+        to.addElement("groupId").addText(from.id().groupId());
+        to.addElement("artifactId").addText(from.id().artifactId());
+        to.addElement("version").addText(from.versionString());
     }
 
     protected void addProperty(XmlElement to, String name, Optional<String> value) {
@@ -65,6 +69,21 @@ abstract class PomSectionWriter {
             return type.getConstructor(Product.class).newInstance(product);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    protected void copy(Product from, XmlElement to) {
+        XmlElement subTo = to.addElement(from.type().toString());
+        if (from.hasFeatures()) {
+            ImmutableList<Product> features = from.features();
+            for (Product subFrom : features) {
+                copy(subFrom, subTo);
+            }
+        } else {
+            Optional<String> value = from.value();
+            if (value.isPresent()) {
+                subTo.addText(value.get());
+            }
         }
     }
 }

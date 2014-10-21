@@ -7,18 +7,12 @@
         <folder>src/main/java</folder>
     </activation>
 
-    <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-            <archive>
-                <addMavenDescriptor>false</addMavenDescriptor>
-                <manifest>
-                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                    <Main-Class>com.github.t1.somemake.Main</Main-Class>
-                </manifest>
-            </archive>
-        </configuration>
+    <plugin id="org.apache.maven.plugins:maven-jar-plugin" version="2.4">
+        <archive>
+            <addMavenDescriptor>false</addMavenDescriptor>
+            <manifest>
+                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+        </archive>
     </plugin>
 </packaging>

@@ -168,8 +168,14 @@ public class XmlElement {
 
     private Text finalText() {
         if (finalText == null) {
-            finalText = createText(indentString(indent - 1));
-            element.insertBefore(finalText, null);
+            String finalIndent = indentString(indent - 1);
+            Node last = element.getLastChild();
+            if (last instanceof Text && finalIndent.equals(((Text) last).getData())) {
+                finalText = (Text) last;
+            } else {
+                finalText = createText(finalIndent);
+                element.insertBefore(finalText, null);
+            }
         }
         return finalText;
     }

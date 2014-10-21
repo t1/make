@@ -5,7 +5,7 @@ import static java.util.stream.Collectors.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.*;
 
 import com.google.common.collect.ImmutableList;
 
@@ -121,17 +121,46 @@ public abstract class Product {
     }
 
     public Product feature(Id id) {
-        List<Product> matching = features(id);
-        if (matching.size() < 1)
-            throw new IllegalArgumentException("no features found with id '" + id + "' in " + this.version());
+        return feature(matching(id));
+    }
+
+    public Product feature(Predicate<? super Product> predicate) {
+        Optional<Product> result = optionalFeature(predicate);
+        if (!result.isPresent())
+            throw new IllegalArgumentException("no features found [" + predicate + "] in " + this.version());
+        return result.get();
+    }
+
+    public Optional<Product> optionalFeature(Type type) {
+        return optionalFeature(matching(type));
+    }
+
+    public Optional<Product> optionalFeature(Predicate<? super Product> predicate) {
+        List<Product> matching = features(predicate);
         if (matching.size() > 1)
-            throw new IllegalArgumentException("multiple features with id '" + id + "' in " + this.version() + ":\n"
+            throw new IllegalArgumentException("multiple features [" + predicate + "] in " + this.version() + ":\n"
                     + info(matching));
-        return matching.get(0);
+        return (matching.isEmpty()) ? Optional.empty() : Optional.of(matching.get(0));
     }
 
     public List<Product> features(Id id) {
-        return features().stream().filter(f -> id.equals(f.id())).collect(toList());
+        return features(matching(id));
+    }
+
+    public List<Product> features(Predicate<? super Product> predicate) {
+        return features().stream().filter(predicate).collect(toList());
+    }
+
+    public Predicate<? super Product> matching(Type type) {
+        return f -> type.equals(f.type());
+    }
+
+    public Predicate<? super Product> matching(Id id) {
+        return f -> id.equals(f.id());
+    }
+
+    public Predicate<? super Product> matching(Version version) {
+        return f -> version.equals(f.version());
     }
 
     private String info(List<Product> matching) {
@@ -149,7 +178,7 @@ public abstract class Product {
     }
 
     public boolean hasFeature(Id id) {
-        return features().stream().anyMatch(feature -> id.equals(feature.id()));
+        return features().stream().anyMatch(matching(id));
     }
 
     public Product set(Id id, @SuppressWarnings("unused") String value) {

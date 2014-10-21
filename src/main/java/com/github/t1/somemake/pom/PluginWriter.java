@@ -1,10 +1,7 @@
 package com.github.t1.somemake.pom;
 
-import java.util.Optional;
-
 import com.github.t1.somemake.model.Product;
 import com.github.t1.xml.XmlElement;
-import com.google.common.collect.ImmutableList;
 
 @PomSection(from = "plugin", to = "build/plugins")
 class PluginWriter extends PomSectionWriter {
@@ -30,21 +27,6 @@ class PluginWriter extends PomSectionWriter {
                 if (configurationElement == null)
                     configurationElement = element.addElement("configuration");
                 copy(property, configurationElement);
-            }
-        }
-    }
-
-    private void copy(Product from, XmlElement to) {
-        XmlElement subTo = to.addElement(from.type().toString());
-        if (from.hasFeatures()) {
-            ImmutableList<Product> features = from.features();
-            for (Product subFrom : features) {
-                copy(subFrom, subTo);
-            }
-        } else {
-            Optional<String> value = from.value();
-            if (value.isPresent()) {
-                subTo.addText(value.get());
             }
         }
     }

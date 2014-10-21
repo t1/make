@@ -35,16 +35,17 @@ public class PomWriter extends PomSectionWriter {
         out.addAttribute("xsi:schemaLocation", NAMESPACE_NAME + " http://maven.apache.org/xsd/maven-4.0.0.xsd");
 
         out.addComment("pom written by somemake; built from " + product.version());
-
         out.addElement("modelVersion").addText("4.0.0");
         out.nl();
+
         gav(out);
         out.nl();
+
         addProperty(out, "name", product.name());
         addProperty(out, "description", product.description());
 
-        addSection(out, PluginWriter.class);
         addSection(out, PackagingWriter.class);
+        addSection(out, PluginWriter.class);
         addSection(out, DependencyWriter.class);
     }
 }
