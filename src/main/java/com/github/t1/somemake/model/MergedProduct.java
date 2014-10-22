@@ -35,6 +35,8 @@ public class MergedProduct extends Product {
 
     @Override
     public Version version() {
+        if (!master.version().isAny())
+            return master.version();
         return servant.version();
     }
 

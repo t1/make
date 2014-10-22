@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<dependency id="org.projectlombok:lombok" version="1.14.6">
+<dependency id="org.projectlombok:lombok" version="*">
     <name>Project Lombok</name>
     <description>Simplify your code</description>
 

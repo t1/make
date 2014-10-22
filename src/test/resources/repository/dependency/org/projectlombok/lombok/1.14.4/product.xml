@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<dependency id="org.projectlombok:lombok" version="1.14.4">
-    <name>Project Lombok</name>
-    <description>Simplify your code</description>
-
-    <scope>provided</scope>
-    <optional>true</optional>
-</dependency>

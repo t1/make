@@ -82,13 +82,15 @@ public class Version {
 
     public boolean matches(String version) {
         if (versionString.endsWith(ANY))
-            return wildcardMatches(version);
+            return wildcardMatches(versionString, version);
+        if (version.endsWith(ANY))
+            return wildcardMatches(version, versionString);
         return versionString.equals(version);
     }
 
-    private boolean wildcardMatches(String pattern) {
-        int i = versionString.indexOf(ANY);
-        return pattern.substring(0, i).equals(versionString.substring(0, i));
+    private boolean wildcardMatches(String input, String pattern) {
+        int i = input.indexOf(ANY);
+        return pattern.substring(0, i).equals(input.substring(0, i));
     }
 
     public Path path() {

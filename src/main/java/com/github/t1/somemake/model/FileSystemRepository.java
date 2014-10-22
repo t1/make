@@ -65,21 +65,23 @@ public class FileSystemRepository extends Repository {
         if (!version.id().idString().isEmpty()) {
             Path idPath = repositoryRoot.resolve(version.id().path());
             if (Files.exists(idPath)) {
-                Optional<String> resolvedVersion = version.resolve(versions(idPath));
+                Optional<String> resolvedVersion = version.resolve(files(idPath));
                 if (resolvedVersion.isPresent()) {
                     Path versionPath = idPath.resolve(resolvedVersion.get());
                     if (Files.exists(versionPath)) {
                         return Optional.of(versionPath.resolve("product.xml"));
                     }
+                } else if (Files.exists(idPath.resolve(Version.ANY))) {
+                    return Optional.of(idPath.resolve(Version.ANY).resolve("product.xml"));
                 }
             }
         }
         return Optional.empty();
     }
 
-    private Stream<String> versions(Path basePath) {
+    private Stream<String> files(Path path) {
         try {
-            return Files.list(basePath).map(p -> p.getFileName().toString());
+            return Files.list(path).map(p -> p.getFileName().toString());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
