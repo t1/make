@@ -2,11 +2,15 @@ package com.github.t1.somemake.pom;
 
 import static com.github.t1.somemake.model.Type.*;
 
-import com.github.t1.somemake.model.Product;
+import java.util.Optional;
+
+import com.github.t1.somemake.model.*;
 import com.github.t1.xml.XmlElement;
 
 @PomSection(from = "dependency", to = "dependencies")
 class DependencyWriter extends PomSectionWriter {
+    private static final Id SCOPE = property("scope");
+
     public DependencyWriter(Product product) {
         super(product);
     }
@@ -17,13 +21,17 @@ class DependencyWriter extends PomSectionWriter {
 
         gav(element);
 
-        addProperty(element, property("scope"));
+        addProperty(element, SCOPE);
         addProperty(element, property("classifier"));
         addProperty(element, property("optional"));
         addProperty(element, property("systemPath"));
         addProperty(element, property("type"));
 
         copyExlusions(element);
+    }
+
+    public Optional<String> scope() {
+        return product.optionalFeature(SCOPE).map(f -> f.value().get());
     }
 
     private void copyExlusions(XmlElement element) {

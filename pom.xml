@@ -65,7 +65,7 @@
     </build>
 
     <dependencies>
-        <!-- scope: only during build -->
+        <!-- provided scope -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

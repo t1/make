@@ -135,6 +135,10 @@ public abstract class Product {
         return optionalFeature(matching(type));
     }
 
+    public Optional<Product> optionalFeature(Id id) {
+        return optionalFeature(matching(id));
+    }
+
     public Optional<Product> optionalFeature(Predicate<? super Product> predicate) {
         List<Product> matching = features(predicate);
         if (matching.size() > 1)

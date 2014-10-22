@@ -41,10 +41,7 @@ abstract class PomSectionWriter {
     }
 
     protected void addSection(XmlElement out, Class<? extends PomSectionWriter> type) {
-        PomSection sectionAnnotation = type.getAnnotation(PomSection.class);
-        if (sectionAnnotation == null)
-            throw new IllegalArgumentException("the type " + type.getName() + " is not annoated as "
-                    + PomSection.class.getSimpleName());
+        PomSection sectionAnnotation = pomSection(type);
         List<Product> list = featuresOfType(sectionAnnotation.from());
         if (list.isEmpty())
             return;
@@ -58,13 +55,21 @@ abstract class PomSectionWriter {
         }
     }
 
+    protected PomSection pomSection(Class<? extends PomSectionWriter> type) {
+        PomSection sectionAnnotation = type.getAnnotation(PomSection.class);
+        if (sectionAnnotation == null)
+            throw new IllegalArgumentException("the type " + type.getName() + " is not annoated as "
+                    + PomSection.class.getSimpleName());
+        return sectionAnnotation;
+    }
+
     protected List<Product> featuresOfType(String... types) {
         return product.features().stream().filter(p -> {
             return stream(types).anyMatch(type -> p.type().is(type));
         }).collect(toList());
     }
 
-    private PomSectionWriter createWriter(Class<? extends PomSectionWriter> type, Product product) {
+    protected <T extends PomSectionWriter> T createWriter(Class<T> type, Product product) {
         try {
             return type.getConstructor(Product.class).newInstance(product);
         } catch (ReflectiveOperationException e) {

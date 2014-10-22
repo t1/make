@@ -1,6 +1,8 @@
 package com.github.t1.somemake.pom;
 
 import java.io.*;
+import java.nio.file.*;
+import java.util.List;
 
 import com.github.t1.somemake.model.Product;
 import com.github.t1.xml.*;
@@ -46,6 +48,29 @@ public class PomWriter extends PomSectionWriter {
 
         addSection(out, PackagingWriter.class);
         addSection(out, PluginWriter.class);
-        addSection(out, DependencyWriter.class);
+        addDependencies(out);
+    }
+
+    private void addDependencies(XmlElement out) {
+        PomSection sectionAnnotation = pomSection(DependencyWriter.class);
+        List<Product> list = featuresOfType(sectionAnnotation.from());
+        if (list.isEmpty())
+            return;
+
+        Path path = Paths.get(sectionAnnotation.to());
+        XmlElement sectionElement = out.getOrCreateElement(path);
+        String lastScope = null;
+
+        for (Product product : list) {
+            DependencyWriter writer = createWriter(DependencyWriter.class, product);
+            String scope = writer.scope().orElse("compile");
+            if (!scope.equals(lastScope)) {
+                if (lastScope != null)
+                    sectionElement.nl();
+                lastScope = scope;
+                sectionElement.addComment(scope + " scope");
+            }
+            writer.addTo(sectionElement);
+        }
     }
 }
