@@ -67,6 +67,10 @@ public class Version {
         return Version.ANY.equals(versionString);
     }
 
+    public boolean isWildcard() {
+        return versionString.endsWith(Version.ANY);
+    }
+
     @Override
     public String toString() {
         return id + ":" + versionString;
@@ -81,7 +85,7 @@ public class Version {
     }
 
     public boolean matches(String version) {
-        if (versionString.endsWith(ANY))
+        if (isWildcard())
             return wildcardMatches(versionString, version);
         if (version.endsWith(ANY))
             return wildcardMatches(version, versionString);
