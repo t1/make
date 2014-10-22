@@ -41,4 +41,10 @@ public class XmlStoredProduct extends Product {
     public String toString() {
         return super.toString() + "\n# " + xml.uri();
     }
+
+    @Override
+    public Optional<String> attribute(String name) {
+        String value = xml.getAttribute(name);
+        return (value.isEmpty()) ? Optional.empty() : Optional.of(value);
+    }
 }

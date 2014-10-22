@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <plugin id="org.apache.maven.plugins:maven-shade-plugin" version="2.3">
-    <executions>
-        <execution>
-            <phase>package</phase>
-            <goals>
-                <goal>shade</goal>
-            </goals>
-        </execution>
-    </executions>
-    <configuration>
-        <createDependencyReducedPom>false</createDependencyReducedPom>
-    </configuration>
+    <execution phase="package" goals="shade" />
+    <createDependencyReducedPom>false</createDependencyReducedPom>
 </plugin>

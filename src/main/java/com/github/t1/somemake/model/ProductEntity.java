@@ -13,6 +13,8 @@ public class ProductEntity extends Product {
     @Getter
     private final Version version;
 
+    private final Map<String, String> attributes = new LinkedHashMap<>();
+
     @Setter
     private String value;
 
@@ -45,5 +47,10 @@ public class ProductEntity extends Product {
         ProductEntity feature = new ProductEntity(id.version(ANY));
         feature.value(value);
         return add(feature);
+    }
+
+    @Override
+    public Optional<String> attribute(String name) {
+        return Optional.ofNullable(attributes.get(name));
     }
 }

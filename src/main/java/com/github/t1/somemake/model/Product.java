@@ -208,4 +208,6 @@ public abstract class Product {
         }
         return out.toString();
     }
+
+    public abstract Optional<String> attribute(String name);
 }

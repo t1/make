@@ -90,4 +90,12 @@ public class MergedProduct extends Product {
         return "merged master: " + master.getClass().getSimpleName() + ": " + master + "\n" //
                 + "merged servant: " + servant.getClass().getSimpleName() + ": " + servant;
     }
+
+    @Override
+    public Optional<String> attribute(String name) {
+        Optional<String> value = master.attribute(name);
+        if (value.isPresent())
+            return value;
+        return servant.attribute(name);
+    }
 }

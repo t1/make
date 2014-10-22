@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<packaging id="jar" version="1.0" unique="true">
+<packaging id="jar" version="1.0">
     <name>Java-ARchive packaging</name>
     <description>Package Java classes and resources into a Zip with the file extension '.jar'</description>
 
