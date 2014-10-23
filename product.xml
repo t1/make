@@ -11,6 +11,10 @@
 
     <dependency id="org.projectlombok:lombok" version="1.14.6" />
     <dependency id="ch.qos.logback:logback-classic" version="1.1*" />
+    <dependency id="com.google.guava:guava" version="17.0" />
+    <dependency id="org.glassfish:javax.json" version="1.0.4" />
+    <dependency id="org.joda:joda-convert" version="1.6" />
+
     <dependency id="junit:junit" version="4.11">
         <scope>test</scope>
     </dependency>

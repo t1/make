@@ -8,6 +8,7 @@ import com.github.t1.somemake.model.Product;
 import com.github.t1.xml.*;
 
 public class PomWriter extends PomSectionWriter {
+    private static final String[] SCOPES = { "provided", "compile", "runtime", "test", "system" };
     private static final String NAMESPACE_NAME = "http://maven.apache.org/POM/4.0.0";
 
     public PomWriter(Product product) {
@@ -59,18 +60,26 @@ public class PomWriter extends PomSectionWriter {
 
         Path path = Paths.get(sectionAnnotation.to());
         XmlElement sectionElement = out.getOrCreateElement(path);
-        String lastScope = null;
 
-        for (Product product : list) {
-            DependencyWriter writer = createWriter(DependencyWriter.class, product);
-            String scope = writer.scope().orElse("compile");
-            if (!scope.equals(lastScope)) {
-                if (lastScope != null)
-                    sectionElement.nl();
-                lastScope = scope;
-                sectionElement.addComment(scope + " scope");
+        boolean firstScope = true;
+        for (String scope : SCOPES) {
+            boolean firstDependency = true;
+            for (Product product : list) {
+                DependencyWriter writer = createWriter(DependencyWriter.class, product);
+                if (scope.equals(writer.scope())) {
+                    if (firstDependency) {
+                        if (firstScope) {
+                            firstScope = false;
+                        } else {
+                            sectionElement.nl();
+                        }
+                        firstDependency = false;
+                        sectionElement.addComment(scope + " scope");
+                    }
+
+                    writer.addTo(sectionElement);
+                }
             }
-            writer.addTo(sectionElement);
         }
     }
 }
