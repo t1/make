@@ -11,6 +11,7 @@
     <description>A product used for tests</description>
 
     <dependencies>
+        <!-- test scope -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>

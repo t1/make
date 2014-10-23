@@ -2,6 +2,7 @@ package com.github.t1.somemake.model;
 
 import static com.github.t1.somemake.model.Repositories.*;
 import static com.github.t1.somemake.model.Type.*;
+import static com.github.t1.somemake.model.Version.*;
 import static org.junit.Assert.*;
 
 import java.time.LocalDateTime;
@@ -24,7 +25,7 @@ public class XmlStoredProductTest extends AbstractFileRepositoryTest {
     public void shouldReadDependencyFromXmlFile() {
         Product lombok = repositories().get(LOMBOK_VERSION).get();
 
-        assertEquals(LOMBOK_VERSION, lombok.version());
+        assertEquals(LOMBOK_ID.version(ANY), lombok.version());
         assertEquals(LOMBOK_NAME, lombok.name().get());
         assertEquals(LOMBOK_DESCRIPTION, lombok.description().get());
         assertFalse(lombok.releaseTimestamp().isPresent());

@@ -10,6 +10,18 @@ import java.util.function.*;
 import com.google.common.collect.ImmutableList;
 
 public abstract class Product {
+    public static Predicate<? super Product> matching(Type type) {
+        return f -> type.equals(f.type());
+    }
+
+    public static Predicate<? super Product> matching(Id id) {
+        return f -> id.equals(f.id());
+    }
+
+    public static Predicate<? super Product> matching(Version version) {
+        return f -> version.equals(f.version());
+    }
+
     private static final Id NAME = Type.property("name");
     private static final Id DESCRIPTION = Type.property("description");
     private static final Id RELEASETIMESTAMP = Type.property("releaseTimestamp");
@@ -147,28 +159,8 @@ public abstract class Product {
         return (matching.isEmpty()) ? Optional.empty() : Optional.of(matching.get(0));
     }
 
-    public List<Product> features(Type type) {
-        return features(matching(type));
-    }
-
-    public List<Product> features(Id id) {
-        return features(matching(id));
-    }
-
     public List<Product> features(Predicate<? super Product> predicate) {
         return features().stream().filter(predicate).collect(toList());
-    }
-
-    public Predicate<? super Product> matching(Type type) {
-        return f -> type.equals(f.type());
-    }
-
-    public Predicate<? super Product> matching(Id id) {
-        return f -> id.equals(f.id());
-    }
-
-    public Predicate<? super Product> matching(Version version) {
-        return f -> version.equals(f.version());
     }
 
     private String info(List<Product> matching) {

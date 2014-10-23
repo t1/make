@@ -1,5 +1,6 @@
 package com.github.t1.somemake.pom;
 
+import static com.github.t1.somemake.model.Product.*;
 import static com.github.t1.somemake.model.Type.*;
 
 import java.util.*;
@@ -9,10 +10,11 @@ import com.github.t1.xml.XmlElement;
 
 class DependencyWriter extends PomSectionWriter {
     public static void addDependencies(Product from, XmlElement to) {
-        List<Product> list = from.features(type("dependency"));
+        List<Product> list = from.features(matching(type("dependency")));
         if (list.isEmpty())
             return;
 
+        to.nl();
         XmlElement sectionElement = to.getOrCreateElement("dependencies");
 
         GroupingWriter grouping = new GroupingWriter();
