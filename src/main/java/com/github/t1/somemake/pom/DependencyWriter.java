@@ -2,13 +2,31 @@ package com.github.t1.somemake.pom;
 
 import static com.github.t1.somemake.model.Type.*;
 
-import java.util.Optional;
+import java.util.*;
 
 import com.github.t1.somemake.model.*;
 import com.github.t1.xml.XmlElement;
 
-@PomSection(from = "dependency", to = "dependencies")
 class DependencyWriter extends PomSectionWriter {
+    public static void addDependencies(Product from, XmlElement to) {
+        List<Product> list = from.features(type("dependency"));
+        if (list.isEmpty())
+            return;
+
+        XmlElement sectionElement = to.getOrCreateElement("dependencies");
+
+        GroupingWriter grouping = new GroupingWriter();
+        for (Scope scope : Scope.values()) {
+            for (Product dependency : list) {
+                DependencyWriter writer = new DependencyWriter(dependency);
+                if (scope == writer.scope()) {
+                    grouping.write(scope, sectionElement);
+                    writer.addTo(sectionElement);
+                }
+            }
+        }
+    }
+
     public static class GroupingWriter {
         private Scope lastScope = null;
 

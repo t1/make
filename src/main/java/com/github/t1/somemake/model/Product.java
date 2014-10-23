@@ -147,6 +147,10 @@ public abstract class Product {
         return (matching.isEmpty()) ? Optional.empty() : Optional.of(matching.get(0));
     }
 
+    public List<Product> features(Type type) {
+        return features(matching(type));
+    }
+
     public List<Product> features(Id id) {
         return features(matching(id));
     }

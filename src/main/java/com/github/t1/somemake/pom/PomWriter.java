@@ -1,11 +1,8 @@
 package com.github.t1.somemake.pom;
 
 import java.io.*;
-import java.nio.file.*;
-import java.util.List;
 
 import com.github.t1.somemake.model.Product;
-import com.github.t1.somemake.pom.DependencyWriter.GroupingWriter;
 import com.github.t1.xml.*;
 
 public class PomWriter extends PomSectionWriter {
@@ -49,27 +46,7 @@ public class PomWriter extends PomSectionWriter {
 
         addSection(out, PackagingWriter.class);
         addSection(out, PluginWriter.class);
-        addDependencies(out);
-    }
 
-    private void addDependencies(XmlElement out) {
-        PomSection sectionAnnotation = pomSection(DependencyWriter.class);
-        List<Product> list = featuresOfType(sectionAnnotation.from());
-        if (list.isEmpty())
-            return;
-
-        Path path = Paths.get(sectionAnnotation.to());
-        XmlElement sectionElement = out.getOrCreateElement(path);
-
-        GroupingWriter grouping = new GroupingWriter();
-        for (Scope scope : Scope.values()) {
-            for (Product product : list) {
-                DependencyWriter writer = createWriter(DependencyWriter.class, product);
-                if (scope == writer.scope()) {
-                    grouping.write(scope, sectionElement);
-                    writer.addTo(sectionElement);
-                }
-            }
-        }
+        DependencyWriter.addDependencies(product, out);
     }
 }
