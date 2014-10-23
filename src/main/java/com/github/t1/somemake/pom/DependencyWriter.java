@@ -10,8 +10,9 @@ import com.github.t1.xml.XmlElement;
 
 class DependencyWriter extends PomSectionWriter {
     public static void addDependencies(Product from, XmlElement to) {
-        List<Product> list = from.features(matching(type("dependency")));
-        if (list.isEmpty())
+        List<Product> topScopes = from.features(matching(type("scope")));
+        List<Product> dependencies = from.features(matching(type("dependency")));
+        if (dependencies.isEmpty() && topScopes.isEmpty())
             return;
 
         to.nl();
@@ -19,7 +20,16 @@ class DependencyWriter extends PomSectionWriter {
 
         GroupingWriter grouping = new GroupingWriter();
         for (Scope scope : Scope.values()) {
-            for (Product dependency : list) {
+            for (Product topScope : topScopes) {
+                for (Product dependency : topScope.features(matching(type("dependency")))) {
+                    if (scope.toString().equals(topScope.id().idString())) {
+                        DependencyWriter writer = new DependencyWriter(dependency);
+                        grouping.write(scope, sectionElement);
+                        writer.addTo(sectionElement).addElement("scope").value(scope.toString());
+                    }
+                }
+            }
+            for (Product dependency : dependencies) {
                 DependencyWriter writer = new DependencyWriter(dependency);
                 if (scope == writer.scope()) {
                     grouping.write(scope, sectionElement);
@@ -49,7 +59,7 @@ class DependencyWriter extends PomSectionWriter {
     }
 
     @Override
-    public void addTo(XmlElement out) {
+    public XmlElement addTo(XmlElement out) {
         XmlElement element = out.addElement("dependency");
 
         gav(element);
@@ -61,6 +71,8 @@ class DependencyWriter extends PomSectionWriter {
         addProperty(element, property("type"));
 
         copyExlusions(element);
+
+        return element;
     }
 
     public Scope scope() {

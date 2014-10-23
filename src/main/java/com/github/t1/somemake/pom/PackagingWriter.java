@@ -18,7 +18,7 @@ class PackagingWriter extends PomSectionWriter {
     }
 
     @Override
-    protected void addTo(XmlElement out) {
+    protected XmlElement addTo(XmlElement out) {
         XmlElement plugins = out.getOrCreateElement("plugins");
         XmlElement plugin = plugins.addElement("plugin");
 
@@ -29,6 +29,8 @@ class PackagingWriter extends PomSectionWriter {
             XmlElement manifest = plugin.getOrCreateElement(MANIFEST);
             manifest.addElement("Main-Class").addText(mainClass.get().value().get());
         }
+
+        return plugins;
     }
 
     private void copyPlugin(XmlElement to) {

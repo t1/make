@@ -16,7 +16,7 @@ import com.google.common.collect.ImmutableList;
 abstract class PomSectionWriter {
     protected final Product product;
 
-    protected abstract void addTo(XmlElement out);
+    protected abstract XmlElement addTo(XmlElement out);
 
     protected void gav(XmlElement to) {
         gav(product.version(), to);
@@ -45,7 +45,6 @@ abstract class PomSectionWriter {
         List<Product> list = featuresOfType(sectionAnnotation.from());
         if (list.isEmpty())
             return;
-        out.nl();
 
         Path path = Paths.get(sectionAnnotation.to());
         XmlElement sectionElement = out.getOrCreateElement(path);

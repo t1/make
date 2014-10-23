@@ -29,7 +29,7 @@ public class PomWriter extends PomSectionWriter {
     }
 
     @Override
-    protected void addTo(XmlElement out) {
+    protected XmlElement addTo(XmlElement out) {
         out.addAttribute("xmlns", NAMESPACE_NAME);
         out.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
         out.addAttribute("xsi:schemaLocation", NAMESPACE_NAME + " http://maven.apache.org/xsd/maven-4.0.0.xsd");
@@ -43,10 +43,13 @@ public class PomWriter extends PomSectionWriter {
 
         addProperty(out, "name", product.name());
         addProperty(out, "description", product.description());
+        out.nl();
 
         addSection(out, PackagingWriter.class);
         addSection(out, PluginWriter.class);
 
         DependencyWriter.addDependencies(product, out);
+
+        return out;
     }
 }

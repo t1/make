@@ -61,6 +61,10 @@ public class XmlElement {
         return Optional.empty();
     }
 
+    public void value(String value) {
+        element.setTextContent(value);
+    }
+
     public List<XmlElement> elements() {
         return list(element.getChildNodes());
     }

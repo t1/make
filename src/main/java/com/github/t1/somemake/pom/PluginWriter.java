@@ -12,12 +12,14 @@ class PluginWriter extends PomSectionWriter {
     }
 
     @Override
-    public void addTo(XmlElement out) {
+    public XmlElement addTo(XmlElement out) {
         XmlElement element = out.addElement("plugin");
 
         gav(element);
 
         copyProperties(element);
+
+        return element;
     }
 
     private void copyProperties(XmlElement element) {
