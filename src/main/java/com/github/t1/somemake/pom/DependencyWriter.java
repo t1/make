@@ -30,9 +30,9 @@ class DependencyWriter extends PomSectionWriter {
         copyExlusions(element);
     }
 
-    public String scope() {
+    public Scope scope() {
         Optional<Product> optional = product.optionalFeature(SCOPE);
-        return optional.isPresent() ? optional.get().value().get() : "compile";
+        return optional.isPresent() ? Scope.valueOf(optional.get().value().get()) : Scope.DEFAULT;
     }
 
     private void copyExlusions(XmlElement element) {
