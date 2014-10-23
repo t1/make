@@ -9,6 +9,19 @@ import com.github.t1.xml.XmlElement;
 
 @PomSection(from = "dependency", to = "dependencies")
 class DependencyWriter extends PomSectionWriter {
+    public static class GroupingWriter {
+        private Scope lastScope = null;
+
+        public void write(Scope scope, XmlElement element) {
+            if (scope != lastScope) {
+                if (lastScope != null)
+                    element.nl();
+                element.addComment(scope + " scope");
+            }
+            lastScope = scope;
+        }
+    }
+
     private static final Id SCOPE = property("scope");
 
     public DependencyWriter(Product product) {

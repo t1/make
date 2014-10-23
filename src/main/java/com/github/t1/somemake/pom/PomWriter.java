@@ -5,6 +5,7 @@ import java.nio.file.*;
 import java.util.List;
 
 import com.github.t1.somemake.model.Product;
+import com.github.t1.somemake.pom.DependencyWriter.GroupingWriter;
 import com.github.t1.xml.*;
 
 public class PomWriter extends PomSectionWriter {
@@ -60,22 +61,12 @@ public class PomWriter extends PomSectionWriter {
         Path path = Paths.get(sectionAnnotation.to());
         XmlElement sectionElement = out.getOrCreateElement(path);
 
-        boolean firstScope = true;
+        GroupingWriter grouping = new GroupingWriter();
         for (Scope scope : Scope.values()) {
-            boolean firstDependency = true;
             for (Product product : list) {
                 DependencyWriter writer = createWriter(DependencyWriter.class, product);
-                if (scope.equals(writer.scope())) {
-                    if (firstDependency) {
-                        if (firstScope) {
-                            firstScope = false;
-                        } else {
-                            sectionElement.nl();
-                        }
-                        firstDependency = false;
-                        sectionElement.addComment(scope + " scope");
-                    }
-
+                if (scope == writer.scope()) {
+                    grouping.write(scope, sectionElement);
                     writer.addTo(sectionElement);
                 }
             }
