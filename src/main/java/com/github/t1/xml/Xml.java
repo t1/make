@@ -35,7 +35,6 @@ public class Xml extends XmlElement {
             Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(uri.toASCIIString());
             document.setDocumentURI(uri.toString());
             return document;
-            // JsonObject obj = Json.createReader(uri.toURL().openStream()).readObject();
         } catch (SAXException | IOException | ParserConfigurationException e) {
             throw new RuntimeException(e);
         }

@@ -5,9 +5,13 @@ import static com.github.t1.somemake.model.Type.*;
 import static com.github.t1.somemake.model.Version.*;
 import static org.junit.Assert.*;
 
+import java.io.IOException;
+import java.nio.file.*;
 import java.time.LocalDateTime;
 
 import org.junit.Test;
+
+import com.github.t1.xml.Xml;
 
 public class XmlStoredProductTest extends AbstractFileRepositoryTest {
     private void assertJunitHamcrestMockito(Product jhm) {
@@ -100,5 +104,22 @@ public class XmlStoredProductTest extends AbstractFileRepositoryTest {
         assertEquals("Test Product", product.name().get());
         assertEquals("A product used for tests", product.description().get());
         assertEquals(LocalDateTime.of(2014, 8, 4, 15, 16, 59), product.releaseTimestamp().get());
+    }
+
+    @Test
+    public void shouldWriteProductToXmlFile() throws IOException {
+        Version version = product("write-test:prod").version("1.0");
+        Product product = new XmlStoredProduct(version);
+
+        fileRepository.store(product);
+
+        Path path = fileRepository.resolvePath(product.version()).get();
+        String xml = readFile(path);
+        Files.delete(path);
+        assertEquals(Xml //
+                .createWithRootElement(version.type().typeName()) //
+                .addAttribute("id", version.id().idString()) //
+                .addAttribute("version", version.versionString()) //
+                .toXmlString(), xml + "\n");
     }
 }

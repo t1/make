@@ -61,7 +61,7 @@ public class FileSystemRepository extends Repository {
         return product;
     }
 
-    private Optional<Path> resolvePath(Version version) {
+    public Optional<Path> resolvePath(Version version) {
         if (!version.id().idString().isEmpty()) {
             Path idPath = repositoryRoot.resolve(version.id().path());
             if (Files.exists(idPath)) {
@@ -98,8 +98,7 @@ public class FileSystemRepository extends Repository {
     }
 
     public XmlStoredProduct load(Path path) {
-        Xml xml = Xml.load(path.toUri());
-        return new XmlStoredProduct(xml);
+        return new XmlStoredProduct(path.toUri());
     }
 
     private void checkVersion(Version version, Version productVersion, Path path) {
@@ -155,5 +154,10 @@ public class FileSystemRepository extends Repository {
         }
 
         xml.save();
+    }
+
+    public void store(Product product) {
+        Path path = repositoryRoot.resolve(product.version().path()).resolve("");
+        product.saveTo(path.toUri());
     }
 }

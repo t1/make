@@ -3,6 +3,7 @@ package com.github.t1.somemake.model;
 import static com.github.t1.somemake.model.Repositories.*;
 import static java.util.stream.Collectors.*;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.*;
@@ -210,4 +211,8 @@ public abstract class Product {
     }
 
     public abstract Optional<String> attribute(String name);
+
+    public Product saveTo(@SuppressWarnings("unused") URI uri) {
+        throw unsupported("saving products");
+    }
 }

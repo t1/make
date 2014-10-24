@@ -35,7 +35,7 @@ public class BuildCommand implements Runnable {
         repositories().register(fileSystemRepository);
 
         timed("  build", () -> {
-            timed("    load product", () -> loadProduct(fileSystemRepository));
+            timed("    load product", () -> loadProduct());
             timed("    write pom", () -> writePom());
             timed("    run maven", () -> runMaven());
         });
@@ -52,7 +52,7 @@ public class BuildCommand implements Runnable {
         }
     }
 
-    private void loadProduct(FileSystemRepository fileSystemRepository) {
+    private void loadProduct() {
         Product unactivatedProduct = fileSystemRepository.load(input);
         this.product = fileSystemRepository.withActivations(unactivatedProduct);
     }
