@@ -3,7 +3,7 @@ package com.github.t1.somemake.model;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
-import java.nio.file.Files;
+import java.nio.file.*;
 
 import org.junit.*;
 
@@ -23,10 +23,10 @@ public class FileActivationsTest extends AbstractActivationsTest {
             + "    <activation id=\"" + SCALA_0_1 + "\">folder(src/main/scala)</activation>\n" //
             + "</activations>";
 
-    @Before
     @After
-    public void cleanActivationsXml() throws IOException {
+    public void restoreCleanActivationsXml() throws IOException {
         Files.deleteIfExists(fileRepository.activationsPath());
+        Files.copy(Paths.get("src/test/resources/repository/activations.xml"), fileRepository.activationsPath());
     }
 
     @Override

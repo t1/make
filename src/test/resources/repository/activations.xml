@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<activations>
+    <activation id="plugin:compiler.java:3.1">folder(src/main/java)</activation>
+</activations>

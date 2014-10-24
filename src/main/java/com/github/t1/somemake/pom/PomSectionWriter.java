@@ -46,12 +46,19 @@ abstract class PomSectionWriter {
         if (list.isEmpty())
             return;
 
-        Path path = Paths.get(sectionAnnotation.to());
-        XmlElement sectionElement = out.getOrCreateElement(path);
+        XmlElement sectionElement = getOrCreateSectionElement(out, sectionAnnotation.to());
 
         for (Product feature : list) {
             createWriter(type, feature).addTo(sectionElement);
         }
+    }
+
+    private XmlElement getOrCreateSectionElement(XmlElement out, String to) {
+        Path path = Paths.get(to);
+        if (!out.hasChildElement(path))
+            out.nl();
+        XmlElement sectionElement = out.getOrCreateElement(path);
+        return sectionElement;
     }
 
     protected PomSection pomSection(Class<? extends PomSectionWriter> type) {

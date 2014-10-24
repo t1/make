@@ -43,7 +43,6 @@ public class PomWriter extends PomSectionWriter {
 
         addProperty(out, "name", product.name());
         addProperty(out, "description", product.description());
-        out.nl();
 
         addSection(out, PackagingWriter.class);
         addSection(out, PluginWriter.class);

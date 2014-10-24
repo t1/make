@@ -15,30 +15,65 @@ import com.github.t1.somemake.pom.PomWriter;
 @Setter
 @Slf4j
 public class BuildCommand implements Runnable {
+    public static final Path POM = Paths.get("pom.xml");
+
     @CliArgument
     private Path repository = Paths.get("~/.somemake");
     @CliArgument
     private Path input = Paths.get("product.xml");
     @CliArgument
-    private Path output = Paths.get("target", "pom.xml");
+    private Path maven = Paths.get("mvn");
+
+    private FileSystemRepository fileSystemRepository;
+    private Product product;
 
     @Override
     public void run() {
-        FileSystemRepository fileSystemRepository = new FileSystemRepository(repository);
+        log.info("build [{}] repository [{}]", input, repository);
+
+        fileSystemRepository = new FileSystemRepository(repository);
         repositories().register(fileSystemRepository);
 
-        log.debug("build {} to {} repository {}", input.toAbsolutePath(), output, repository);
-        long t = System.currentTimeMillis();
+        timed("  build", () -> {
+            timed("    load product", () -> loadProduct(fileSystemRepository));
+            timed("    write pom", () -> writePom());
+            timed("    run maven", () -> runMaven());
+        });
+    }
 
-        Product product = fileSystemRepository.load(input);
-        product = fileSystemRepository.withActivations(product);
+    private void timed(String message, Runnable runnable) {
+        log.debug("{} start", message);
+        long t0 = System.currentTimeMillis();
+        try {
+            runnable.run();
+        } finally {
+            long t1 = System.currentTimeMillis();
+            log.debug("{} took {}", message, t1 - t0);
+        }
+    }
 
-        try (FileWriter out = new FileWriter(output.toFile())) {
+    private void loadProduct(FileSystemRepository fileSystemRepository) {
+        Product unactivatedProduct = fileSystemRepository.load(input);
+        this.product = fileSystemRepository.withActivations(unactivatedProduct);
+    }
+
+    private void writePom() {
+        try (FileWriter out = new FileWriter(POM.toFile())) {
             new PomWriter(product).writeTo(out);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
 
-        log.debug("done building {} after {}ms", input, System.currentTimeMillis() - t);
+    private void runMaven() {
+        try {
+            ProcessBuilder builder = new ProcessBuilder(maven.toString(), "clean", "package", "--file", POM.toString());
+            log.debug("mvn command: {}", builder.command());
+            Process process = builder.inheritIO().start();
+
+            process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

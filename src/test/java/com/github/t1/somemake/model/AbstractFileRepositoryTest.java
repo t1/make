@@ -8,7 +8,7 @@ import java.nio.file.*;
 import org.junit.*;
 
 public class AbstractFileRepositoryTest extends AbstractTest {
-    protected static final Path REPOSITORY_ROOT = Paths.get("src", "test", "resources", "repository");
+    protected static final Path REPOSITORY_ROOT = Paths.get("target", "test-classes", "repository");
 
     protected static final Id LOMBOK_ID = dependency("org.projectlombok:lombok");
     protected static final Version LOMBOK_VERSION = LOMBOK_ID.version("1.12.6");

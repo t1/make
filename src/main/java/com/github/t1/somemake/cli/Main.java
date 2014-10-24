@@ -43,7 +43,7 @@ public class Main implements Runnable {
     }
 
     private Runnable command(String commandName) {
-        Runnable command = build(commandName);
+        Runnable command = buildCommand(commandName);
         for (Field field : command.getClass().getDeclaredFields()) {
             CliArgument cliArgument = field.getAnnotation(CliArgument.class);
             if (cliArgument == null)
@@ -53,7 +53,7 @@ public class Main implements Runnable {
         return command;
     }
 
-    private Runnable build(String commandName) {
+    private Runnable buildCommand(String commandName) {
         String className = Main.class.getPackage().getName() + "." + initCap(commandName) + "Command";
         try {
             return (Runnable) Class.forName(className).newInstance();
