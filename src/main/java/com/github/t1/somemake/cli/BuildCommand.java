@@ -15,12 +15,12 @@ import com.github.t1.somemake.pom.PomWriter;
 @Setter
 @Slf4j
 public class BuildCommand implements Runnable {
-    public static final Path POM = Paths.get("pom.xml");
-
     @CliArgument
     private Path repository = Paths.get("~/.somemake");
     @CliArgument
     private Path input = Paths.get("product.xml");
+    @CliArgument
+    private Path pom = Paths.get("pom.xml");
     @CliArgument
     private Path maven = Paths.get("mvn");
 
@@ -58,7 +58,7 @@ public class BuildCommand implements Runnable {
     }
 
     private void writePom() {
-        try (FileWriter out = new FileWriter(POM.toFile())) {
+        try (FileWriter out = new FileWriter(pom.toFile())) {
             new PomWriter(product).writeTo(out);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -67,7 +67,7 @@ public class BuildCommand implements Runnable {
 
     private void runMaven() {
         try {
-            ProcessBuilder builder = new ProcessBuilder(maven.toString(), "clean", "package", "--file", POM.toString());
+            ProcessBuilder builder = new ProcessBuilder(maven.toString(), "clean", "package", "--file", pom.toString());
             log.debug("mvn command: {}", builder.command());
             Process process = builder.inheritIO().start();
 

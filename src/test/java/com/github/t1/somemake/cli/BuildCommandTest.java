@@ -9,15 +9,16 @@ import org.junit.Test;
 
 public class BuildCommandTest {
     private static final Path REPOSITORY = Paths.get("target/test-classes/repository");
+    private static final Path ORIGINAL_POM = Paths.get("pom.xml");
+    private static final Path TEST_POM = Paths.get("target/test-pom.xml");
     private static final Path ECHO = Paths.get("/bin/echo");
 
     @Test
     public void shouldRun() {
-        String beforePom = readFile(BuildCommand.POM);
-        BuildCommand buildCommand = new BuildCommand().repository(REPOSITORY).maven(ECHO);
+        BuildCommand buildCommand = new BuildCommand().repository(REPOSITORY).maven(ECHO).pom(TEST_POM);
 
         buildCommand.run();
 
-        assertEquals(beforePom, readFile(BuildCommand.POM));
+        assertEquals(readFile(ORIGINAL_POM), readFile(buildCommand.pom()));
     }
 }
