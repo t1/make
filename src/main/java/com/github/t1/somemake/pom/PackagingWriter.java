@@ -10,7 +10,6 @@ import com.github.t1.xml.XmlElement;
 
 @PomSection(from = "packaging", to = "build")
 class PackagingWriter extends PomSectionWriter {
-
     private static final Path MANIFEST = Paths.get("configuration/archive/manifest");
 
     public PackagingWriter(Product product) {
@@ -18,19 +17,23 @@ class PackagingWriter extends PomSectionWriter {
     }
 
     @Override
-    protected XmlElement addTo(XmlElement out) {
-        XmlElement plugins = out.getOrCreateElement("plugins");
+    protected XmlElement addTo(XmlElement build) {
+        copyFinalName(build);
+
+        XmlElement plugins = build.getOrCreateElement("plugins");
         XmlElement plugin = plugins.addElement("plugin");
 
         copyPlugin(plugin);
-
-        Optional<Product> mainClass = product.optionalFeature(p -> type("Main-Class").equals(p.type()));
-        if (mainClass.isPresent()) {
-            XmlElement manifest = plugin.getOrCreateElement(MANIFEST);
-            manifest.addElement("Main-Class").addText(mainClass.get().value().get());
-        }
+        copyMainClass(plugin);
 
         return plugins;
+    }
+
+    private void copyFinalName(XmlElement build) {
+        Optional<Product> finalName = product.optionalFeature(p -> type("finalName").equals(p.type()));
+        if (finalName.isPresent()) {
+            build.addElement("finalName").addText(finalName.get().value().get());
+        }
     }
 
     private void copyPlugin(XmlElement to) {
@@ -45,6 +48,14 @@ class PackagingWriter extends PomSectionWriter {
             if (configurationElement == null)
                 configurationElement = element.addElement("configuration");
             copy(property, configurationElement);
+        }
+    }
+
+    private void copyMainClass(XmlElement plugin) {
+        Optional<Product> mainClass = product.optionalFeature(p -> type("Main-Class").equals(p.type()));
+        if (mainClass.isPresent()) {
+            XmlElement manifest = plugin.getOrCreateElement(MANIFEST);
+            manifest.addElement("Main-Class").addText(mainClass.get().value().get());
         }
     }
 }

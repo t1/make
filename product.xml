@@ -4,6 +4,7 @@
     <description>simplifies the description of project build processes</description>
 
     <packaging id="jar">
+        <finalName>somemake</finalName>
         <Main-Class>com.github.t1.somemake.cli.Main</Main-Class>
     </packaging>
 

@@ -11,6 +11,7 @@
     <description>simplifies the description of project build processes</description>
 
     <build>
+        <finalName>somemake</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

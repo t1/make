@@ -34,6 +34,13 @@ public class XmlElement {
         return element.getNodeName();
     }
 
+    public XmlElement assertName(String expectedName) {
+        if (!expectedName.equals(getName())) {
+            throw new AssertionError("expected element name '" + expectedName + "' but found '" + getName() + "'");
+        }
+        return this;
+    }
+
     public Path getPath() {
         return buildPath(element, Paths.get("/"));
     }
@@ -281,5 +288,9 @@ public class XmlElement {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public XmlElement getParent() {
+        return parent;
     }
 }
