@@ -22,7 +22,7 @@ abstract class PomSectionWriter {
         gav(product.version(), to);
     }
 
-    protected void gav(Version from, XmlElement to) {
+    protected static void gav(Version from, XmlElement to) {
         to.addElement("groupId").addText(from.id().groupId());
         to.addElement("artifactId").addText(from.id().artifactId());
         to.addElement("version").addText(from.versionString());
@@ -76,7 +76,7 @@ abstract class PomSectionWriter {
         }
     }
 
-    protected void copy(Product from, XmlElement to) {
+    protected static void copy(Product from, XmlElement to) {
         XmlElement subTo = to.addElement(from.type().toString());
         if (from.hasFeatures()) {
             ImmutableList<Product> features = from.features();

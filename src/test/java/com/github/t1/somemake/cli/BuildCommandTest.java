@@ -29,8 +29,6 @@ public class BuildCommandTest {
     }
 
     @Test
-    // FIXME
-    @Ignore
     public void shouldRun() {
         BuildCommand buildCommand = new BuildCommand().repository(REPOSITORY);
 

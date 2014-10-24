@@ -1,6 +1,9 @@
 package com.github.t1.somemake.pom;
 
-import java.util.Optional;
+import static com.github.t1.somemake.model.Product.*;
+import static com.github.t1.somemake.model.Type.*;
+
+import java.util.*;
 
 import com.github.t1.somemake.model.Product;
 import com.github.t1.xml.XmlElement;
@@ -13,16 +16,28 @@ class PluginWriter extends PomSectionWriter {
 
     @Override
     public XmlElement addTo(XmlElement out) {
-        XmlElement element = out.addElement("plugin");
-
-        gav(element);
-
-        copyProperties(element);
+        List<Product> plugins = product.features(matching(type("plugin")));
+        XmlElement element;
+        if (plugins.isEmpty()) {
+            element = addPlugin(product, out);
+        } else {
+            element = null;
+            for (Product plugin : plugins) {
+                element = addPlugin(plugin, out);
+            }
+        }
 
         return element;
     }
 
-    private void copyProperties(XmlElement element) {
+    private static XmlElement addPlugin(Product product, XmlElement out) {
+        XmlElement element = out.addElement("plugin");
+        gav(product.version(), element);
+        copyProperties(product, element);
+        return element;
+    }
+
+    private static void copyProperties(Product product, XmlElement element) {
         XmlElement configuration = null;
         XmlElement executions = null;
 
@@ -43,14 +58,14 @@ class PluginWriter extends PomSectionWriter {
         }
     }
 
-    private void addPhase(Product property, XmlElement execution) {
+    private static void addPhase(Product property, XmlElement execution) {
         Optional<String> phase = property.attribute("phase");
         if (!phase.isPresent())
             throw new RuntimeException("execution requires a phase attribute");
         execution.addElement("phase").addText(phase.get());
     }
 
-    private void addGoals(Product property, XmlElement goalsElement) {
+    private static void addGoals(Product property, XmlElement goalsElement) {
         Optional<String> goalsString = property.attribute("goals");
         if (!goalsString.isPresent())
             throw new RuntimeException("execution requires a goals attribute");
