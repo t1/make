@@ -7,7 +7,7 @@
     <artifactId>make</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
-    <name>some make</name>
+    <name>make</name>
     <description>simplifies the description of project build processes</description>
 
     <build>

@@ -84,7 +84,6 @@ public class JsonStoredProduct extends Product {
         map.forEach((key, value) -> {
             if (key.startsWith(ATTRIBUTE_PREFIX))
                 return;
-            System.out.println("---> " + key + ": " + value);
             Version version = Type.type(key).id(Id.EMPTY).version(Version.ANY);
             list.add(new JsonStoredProduct(version).value(value.toString()));
         });
