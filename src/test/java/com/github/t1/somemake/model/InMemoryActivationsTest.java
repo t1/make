@@ -23,7 +23,9 @@ public class InMemoryActivationsTest extends AbstractActivationsTest {
     }
 
     private void givenActivationWithExpression(Version version, String expression) {
-        memRepository.put(new ProductEntity(version).set(ACTIVATION, expression));
+        ProductEntity product = new ProductEntity(version);
+        product.addFeature(ACTIVATION, expression);
+        memRepository.put(product);
     }
 
     @Override

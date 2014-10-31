@@ -25,7 +25,7 @@ abstract class PomSectionWriter {
     protected static void gav(Version from, XmlElement to) {
         to.addElement("groupId").addText(from.id().groupId());
         to.addElement("artifactId").addText(from.id().artifactId());
-        to.addElement("version").addText(from.versionString());
+        to.addElement(Version.ATTRIBUTE).addText(from.versionString());
     }
 
     protected void addProperty(XmlElement to, String name, Optional<String> value) {

@@ -3,15 +3,32 @@ package com.github.t1.somemake.model;
 import static com.github.t1.somemake.model.Repositories.*;
 import static com.github.t1.somemake.model.Type.*;
 import static com.github.t1.somemake.model.Version.*;
+import static java.util.stream.Collectors.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import org.junit.Test;
 
-public class XmlStoredProductTest extends AbstractFileRepositoryTest {
+public class JsonStoredProductTest extends AbstractFileRepositoryTest {
+    private String json(String versionString, String... elements) {
+        return ("{" //
+                + "'-type':'product'," //
+                + "'-id':'product:test-product'," //
+                + "'-version':'" + versionString + "'" //
+                + ((elements.length == 0) ? "" : ",") //
+                + Arrays.asList(elements).stream().collect(joining(",")) //
+        + "}").replace('\'', '\"');
+    }
+
+    private void write(Path dir, String json) throws IOException {
+        Files.createDirectories(dir);
+        Files.write(dir.resolve("product.json"), json.getBytes());
+    }
+
     private void assertJunitHamcrestMockito(Product jhm) {
         Product junit = jhm.feature(dependency("junit:junit"));
         assertEquals("4.11", junit.version().versionString());
@@ -24,7 +41,7 @@ public class XmlStoredProductTest extends AbstractFileRepositoryTest {
     }
 
     @Test
-    public void shouldReadDependencyFromXmlFile() {
+    public void shouldReadDependencyFromJsonFile() {
         Product lombok = repositories().get(LOMBOK_VERSION).get();
 
         assertEquals(LOMBOK_ID.version(ANY), lombok.version());
@@ -94,8 +111,8 @@ public class XmlStoredProductTest extends AbstractFileRepositoryTest {
     }
 
     @Test
-    public void shouldReadProductFromXmlFile() {
-        Version version = product("product:test-product").version("1.0");
+    public void shouldReadProductFromJsonFile() {
+        Version version = product("product:test-product").version("101.0");
         Product product = repositories().get(version).get();
 
         assertEquals(version, product.version());
@@ -105,55 +122,53 @@ public class XmlStoredProductTest extends AbstractFileRepositoryTest {
     }
 
     @Test
-    public void shouldWriteProductToXmlFile() throws IOException {
-        Path pathOut = REPOSITORY_ROOT.resolve("product/product/test-product/999/product.xml");
+    public void shouldWriteProductToJsonFile() throws IOException {
+        Path pathOut = REPOSITORY_ROOT.resolve("product/product/test-product/999/product.json");
         Version version = product("product:test-product").version("999");
 
         try {
-            Product product = new XmlStoredProduct(version);
+            Product product = new JsonStoredProduct(version).description("description");
             product.add(newProduct(LOMBOK_VERSION).name("foo"));
+            product.add(newProduct(dependency("foo:bar").version("1")).name("baz"));
 
             fileRepository.store(product);
 
-            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //
-                    + "<product id=\"product:test-product\" version=\"999\">\n" //
-                    + "    <dependency id=\"org.projectlombok:lombok\" version=\"1.12.6\">\n" //
-                    + "        <name>foo</name>\n" //
-                    + "    </dependency>\n" //
-                    + "</product>\n" //
-            , readFile(pathOut) + "\n");
+            assertEquals(json("999", //
+                    "'description':'description'", //
+                    "'dependencies':[" //
+                            + "{" //
+                            + "'-type':'dependency'," //
+                            + "'-id':'org.projectlombok:lombok'," //
+                            + "'-version':'1.12.6'," //
+                            + "'name':'foo'" //
+                            + "}," //
+                            + "{" //
+                            + "'-type':'dependency'," //
+                            + "'-id':'foo:bar'," //
+                            + "'-version':'1'," //
+                            + "'name':'baz'" //
+                            + "}" //
+                            + "]" //
+            ), readFile(pathOut));
         } finally {
             Files.deleteIfExists(pathOut);
         }
     }
 
     @Test
-    public void shouldUpdateProductVersionFromXmlFileAndStore() throws IOException {
-        Path pathOut = REPOSITORY_ROOT.resolve("product/product/test-product/999/product.xml");
-
+    public void shouldUpdateProductVersionFromJsonFileAndStore() throws IOException {
+        Path dir = REPOSITORY_ROOT.resolve("product/product/test-product");
+        Path pathOut = dir.resolve("999/product.json");
         try {
-            Version versionIn = product("product:test-product").version("1.0");
+            write(dir.resolve("998"), json("998"));
+            Version versionIn = product("product:test-product").version("998");
             Product product = repositories().get(versionIn).get();
 
             product.versionString("999");
 
             fileRepository.store(product);
 
-            assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" //
-                    + "<product id=\"product:test-product\" version=\"999\">\n" //
-                    + "    <name>Test Product</name>\n" //
-                    + "    <description>A product used for tests</description>\n" //
-                    + "    <releaseTimestamp>2014-08-04T15:16:59</releaseTimestamp>\n" //
-                    + "\n" //
-                    + "    <dependency id=\"ch.qos.logback:logback-classic\" version=\"1.1*\">\n" //
-                    + "        <scope>test</scope>\n" //
-                    + "        <classifier>cls</classifier>\n" //
-                    + "        <optional>true</optional>\n" //
-                    + "        <systemPath>sys</systemPath>\n" //
-                    + "        <type>type</type>\n" //
-                    + "    </dependency>\n" //
-                    + "</product>" //
-            , readFile(pathOut));
+            assertEquals(json("999"), readFile(pathOut));
         } finally {
             Files.deleteIfExists(pathOut);
         }

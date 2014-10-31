@@ -109,7 +109,7 @@ public class FileActivationsTest extends AbstractActivationsTest {
     @Test
     public void shouldLoadActivationsWhenCreatingFileSystemRepository() {
         Xml xml = Xml.createWithRootElement("activations");
-        xml.addElement("activation").addAttribute("id", JAVAC_3_1.toString()).addText("folder(src/main/java)");
+        xml.addElement("activation").setAttribute(Id.ATTRIBUTE, JAVAC_3_1.toString()).addText("folder(src/main/java)");
         xml.save(fileRepository.activationsPath().toUri());
 
         fileRepository.loadActivations();

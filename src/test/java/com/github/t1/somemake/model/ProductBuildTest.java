@@ -40,12 +40,12 @@ public class ProductBuildTest extends AbstractTest {
 
     @Test
     public void shouldFetchFeatureTimestampAndFeatures() {
-        Product foo1 = newProduct(feature("foo"), "1.0");
-        Product bar2 = newProduct(feature("bar"), "2.0");
-        memRepository.put(foo1.releaseTimestamp(now) //
-                .add(bar2.releaseTimestamp(now.plusDays(3))));
+        Product foo = newProduct(feature("foo"), "1.0");
+        Product bar = newProduct(feature("bar"), "2.0");
+        memRepository.put(foo.releaseTimestamp(now) //
+                .add(bar.releaseTimestamp(now.plusDays(3))));
 
-        Product product = newProduct(product("baz"), "3.0").add(foo1);
+        Product product = newProduct(product("baz"), "3.0").add(foo);
 
         assertEquals(now, product.feature(feature("foo")).releaseTimestamp().get());
         assertEquals(now.plusDays(3), product.feature(feature("foo")).feature(feature("bar")).releaseTimestamp().get());

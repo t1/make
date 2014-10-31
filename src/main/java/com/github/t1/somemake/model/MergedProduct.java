@@ -23,6 +23,10 @@ public class MergedProduct extends Product {
     }
 
     private void check(Product master, Product servant) {
+        if (!master.type().equals(servant.type()))
+            throw new IllegalArgumentException("types of products to be merged don't match\n" //
+                    + "master: " + master.type() + "\n" //
+                    + "servant: " + servant.type());
         if (!master.id().equals(servant.id()))
             throw new IllegalArgumentException("ids of products to be merged don't match\n" //
                     + "master: " + master.id() + "\n" //
@@ -31,6 +35,16 @@ public class MergedProduct extends Product {
             throw new IllegalArgumentException("versions of products to be merged don't match\n" //
                     + "master: " + master.versionString() + "\n" //
                     + "servant: " + servant.versionString());
+    }
+
+    @Override
+    public Type type() {
+        return master.type();
+    }
+
+    @Override
+    public Id id() {
+        return master.id();
     }
 
     @Override
@@ -99,5 +113,14 @@ public class MergedProduct extends Product {
         if (value.isPresent())
             return value;
         return servant.attribute(name);
+    }
+
+    @Override
+    public Product attribute(String key, String value) {
+        if (!master.attribute(key).isPresent() && servant.attribute(key).isPresent())
+            servant.attribute(key, value);
+        else
+            master.attribute(key, value);
+        return this;
     }
 }

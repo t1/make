@@ -4,6 +4,8 @@ import lombok.*;
 
 @Value(staticConstructor = "type")
 public class Type {
+    public static final String ATTRIBUTE = "type";
+
     public static Id product(String id) {
         return type("product").id(id);
     }
@@ -42,5 +44,11 @@ public class Type {
     @Override
     public String toString() {
         return typeName;
+    }
+
+    public String pluralString() {
+        if (typeName.endsWith("y"))
+            return typeName.substring(0, typeName.length() - 1) + "ies";
+        return typeName + "s";
     }
 }

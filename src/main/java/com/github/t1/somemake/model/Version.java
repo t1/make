@@ -9,6 +9,7 @@ import lombok.*;
 @Value
 public class Version {
     public static final String ANY = "*";
+    public static final String ATTRIBUTE = "version";
 
     public static final Comparator<String> VERSION = new Comparator<String>() {
         @Override

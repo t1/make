@@ -30,9 +30,9 @@ public class PomWriter extends PomSectionWriter {
 
     @Override
     protected XmlElement addTo(XmlElement out) {
-        out.addAttribute("xmlns", NAMESPACE_NAME);
-        out.addAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
-        out.addAttribute("xsi:schemaLocation", NAMESPACE_NAME + " http://maven.apache.org/xsd/maven-4.0.0.xsd");
+        out.setAttribute("xmlns", NAMESPACE_NAME);
+        out.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        out.setAttribute("xsi:schemaLocation", NAMESPACE_NAME + " http://maven.apache.org/xsd/maven-4.0.0.xsd");
 
         out.addComment("pom written by somemake; built from " + product.version());
         out.addElement("modelVersion").addText("4.0.0");

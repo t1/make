@@ -213,8 +213,11 @@ public class XmlElement {
         return document().createTextNode(text);
     }
 
-    public XmlElement addAttribute(String name, String value) {
-        element.setAttribute(name, value);
+    public XmlElement setAttribute(String name, String value) {
+        if (value == null)
+            element.removeAttribute(name);
+        else
+            element.setAttribute(name, value);
         return this;
     }
 

@@ -8,10 +8,12 @@ import java.util.Map.Entry;
 import java.util.stream.Stream;
 
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import com.github.t1.xml.*;
 import com.google.common.collect.ImmutableList;
 
+@Slf4j
 public class FileSystemRepository extends Repository {
     private final Path repositoryRoot;
     private final Map<Activation, Version> activations = new LinkedHashMap<>();
@@ -56,12 +58,12 @@ public class FileSystemRepository extends Repository {
         if (!resolvedPath.isPresent())
             return null;
         Path path = resolvedPath.get();
-        Product product = load(path);
+        Product product = loadFromDirectory(path);
         checkVersion(version, product.version(), path);
         return product;
     }
 
-    public Optional<Path> resolvePath(Version version) {
+    private Optional<Path> resolvePath(Version version) {
         if (!version.id().idString().isEmpty()) {
             Path idPath = repositoryRoot.resolve(version.id().path());
             if (Files.exists(idPath)) {
@@ -69,10 +71,10 @@ public class FileSystemRepository extends Repository {
                 if (resolvedVersion.isPresent()) {
                     Path versionPath = idPath.resolve(resolvedVersion.get());
                     if (Files.exists(versionPath)) {
-                        return Optional.of(versionPath.resolve("product.xml"));
+                        return Optional.of(versionPath);
                     }
                 } else if (Files.exists(idPath.resolve(Version.ANY))) {
-                    return Optional.of(idPath.resolve(Version.ANY).resolve("product.xml"));
+                    return Optional.of(idPath.resolve(Version.ANY));
                 }
             }
         }
@@ -97,8 +99,14 @@ public class FileSystemRepository extends Repository {
         return activations.get(activation);
     }
 
-    public XmlStoredProduct load(Path path) {
-        return new XmlStoredProduct(path.toUri());
+    public Product loadFromDirectory(Path path) {
+        Path file = path.resolve("product.xml");
+        if (Files.exists(file))
+            return new XmlStoredProduct(file.toUri());
+        file = path.resolve("product.json");
+        if (Files.exists(file))
+            return new JsonStoredProduct(file.toUri());
+        throw new UnsupportedOperationException("no supported product file found in: " + path);
     }
 
     private void checkVersion(Version version, Version productVersion, Path path) {
@@ -136,7 +144,7 @@ public class FileSystemRepository extends Repository {
     public void loadActivations() {
         Xml xml = Xml.load(activationsUri());
         for (XmlElement element : xml.elements()) {
-            Version version = Version.parse(element.getAttribute("id"));
+            Version version = Version.parse(element.getAttribute(Id.ATTRIBUTE));
             Optional<Product> product = resolve(version);
             Activation activation = Activation.of(product.get());
             activations.put(activation, version);
@@ -149,7 +157,7 @@ public class FileSystemRepository extends Repository {
 
         for (Entry<Activation, Version> activation : activations.entrySet()) {
             xml.addElement("activation") //
-                    .addAttribute("id", activation.getValue().toString()) //
+                    .setAttribute(Id.ATTRIBUTE, activation.getValue().toString()) //
                     .addText(activation.getKey().toString());
         }
 
@@ -157,7 +165,17 @@ public class FileSystemRepository extends Repository {
     }
 
     public void store(Product product) {
-        Path path = repositoryRoot.resolve(product.version().path()).resolve("");
-        product.saveTo(path.toUri());
+        Path dir = repositoryRoot.resolve(product.version().path());
+        mkdirs(dir);
+        log.debug("save {} to {}", product.version(), dir);
+        product.saveTo(dir);
+    }
+
+    private static void mkdirs(Path dir) {
+        try {
+            Files.createDirectories(dir);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

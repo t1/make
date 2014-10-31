@@ -18,7 +18,7 @@ public class BuildCommand implements Runnable {
     @CliArgument
     private Path repository = Paths.get("~/.somemake");
     @CliArgument
-    private Path input = Paths.get("product.xml");
+    private Path inputDir = Paths.get(".");
     @CliArgument
     private Path pom = Paths.get("pom.xml");
     @CliArgument
@@ -29,7 +29,7 @@ public class BuildCommand implements Runnable {
 
     @Override
     public void run() {
-        log.info("build [{}] repository [{}]", input, repository);
+        log.info("build [{}] repository [{}]", inputDir, repository);
 
         fileSystemRepository = new FileSystemRepository(repository);
         repositories().register(fileSystemRepository);
@@ -53,7 +53,7 @@ public class BuildCommand implements Runnable {
     }
 
     private void loadProduct() {
-        Product unactivatedProduct = fileSystemRepository.load(input);
+        Product unactivatedProduct = fileSystemRepository.loadFromDirectory(inputDir);
         this.product = fileSystemRepository.withActivations(unactivatedProduct);
     }
 

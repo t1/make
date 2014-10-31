@@ -3,7 +3,7 @@ package com.github.t1.somemake.model;
 import static com.github.t1.somemake.model.Repositories.*;
 import static java.util.stream.Collectors.*;
 
-import java.net.URI;
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.*;
@@ -11,46 +11,43 @@ import java.util.function.*;
 import com.google.common.collect.ImmutableList;
 
 public abstract class Product {
-    public static Predicate<? super Product> matching(Type type) {
-        return f -> type.equals(f.type());
+    public static Predicate<Product> matching(Type type) {
+        return new PredicateWithToString<>(p -> type.equals(p.type()), "matching type " + type);
     }
 
     public static Predicate<? super Product> matching(Id id) {
-        return f -> id.equals(f.id());
+        return new PredicateWithToString<>(p -> id.equals(p.id()), "matching id " + id);
     }
 
     public static Predicate<? super Product> matching(Version version) {
-        return f -> version.equals(f.version());
+        return new PredicateWithToString<>(p -> version.equals(p.version()), "matching version " + version);
     }
 
     private static final Id NAME = Type.property("name");
     private static final Id DESCRIPTION = Type.property("description");
     private static final Id RELEASETIMESTAMP = Type.property("releaseTimestamp");
 
-    public Type type() {
-        return id().type();
-    }
+    public abstract Type type();
 
     public boolean hasId() {
         return !id().isEmpty();
     }
 
     public Id id() {
-        return version().id();
+        return type().id(attribute(Id.ATTRIBUTE).orElse(Id.EMPTY));
     }
 
-    public Product id(Id id) {
-        return version(type().id(id.idString()).version(versionString()));
+    public Version version() {
+        return id().version(attribute(Version.ATTRIBUTE).orElse(Version.ANY));
     }
-
-    public abstract Version version();
 
     public String versionString() {
         return version().versionString();
     }
 
-    public Product version(@SuppressWarnings("unused") Version version) {
-        throw changeUnsupportet("version");
+    public Product version(Version version) {
+        attribute(Version.ATTRIBUTE, version.versionString());
+        return this;
     }
 
     public Product versionString(String version) {
@@ -65,7 +62,8 @@ public abstract class Product {
     }
 
     public Product name(String name) {
-        return set(NAME, name);
+        addFeature(NAME, name);
+        return this;
     }
 
 
@@ -76,7 +74,8 @@ public abstract class Product {
     }
 
     public Product description(String description) {
-        return set(DESCRIPTION, description);
+        addFeature(DESCRIPTION, description);
+        return this;
     }
 
 
@@ -89,7 +88,8 @@ public abstract class Product {
     }
 
     public Product releaseTimestamp(LocalDateTime releaseTimestamp) {
-        return set(RELEASETIMESTAMP, releaseTimestamp.toString());
+        addFeature(RELEASETIMESTAMP, releaseTimestamp.toString());
+        return this;
     }
 
 
@@ -182,7 +182,7 @@ public abstract class Product {
         return features().stream().anyMatch(matching(id));
     }
 
-    public Product set(Id id, @SuppressWarnings("unused") String value) {
+    public Product addFeature(Id id, @SuppressWarnings("unused") String value) {
         throw unsupported("setting feature '" + id + "'");
     }
 
@@ -195,6 +195,10 @@ public abstract class Product {
     }
 
     public abstract Optional<String> value();
+
+    public Product value(@SuppressWarnings("unused") String value) {
+        throw unsupported("setting the value");
+    }
 
     @Override
     public String toString() {
@@ -212,7 +216,9 @@ public abstract class Product {
 
     public abstract Optional<String> attribute(String name);
 
-    public Product saveTo(@SuppressWarnings("unused") URI uri) {
+    public abstract Product attribute(String key, String value);
+
+    public Product saveTo(@SuppressWarnings("unused") Path directory) {
         throw unsupported("saving products");
     }
 }

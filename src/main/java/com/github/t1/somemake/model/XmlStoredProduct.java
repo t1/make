@@ -1,8 +1,7 @@
 package com.github.t1.somemake.model;
 
-import java.io.IOException;
 import java.net.URI;
-import java.nio.file.*;
+import java.nio.file.Path;
 import java.util.Optional;
 
 import com.github.t1.xml.*;
@@ -22,28 +21,48 @@ public class XmlStoredProduct extends Product {
     public XmlStoredProduct(Version version) {
         this.xml = Xml.createWithRootElement(version.type().typeName());
 
-        this.xml.addAttribute("id", version.id().idString());
-        this.xml.addAttribute("version", version.versionString());
+        this.xml.setAttribute(Id.ATTRIBUTE, version.id().idString());
+        this.xml.setAttribute(Version.ATTRIBUTE, version.versionString());
     }
 
     @Override
-    public Version version() {
-        Type type = Type.type(xml.getName());
-        String id = xml.getAttribute("id");
-        if (id == null)
-            id = Id.EMPTY;
-        String version = xml.getAttribute("version");
-        if (version == null || version.isEmpty())
-            version = Version.ANY;
-        return type.id(id).version(version);
+    public Type type() {
+        return Type.type(xml.getName());
     }
 
     @Override
-    public Product set(Id id, String value) {
+    public Product version(Version version) {
+        xml.setAttribute(Id.ATTRIBUTE, version.id().idString());
+        xml.setAttribute(Version.ATTRIBUTE, version.versionString());
+        return this;
+    }
+
+    @Override
+    public Product addFeature(Id id, String value) {
         XmlElement element = xml.addElement(id.type().typeName());
         if (!id.isEmpty())
-            element.addAttribute("id", id.idString());
+            element.setAttribute(Id.ATTRIBUTE, id.idString());
         element.value(value);
+        return this;
+    }
+
+    @Override
+    public Product add(Product feature) {
+        Version version = feature.version();
+        XmlElement element = xml.addElement(version.id().type().typeName());
+        if (!version.id().isEmpty()) {
+            element.setAttribute(Id.ATTRIBUTE, version.id().idString());
+            element.setAttribute(Version.ATTRIBUTE, version.versionString());
+        }
+
+        feature.value().ifPresent(v -> xml.value(v));
+
+        for (Product subFrom : feature.features()) {
+            XmlElement subElement = element.addElement(subFrom.type().typeName());
+            XmlStoredProduct subTo = new XmlStoredProduct(subElement);
+            subTo.add(subFrom);
+        }
+
         return this;
     }
 
@@ -73,19 +92,16 @@ public class XmlStoredProduct extends Product {
     }
 
     @Override
-    public Product saveTo(URI uri) {
-        Path dir = Paths.get(uri);
-        mkdirs(dir);
-        uri = dir.resolve("product.xml").toUri();
-        ((Xml) xml).save(uri);
+    public Product attribute(String key, String value) {
+        xml.setAttribute(key, value);
         return this;
     }
 
-    private void mkdirs(Path dir) {
-        try {
-            Files.createDirectories(dir);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    @Override
+    public Product saveTo(Path directory) {
+        Path filePath = directory.resolve("product.xml");
+        URI uri = filePath.toUri();
+        ((Xml) xml).save(uri);
+        return this;
     }
 }

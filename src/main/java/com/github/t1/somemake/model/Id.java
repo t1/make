@@ -7,6 +7,7 @@ import lombok.*;
 @Value
 @AllArgsConstructor
 public class Id {
+    public static final String ATTRIBUTE = "id";
     public static final String EMPTY = "";
     private static final String DELIMITER = ":";
 
