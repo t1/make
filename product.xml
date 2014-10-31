@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<product id="com.github.t1:somemake" version="0.0.1-SNAPSHOT">
+<product id="com.github.t1:make" version="0.0.1-SNAPSHOT">
     <name>some make</name>
     <description>simplifies the description of project build processes</description>
 
     <packaging id="jar">
-        <finalName>somemake</finalName>
-        <Main-Class>com.github.t1.somemake.cli.Main</Main-Class>
+        <finalName>make</finalName>
+        <Main-Class>com.github.t1.make.cli.Main</Main-Class>
     </packaging>
 
     <plugin id="org.apache.maven.plugins:maven-shade-plugin" version="2.3" />

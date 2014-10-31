@@ -7,7 +7,7 @@
     <plugin id="org.apache.maven.plugins:maven-jar-plugin" version="2.4">
         <archive>
             <manifest>
-                <Main-Class>com.github.t1.somemake.Main</Main-Class>
+                <Main-Class>com.github.t1.make.Main</Main-Class>
             </manifest>
         </archive>
     </plugin>

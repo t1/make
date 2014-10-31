@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <!-- pom written by somemake; built from product:com.github.t1:somemake:0.0.1-SNAPSHOT -->
+    <!-- pom written by make; built from product:com.github.t1:make:0.0.1-SNAPSHOT -->
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.t1</groupId>
-    <artifactId>somemake</artifactId>
+    <artifactId>make</artifactId>
     <version>0.0.1-SNAPSHOT</version>
 
     <name>some make</name>
     <description>simplifies the description of project build processes</description>
 
     <build>
-        <finalName>somemake</finalName>
+        <finalName>make</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -22,7 +22,7 @@
                         <addMavenDescriptor>false</addMavenDescriptor>
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <Main-Class>com.github.t1.somemake.cli.Main</Main-Class>
+                            <Main-Class>com.github.t1.make.cli.Main</Main-Class>
                         </manifest>
                     </archive>
                 </configuration>

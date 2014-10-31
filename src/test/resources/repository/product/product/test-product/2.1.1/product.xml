@@ -8,7 +8,7 @@
         <archive>
             <addMavenDescriptor>false</addMavenDescriptor>
             <manifest>
-                <Main-Class>com.github.t1.somemake.Main</Main-Class>
+                <Main-Class>com.github.t1.make.Main</Main-Class>
             </manifest>
         </archive>
     </plugin>
