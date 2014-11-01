@@ -11,5 +11,5 @@ The file used to supersede the `pom` is called `product.xml`, or `product.json` 
 After building `make` with Maven (using `mvn package`), `make` can e.g. build itself:
 
 ```
-java -jar target/make.jar build --repository=target/test-classes/repository --maven=/Users/rdohna/bin/mvn
+java -jar target/make.jar build --repository=target/test-classes/repository
 ```
