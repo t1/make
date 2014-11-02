@@ -16,20 +16,21 @@ public class MainTest {
     public void shouldRunDefaultCommand() {
         new Main().run();
 
-        assertEquals(HELP, out.systemOut().trim());
+        assertThat(out.systemOut().trim(), containsString(HELP));
     }
 
     @Test
     public void shouldRunHelpCommand() {
         new Main("help").run();
 
-        assertEquals(HELP, out.systemOut().trim());
+        assertThat(out.systemOut().trim(), containsString(HELP));
     }
 
     @Test
-    public void shouldRunBuildCommand() {
-        new Main("build").run();
+    public void shouldFailToRunBuildCommandWithInvalidRepositoryPath() {
+        new Main("build", "--repository=dummy").run();
 
-        assertThat(out.systemErr(), startsWith("failed to run [build]: repository path ~/.make not found"));
+        assertThat(out.systemErr(),
+                containsString("failed to run [build --repository=dummy]: repository path [dummy] not found"));
     }
 }

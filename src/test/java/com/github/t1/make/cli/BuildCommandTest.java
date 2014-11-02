@@ -21,4 +21,15 @@ public class BuildCommandTest {
 
         assertEquals(readFile(ORIGINAL_POM), readFile(buildCommand.pom()));
     }
+
+    @Test
+    public void shouldResolveDefaultRepository() {
+        BuildCommand buildCommand = new BuildCommand().maven(ECHO).pom(TEST_POM);
+        buildCommand.run(); // instantiate file system repository
+
+        assertEquals(Paths.get("~/.make"), buildCommand.repository());
+        assertEquals( //
+                Paths.get(System.getProperty("user.home")).resolve(".make"), //
+                buildCommand.fileSystemRepository().repositoryRoot());
+    }
 }

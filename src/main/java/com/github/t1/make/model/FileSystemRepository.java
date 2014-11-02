@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 
-import lombok.NonNull;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import com.github.t1.xml.*;
@@ -15,15 +15,22 @@ import com.google.common.collect.ImmutableList;
 
 @Slf4j
 public class FileSystemRepository extends Repository {
+    @Getter
     private final Path repositoryRoot;
     private final Map<Activation, Version> activations = new LinkedHashMap<>();
 
     public FileSystemRepository(Path repositoryRoot) {
-        this.repositoryRoot = check(repositoryRoot);
+        this.repositoryRoot = check(resolved(repositoryRoot));
 
         if (Files.isReadable(activationsPath())) {
             loadActivations();
         }
+    }
+
+    private Path resolved(Path path) {
+        if (path.startsWith("~/"))
+            path = Paths.get(System.getProperty("user.home")).resolve(path.toString().substring(2));
+        return path;
     }
 
     public URI activationsUri() {
@@ -36,7 +43,7 @@ public class FileSystemRepository extends Repository {
 
     private Path check(Path repositoryRoot) {
         if (!Files.isDirectory(repositoryRoot))
-            throw new IllegalArgumentException("repository path " + repositoryRoot + " not found");
+            throw new IllegalArgumentException("repository path [" + repositoryRoot + "] not found");
         return repositoryRoot;
     }
 
