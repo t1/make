@@ -8,6 +8,10 @@
         <Main-Class>com.github.t1.make.cli.Main</Main-Class>
     </packaging>
 
+    <!-- <compilerArgument>-parameters</compilerArgument> -->
+    <!-- Java 8 javadoc is way to strict; see http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html -->
+    <!-- <compilerArgument>-Xdoclint:none</compilerArgument> -->
+
     <plugin id="org.apache.maven.plugins:maven-shade-plugin" version="2.3" />
 
     <dependency id="org.projectlombok:lombok" version="1.14.6" />
