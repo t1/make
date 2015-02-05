@@ -27,10 +27,12 @@ public class MainTest {
     }
 
     @Test
+    @Ignore("this test overwrites make/pom.xml with an empty file")
     public void shouldFailToRunBuildCommandWithInvalidRepositoryPath() {
         new Main("build", "--repository=dummy").run();
 
-        assertThat(out.systemErr(),
-                containsString("failed to run [build --repository=dummy]: repository path [dummy] not found"));
+        assertThat(
+                out.systemErr(),
+                containsString("failed to run [build --repository=dummy]: no features found [matching type plugin] in packaging:jar"));
     }
 }

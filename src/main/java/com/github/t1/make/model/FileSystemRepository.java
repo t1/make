@@ -41,11 +41,8 @@ public class FileSystemRepository extends Repository {
         return repositoryRoot.resolve("activations.xml");
     }
 
-    @SneakyThrows(IOException.class)
     private Path check(Path repositoryRoot) {
-        if (!Files.exists(repositoryRoot))
-            Files.createDirectories(repositoryRoot);
-        if (!Files.isDirectory(repositoryRoot))
+        if (Files.exists(repositoryRoot) && !Files.isDirectory(repositoryRoot))
             throw new IllegalArgumentException("repository path [" + repositoryRoot + "] is not a directory");
         return repositoryRoot;
     }
