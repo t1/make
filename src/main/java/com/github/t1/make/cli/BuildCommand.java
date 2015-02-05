@@ -11,16 +11,22 @@ import lombok.extern.slf4j.Slf4j;
 import com.github.t1.make.model.*;
 import com.github.t1.make.pom.PomWriter;
 
-@Getter
-@Setter
 @Slf4j
 public class BuildCommand implements Runnable {
+    @Getter
+    @Setter
     @CliArgument
     private Path repository = Paths.get("~/.make");
+    @Getter
+    @Setter
     @CliArgument
     private Path inputDir = Paths.get(".");
+    @Getter
+    @Setter
     @CliArgument
     private Path pom = Paths.get("pom.xml");
+    @Getter
+    @Setter
     @CliArgument
     private Path maven = Paths.get("mvn");
 
@@ -30,9 +36,6 @@ public class BuildCommand implements Runnable {
     @Override
     public void run() {
         log.info("build [{}] repository [{}]", inputDir, repository);
-
-        fileSystemRepository = new FileSystemRepository(repository);
-        repositories().register(fileSystemRepository);
 
         timed("  build", () -> {
             timed("    load product", () -> loadProduct());
@@ -53,8 +56,14 @@ public class BuildCommand implements Runnable {
     }
 
     private void loadProduct() {
-        Product unactivatedProduct = fileSystemRepository.loadFromDirectory(inputDir);
-        this.product = fileSystemRepository.withActivations(unactivatedProduct);
+        Product unactivatedProduct = fileSystemRepository().loadFromDirectory(inputDir);
+        this.product = fileSystemRepository().withActivations(unactivatedProduct);
+    }
+
+    public FileSystemRepository fileSystemRepository() {
+        fileSystemRepository = new FileSystemRepository(repository);
+        repositories().register(fileSystemRepository);
+        return fileSystemRepository;
     }
 
     private void writePom() {

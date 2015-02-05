@@ -25,7 +25,6 @@ public class BuildCommandTest {
     @Test
     public void shouldResolveDefaultRepository() {
         BuildCommand buildCommand = new BuildCommand().maven(ECHO).pom(TEST_POM);
-        buildCommand.run(); // instantiate file system repository
 
         assertEquals(Paths.get("~/.make"), buildCommand.repository());
         assertEquals( //
