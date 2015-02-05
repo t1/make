@@ -41,15 +41,15 @@ class PackagingWriter extends PomSectionWriter {
     private void copyPlugin(XmlElement to) {
         Product from = product.feature(matching(PLUGIN));
         gav(from.version(), to);
-        copyProperties(from, to);
+        copyFeatures(from, to);
     }
 
-    private void copyProperties(Product from, XmlElement element) {
+    private void copyFeatures(Product from, XmlElement element) {
         XmlElement configurationElement = null;
-        for (Product property : from.features()) {
+        for (Product product : from.features()) {
             if (configurationElement == null)
                 configurationElement = element.addElement("configuration");
-            copy(property, configurationElement);
+            copy(product, configurationElement);
         }
     }
 

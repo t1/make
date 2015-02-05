@@ -23,9 +23,9 @@ public abstract class Product {
         return new PredicateWithToString<>(p -> version.equals(p.version()), "matching version " + version);
     }
 
-    private static final Id NAME = Type.property("name");
-    private static final Id DESCRIPTION = Type.property("description");
-    private static final Id RELEASETIMESTAMP = Type.property("releaseTimestamp");
+    private static final Id NAME = Type.emptyId("name");
+    private static final Id DESCRIPTION = Type.emptyId("description");
+    private static final Id RELEASETIMESTAMP = Type.emptyId("releaseTimestamp");
 
     public abstract Type type();
 

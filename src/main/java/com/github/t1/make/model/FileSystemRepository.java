@@ -33,18 +33,18 @@ public class FileSystemRepository extends Repository {
         return path;
     }
 
+    private Path check(Path repositoryRoot) {
+        if (Files.exists(repositoryRoot) && !Files.isDirectory(repositoryRoot))
+            throw new IllegalArgumentException("repository path [" + repositoryRoot + "] is not a directory");
+        return repositoryRoot;
+    }
+
     public URI activationsUri() {
         return activationsPath().toUri();
     }
 
     public Path activationsPath() {
         return repositoryRoot.resolve("activations.xml");
-    }
-
-    private Path check(Path repositoryRoot) {
-        if (Files.exists(repositoryRoot) && !Files.isDirectory(repositoryRoot))
-            throw new IllegalArgumentException("repository path [" + repositoryRoot + "] is not a directory");
-        return repositoryRoot;
     }
 
     @Override

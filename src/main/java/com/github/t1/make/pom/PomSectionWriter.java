@@ -28,13 +28,13 @@ abstract class PomSectionWriter {
         to.addElement(Version.ATTRIBUTE).addText(from.versionString());
     }
 
-    protected void addProperty(XmlElement to, String name, Optional<String> value) {
+    protected void addFeature(XmlElement to, String name, Optional<String> value) {
         if (value.isPresent()) {
             to.addElement(name).addText(value.get());
         }
     }
 
-    protected void addProperty(XmlElement to, Id id) {
+    protected void addFeature(XmlElement to, Id id) {
         if (product.hasFeature(id)) {
             to.addElement(id.type().typeName()).addText(product.feature(id).value().get());
         }

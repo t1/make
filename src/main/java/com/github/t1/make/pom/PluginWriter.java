@@ -33,40 +33,40 @@ class PluginWriter extends PomSectionWriter {
     private static XmlElement addPlugin(Product product, XmlElement out) {
         XmlElement element = out.addElement("plugin");
         gav(product.version(), element);
-        copyProperties(product, element);
+        copyFeatures(product, element);
         return element;
     }
 
-    private static void copyProperties(Product product, XmlElement element) {
+    private static void copyFeatures(Product product, XmlElement element) {
         XmlElement configuration = null;
         XmlElement executions = null;
 
-        for (Product property : product.features()) {
-            if (property.type().is("inherited")) {
-                element.addElement("inherited").addText(property.value().orElse("true"));
-            } else if (property.type().is("execution")) {
+        for (Product feature : product.features()) {
+            if (feature.type().is("inherited")) {
+                element.addElement("inherited").addText(feature.value().orElse("true"));
+            } else if (feature.type().is("execution")) {
                 if (executions == null)
                     executions = element.addElement("executions");
                 XmlElement execution = executions.addElement("execution");
-                addPhase(property, execution);
-                addGoals(property, execution.addElement("goals"));
+                addPhase(feature, execution);
+                addGoals(feature, execution.addElement("goals"));
             } else {
                 if (configuration == null)
                     configuration = element.addElement("configuration");
-                copy(property, configuration);
+                copy(feature, configuration);
             }
         }
     }
 
-    private static void addPhase(Product property, XmlElement execution) {
-        Optional<String> phase = property.attribute("phase");
+    private static void addPhase(Product product, XmlElement execution) {
+        Optional<String> phase = product.attribute("phase");
         if (!phase.isPresent())
             throw new RuntimeException("execution requires a phase attribute");
         execution.addElement("phase").addText(phase.get());
     }
 
-    private static void addGoals(Product property, XmlElement goalsElement) {
-        Optional<String> goalsString = property.attribute("goals");
+    private static void addGoals(Product product, XmlElement goalsElement) {
+        Optional<String> goalsString = product.attribute("goals");
         if (!goalsString.isPresent())
             throw new RuntimeException("execution requires a goals attribute");
         for (String goal : goalsString.get().split(",")) {

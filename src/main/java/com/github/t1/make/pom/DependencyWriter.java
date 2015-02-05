@@ -52,7 +52,7 @@ class DependencyWriter extends PomSectionWriter {
         }
     }
 
-    private static final Id SCOPE = property("scope");
+    private static final Id SCOPE = emptyId("scope");
 
     public DependencyWriter(Product product) {
         super(product);
@@ -64,11 +64,11 @@ class DependencyWriter extends PomSectionWriter {
 
         gav(element);
 
-        addProperty(element, SCOPE);
-        addProperty(element, property("classifier"));
-        addProperty(element, property("optional"));
-        addProperty(element, property("systemPath"));
-        addProperty(element, property("type"));
+        addFeature(element, SCOPE);
+        addFeature(element, emptyId("classifier"));
+        addFeature(element, emptyId("optional"));
+        addFeature(element, emptyId("systemPath"));
+        addFeature(element, emptyId("type"));
 
         copyExlusions(element);
 

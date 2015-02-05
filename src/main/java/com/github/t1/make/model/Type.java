@@ -22,7 +22,7 @@ public class Type {
         return type("plugin").id(id);
     }
 
-    public static Id property(String type) {
+    public static Id emptyId(String type) {
         return type(type).id(Id.EMPTY);
     }
 

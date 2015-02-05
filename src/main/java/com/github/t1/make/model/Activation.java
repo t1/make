@@ -37,7 +37,7 @@ public interface Activation {
         }
     }
 
-    public static final Id ACTIVATION = Type.property("activation");
+    public static final Id ACTIVATION = Type.emptyId("activation");
 
     public static Activation of(Product product) {
         String activationExpression = product.feature(ACTIVATION).value().get();
