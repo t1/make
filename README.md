@@ -1,4 +1,4 @@
-# make
+# make [![Build Status](https://drone.io/github.com/t1/make/status.png)](https://drone.io/github.com/t1/make/latest)
 
 This is an experiment. It takes the concepts of [Maven](http://maven.apache.org) (namely that you specify the _what_, not the _how_) and pushes them to the next level by showing that it's possible to describe builds more concise, more uniformly, and more to-the-point. I.e. if you want e.g. a Java EE 7 WAR, you only specify that this is what you want, and the know-how required to build it, is expressed [OAOO](http://c2.com/cgi/wiki?OnceAndOnlyOnce) in a repository.
 
