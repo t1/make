@@ -56,8 +56,9 @@ public class BuildCommand implements Runnable {
     }
 
     private void loadProduct() {
-        Product unactivatedProduct = fileSystemRepository().loadFromDirectory(inputDir);
-        this.product = fileSystemRepository().withActivations(unactivatedProduct);
+        FileSystemRepository repo = fileSystemRepository();
+        Product unactivatedProduct = repo.loadFromDirectory(inputDir);
+        this.product = repo.withActivations(unactivatedProduct);
     }
 
     public FileSystemRepository fileSystemRepository() {

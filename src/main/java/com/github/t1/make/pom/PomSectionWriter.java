@@ -1,6 +1,5 @@
 package com.github.t1.make.pom;
 
-import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 
 import java.nio.file.*;
@@ -46,15 +45,17 @@ abstract class PomSectionWriter {
         if (list.isEmpty())
             return;
 
-        XmlElement sectionElement = getOrCreateSectionElement(out, sectionAnnotation.to());
+        XmlElement sectionElement = getOrCreateSectionElement(out, sectionAnnotation);
 
         for (Product feature : list) {
             createWriter(type, feature).addTo(sectionElement);
         }
     }
 
-    private XmlElement getOrCreateSectionElement(XmlElement out, String to) {
-        Path path = Paths.get(to);
+    private XmlElement getOrCreateSectionElement(XmlElement out, PomSection sectionAnnotation) {
+        Path path = Paths.get(sectionAnnotation.to());
+        if (path.toString().isEmpty())
+            throw new IllegalArgumentException("PomSection annotation must not be empty");
         if (!out.hasChildElement(path))
             out.nl();
         XmlElement sectionElement = out.getOrCreateElement(path);
@@ -69,9 +70,9 @@ abstract class PomSectionWriter {
         return sectionAnnotation;
     }
 
-    protected List<Product> featuresOfType(String... types) {
+    protected List<Product> featuresOfType(String type) {
         return product.features().stream().filter(p -> {
-            return stream(types).anyMatch(type -> p.type().is(type));
+            return p.type().is(type);
         }).collect(toList());
     }
 
