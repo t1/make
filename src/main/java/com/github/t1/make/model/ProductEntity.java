@@ -9,6 +9,7 @@ import lombok.*;
 import com.google.common.collect.ImmutableList;
 
 @RequiredArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class ProductEntity extends Product {
     @Getter
     private final Version version;

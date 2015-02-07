@@ -115,7 +115,11 @@ public abstract class Product {
     private void resolve(List<Product> out, Product feature) {
         if (feature.hasId()) {
             Product merged = repositories().merge(feature);
-            merge(out, merged);
+            if (merged.equals(feature)) {
+                out.add(feature);
+            } else {
+                merge(out, merged);
+            }
         } else {
             out.add(feature);
         }
@@ -214,6 +218,10 @@ public abstract class Product {
         return out.toString();
     }
 
+    public boolean hasAttribute(String name) {
+        return attribute(name).isPresent();
+    }
+
     public abstract Optional<String> attribute(String name);
 
     public abstract Product attribute(String key, String value);
@@ -221,4 +229,10 @@ public abstract class Product {
     public Product saveTo(@SuppressWarnings("unused") Path directory) {
         throw unsupported("saving products");
     }
+
+    @Override
+    public abstract boolean equals(Object obj);
+
+    @Override
+    public abstract int hashCode();
 }

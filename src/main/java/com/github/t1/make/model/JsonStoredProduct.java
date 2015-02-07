@@ -7,11 +7,12 @@ import java.util.*;
 
 import javax.json.*;
 
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 import com.google.common.collect.ImmutableList;
 
 @AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 public class JsonStoredProduct extends Product {
     private static final String ATTRIBUTE_PREFIX = "-";
 

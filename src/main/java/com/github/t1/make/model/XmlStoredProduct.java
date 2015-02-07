@@ -4,9 +4,12 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import lombok.EqualsAndHashCode;
+
 import com.github.t1.xml.*;
 import com.google.common.collect.ImmutableList;
 
+@EqualsAndHashCode(callSuper = false)
 public class XmlStoredProduct extends Product {
     private final XmlElement xml;
 
