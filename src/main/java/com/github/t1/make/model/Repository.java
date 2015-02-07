@@ -1,6 +1,6 @@
 package com.github.t1.make.model;
 
-import java.util.Optional;
+import java.util.*;
 
 import org.slf4j.*;
 
@@ -26,21 +26,18 @@ public abstract class Repository {
     public abstract ImmutableList<Activation> activations();
 
     public final Product withActivations(Product product) {
-        Product productActivations = null;
+        List<Product> productActivations = new ArrayList<>();
         for (Activation activation : activations()) {
             Version version = version(activation);
             if (version.equals(product.version()))
                 continue;
             if (activation.active()) {
-                if (productActivations == null)
-                    productActivations = new ProductEntity(product.version());
                 LOG.debug("activate {}", version);
-                productActivations.add(resolve(version).get());
+                Product activatedProduct = resolve(version).get();
+                productActivations.add(activatedProduct);
             }
         }
-        if (productActivations == null)
-            return product;
-        return new MergedProduct(product, productActivations);
+        return MergedProduct.merged(product, productActivations);
     }
 
     public abstract Version version(Activation activation);

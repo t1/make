@@ -44,58 +44,55 @@ public class MergedProductTest {
     }
 
     @Test
-    public void shouldNotMergeDifferentType() {
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("types of products to be merged don't match");
+    public void shouldMergeDifferentTypes() {
+        Product mergedProduct = merged(master, new ProductEntity(Version.parse("stuff:x:1.0")));
 
-        merged(master, new ProductEntity(Version.parse("stuff:x:1.0")));
+        assertEquals(master.type(), mergedProduct.type());
     }
 
     @Test
-    public void shouldNotMergeDifferentId() {
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("ids of products to be merged don't match");
+    public void shouldMergeDifferentId() {
+        Product mergedProduct = merged(master, new ProductEntity(Version.parse("product:y:1.0")));
 
-        merged(master, new ProductEntity(Version.parse("product:y:1.0")));
+        assertEquals(master.id(), mergedProduct.id());
     }
 
     @Test
     public void shouldNotMergeDifferentVersion() {
-        expectedException.expect(IllegalArgumentException.class);
-        expectedException.expectMessage("versions of products to be merged don't match");
+        Product mergedProduct = merged(master, new ProductEntity(Version.parse("product:x:2.0")));
 
-        merged(master, new ProductEntity(Version.parse("product:x:2.0")));
+        assertEquals(master.version(), mergedProduct.version());
     }
 
     @Test
     public void shouldMergeEquals() {
-        MergedProduct merged1 = new MergedProduct(master, servant);
-        MergedProduct merged2 = new MergedProduct(master, servant);
+        Product merged1 = merged(master, servant);
+        Product merged2 = merged(master, servant);
 
         assertEquals(merged2, merged1);
     }
 
     @Test
     public void shouldMergeTypeIdAndVersion() {
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals(VERSION.type(), merged.type());
-        assertEquals(VERSION.id(), merged.id());
-        assertEquals(VERSION, merged.version());
+        assertEquals(VERSION.type(), mergedProduct.type());
+        assertEquals(VERSION.id(), mergedProduct.id());
+        assertEquals(VERSION, mergedProduct.version());
     }
 
     @Test
     public void shouldMergeWildcardVersion() {
-        MergedProduct merged = new MergedProduct(new ProductEntity(Version.parse("product:x:1.*")), servant);
+        Product mergedProduct = merged(new ProductEntity(Version.parse("product:x:1.*")), servant);
 
-        assertEquals(VERSION, merged.version());
+        assertEquals(VERSION, mergedProduct.version());
     }
 
     @Test
     public void shouldMergeEmptyName() {
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals(Optional.empty(), merged.name());
+        assertEquals(Optional.empty(), mergedProduct.name());
     }
 
     @Test
@@ -103,25 +100,25 @@ public class MergedProductTest {
         master.name("master");
         servant.name("servant");
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals("master", merged.name().get());
+        assertEquals("master", mergedProduct.name().get());
     }
 
     @Test
     public void shouldMergeServantName() {
         servant.name("servant");
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals("servant", merged.name().get());
+        assertEquals("servant", mergedProduct.name().get());
     }
 
     @Test
     public void shouldMergeEmptyDescription() {
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals(Optional.empty(), merged.description());
+        assertEquals(Optional.empty(), mergedProduct.description());
     }
 
     @Test
@@ -129,25 +126,25 @@ public class MergedProductTest {
         master.description("master");
         servant.description("servant");
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals("master", merged.description().get());
+        assertEquals("master", mergedProduct.description().get());
     }
 
     @Test
     public void shouldMergeServantDescription() {
         servant.description("servant");
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals("servant", merged.description().get());
+        assertEquals("servant", mergedProduct.description().get());
     }
 
     @Test
     public void shouldMergeEmptyReleaseTimestamp() {
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals(Optional.empty(), merged.releaseTimestamp());
+        assertEquals(Optional.empty(), mergedProduct.releaseTimestamp());
     }
 
     @Test
@@ -155,25 +152,25 @@ public class MergedProductTest {
         master.releaseTimestamp(LocalDateTime.now());
         servant.releaseTimestamp(LocalDateTime.now().plusDays(1));
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals(master.releaseTimestamp(), merged.releaseTimestamp());
+        assertEquals(master.releaseTimestamp(), mergedProduct.releaseTimestamp());
     }
 
     @Test
     public void shouldMergeServantReleaseTimestamp() {
         servant.releaseTimestamp(LocalDateTime.now());
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals(servant.releaseTimestamp(), merged.releaseTimestamp());
+        assertEquals(servant.releaseTimestamp(), mergedProduct.releaseTimestamp());
     }
 
     @Test
     public void shouldMergeEmptyValue() {
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals(Optional.empty(), merged.value());
+        assertEquals(Optional.empty(), mergedProduct.value());
     }
 
     @Test
@@ -181,34 +178,34 @@ public class MergedProductTest {
         master.value("master");
         servant.value("servant");
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals("master", merged.value().get());
+        assertEquals("master", mergedProduct.value().get());
     }
 
     @Test
     public void shouldMergeServantValue() {
         servant.value("servant");
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals("servant", merged.value().get());
+        assertEquals("servant", mergedProduct.value().get());
     }
 
     @Test
     public void shouldNotImplementUnresolvedFeatures() {
         expectedException.expect(UnsupportedOperationException.class);
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        merged.unresolvedFeatures();
+        mergedProduct.unresolvedFeatures();
     }
 
     @Test
     public void shouldMergeEmptyGetAttribute() {
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals(Optional.empty(), merged.attribute("atr"));
+        assertEquals(Optional.empty(), mergedProduct.attribute("atr"));
     }
 
     @Test
@@ -216,25 +213,25 @@ public class MergedProductTest {
         master.attribute("atr", "master");
         servant.attribute("atr", "servant");
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals("master", merged.attribute("atr").get());
+        assertEquals("master", mergedProduct.attribute("atr").get());
     }
 
     @Test
     public void shouldMergeServantGetAttribute() {
         servant.attribute("atr", "servant");
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals("servant", merged.attribute("atr").get());
+        assertEquals("servant", mergedProduct.attribute("atr").get());
     }
 
     @Test
     public void shouldMergeEmptySetAttributeToMaster() {
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        merged.attribute("atr", "value");
+        mergedProduct.attribute("atr", "value");
 
         assertEquals("value", master.attribute("atr").get());
         assertEquals(Optional.empty(), servant.attribute("atr"));
@@ -244,9 +241,9 @@ public class MergedProductTest {
     public void shouldMergeMasterSetAttributeToMaster() {
         master.attribute("atr", "master");
         servant.attribute("atr", "servant");
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        merged.attribute("atr", "value");
+        mergedProduct.attribute("atr", "value");
 
         assertEquals("value", master.attribute("atr").get());
         assertEquals("servant", servant.attribute("atr").get());
@@ -255,9 +252,9 @@ public class MergedProductTest {
     @Test
     public void shouldMergeServantSetAttributeToServant() {
         servant.attribute("atr", "servant");
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        merged.attribute("atr", "value");
+        mergedProduct.attribute("atr", "value");
 
         assertEquals(Optional.empty(), master.attribute("atr"));
         assertEquals("value", servant.attribute("atr").get());
@@ -265,27 +262,27 @@ public class MergedProductTest {
 
     @Test
     public void shouldMergeEmptyFeatures() {
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals(ImmutableList.of(), merged.features());
+        assertEquals(ImmutableList.of(), mergedProduct.features());
     }
 
     @Test
     public void shouldMergeMasterFeature() {
         master.add(FEATURE);
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals(ImmutableList.of(FEATURE), merged.features());
+        assertEquals(ImmutableList.of(FEATURE), mergedProduct.features());
     }
 
     @Test
     public void shouldMergeServantFeature() {
         servant.add(FEATURE);
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals(ImmutableList.of(FEATURE), merged.features());
+        assertEquals(ImmutableList.of(FEATURE), mergedProduct.features());
     }
 
     @Test
@@ -293,13 +290,13 @@ public class MergedProductTest {
         master.add(FEATURE);
         servant.add(new ProductEntity(FEATURE_ID.version("2")));
 
-        MergedProduct merged = new MergedProduct(master, servant);
+        Product mergedProduct = merged(master, servant);
 
-        assertEquals(ImmutableList.of(FEATURE), merged.features());
+        assertEquals(ImmutableList.of(FEATURE), mergedProduct.features());
     }
 
     @Test
     public void shouldNotCrashOnToString() {
-        new MergedProduct(master, servant).toString();
+        merged(master, servant).toString();
     }
 }

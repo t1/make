@@ -3,7 +3,6 @@
     <name>make</name>
     <description>simplifies the description of project build processes</description>
 
-    <property id="project.build.sourceEncoding">UTF-8</property>
     <property id="project.reporting.outputEncoding">UTF-8</property>
 
     <packaging id="jar">

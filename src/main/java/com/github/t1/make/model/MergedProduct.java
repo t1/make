@@ -11,44 +11,32 @@ import com.google.common.collect.ImmutableList;
 
 @EqualsAndHashCode(callSuper = false)
 public class MergedProduct extends Product {
+    public static Product merged(Product product, List<Product> other) {
+        if (other.isEmpty())
+            return product;
+        List<Product> products = new ArrayList<>();
+        products.add(product);
+        products.addAll(other);
+        return new MergedProduct(products);
+    }
+
     public static Product merged(Product first, Product second, Product... other) {
-        return new MergedProduct(first, second, other);
+        List<Product> products = new ArrayList<>();
+        products.add(first);
+        products.add(second);
+        products.addAll(asList(other));
+        return new MergedProduct(products);
     }
 
-    private final List<Product> products = new ArrayList<>();
+    private final List<Product> products;
 
-    public MergedProduct(Product first, Product second, Product... other) {
-        this.products.add(first);
-        this.products.add(second);
-        this.products.addAll(asList(other));
-
-        checkVersions();
-    }
-
-    private void checkVersions() {
-        Version referenceVersion = firstProduct().version();
-        for (Product referencedProduct : this.products.subList(1, this.products.size())) {
-            check(referenceVersion, referencedProduct.version());
-        }
+    public MergedProduct(List<Product> products) {
+        assert !products.isEmpty();
+        this.products = products;
     }
 
     private Product firstProduct() {
         return this.products.get(0);
-    }
-
-    private void check(Version master, Version servant) {
-        if (!master.type().equals(servant.type()))
-            throw new IllegalArgumentException("types of products to be merged don't match\n" //
-                    + "master: " + master.type() + "\n" //
-                    + "servant: " + servant.type());
-        if (!master.id().equals(servant.id()))
-            throw new IllegalArgumentException("ids of products to be merged don't match\n" //
-                    + "master: " + master.id() + "\n" //
-                    + "servant: " + servant.id());
-        if (!master.matches(servant))
-            throw new IllegalArgumentException("versions of products to be merged don't match\n" //
-                    + "master: " + master.versionString() + "\n" //
-                    + "servant: " + servant.versionString());
     }
 
     @Override
