@@ -27,7 +27,6 @@ public class MainTest {
     }
 
     @Test
-    @Ignore("this test overwrites make/pom.xml with an empty file")
     public void shouldFailToRunBuildCommandWithInvalidRepositoryPath() {
         new Main("build", "--repository=dummy").run();
 

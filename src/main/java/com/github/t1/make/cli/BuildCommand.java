@@ -1,6 +1,7 @@
 package com.github.t1.make.cli;
 
 import static com.github.t1.make.model.Repositories.*;
+import static java.nio.file.StandardCopyOption.*;
 
 import java.io.*;
 import java.nio.file.*;
@@ -68,8 +69,12 @@ public class BuildCommand implements Runnable {
     }
 
     private void writePom() {
-        try (FileWriter out = new FileWriter(pom.toFile())) {
-            new PomWriter(product).writeTo(out);
+        try {
+            Path tempFile = Files.createTempFile("temp-pom", ".xml");
+            try (FileWriter out = new FileWriter(tempFile.toFile())) {
+                new PomWriter(product).writeTo(out);
+            }
+            Files.move(tempFile, pom, REPLACE_EXISTING);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
