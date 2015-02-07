@@ -42,11 +42,11 @@ public abstract class AbstractTest {
         ;
     }
 
-    protected Product newProduct(Id id, String version) {
+    protected final Product newProduct(Id id, String version) {
         return newProduct(id.version(version));
     }
 
-    protected Product newProduct(Version version) {
+    protected final Product newProduct(Version version) {
         return new ProductEntity(version);
     }
 }

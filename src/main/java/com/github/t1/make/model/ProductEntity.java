@@ -1,7 +1,5 @@
 package com.github.t1.make.model;
 
-import static com.github.t1.make.model.Version.*;
-
 import java.util.*;
 
 import lombok.*;
@@ -42,8 +40,8 @@ public class ProductEntity extends Product {
     }
 
     @Override
-    public Product addFeature(Id id, String value) {
-        ProductEntity feature = new ProductEntity(id.version(ANY));
+    public Product addFeature(Version version, String value) {
+        ProductEntity feature = new ProductEntity(version);
         feature.value(value);
         add(feature);
         return this;

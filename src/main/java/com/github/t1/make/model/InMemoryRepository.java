@@ -16,9 +16,7 @@ public class InMemoryRepository extends Repository {
     @Override
     public Optional<Product> resolve(Version version) {
         Product product = products.get(version);
-        if (product == null)
-            return Optional.empty();
-        return Optional.of(product);
+        return Optional.ofNullable(product);
     }
 
 

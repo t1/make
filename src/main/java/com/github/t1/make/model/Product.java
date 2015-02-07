@@ -1,6 +1,7 @@
 package com.github.t1.make.model;
 
 import static com.github.t1.make.model.Repositories.*;
+import static com.github.t1.make.model.Version.*;
 import static java.util.stream.Collectors.*;
 
 import java.nio.file.Path;
@@ -186,8 +187,12 @@ public abstract class Product {
         return features().stream().anyMatch(matching(id));
     }
 
-    public Product addFeature(Id id, @SuppressWarnings("unused") String value) {
-        throw unsupported("setting feature '" + id + "'");
+    public Product addFeature(Id id, String value) {
+        return addFeature(id.version(ANY), value);
+    }
+
+    public Product addFeature(Version version, @SuppressWarnings("unused") String value) {
+        throw unsupported("adding feature '" + version + "'");
     }
 
     public Product add(@SuppressWarnings("unused") Product feature) {

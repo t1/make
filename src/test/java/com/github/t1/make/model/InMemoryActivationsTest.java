@@ -25,6 +25,7 @@ public class InMemoryActivationsTest extends AbstractActivationsTest {
     private void givenActivationWithExpression(Version version, String expression) {
         ProductEntity product = new ProductEntity(version);
         product.addFeature(ACTIVATION, expression);
+        product.addFeature(MAVEN_COMPILER_PLUGIN_3_1, "active");
         memRepository.put(product);
     }
 

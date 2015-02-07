@@ -9,10 +9,13 @@ import org.junit.*;
 import com.google.common.collect.ImmutableList;
 
 public abstract class AbstractActivationsTest extends AbstractFileRepositoryTest {
-    protected static final Id JAVAC = plugin("compiler.java");
+    private static final Id JAVAC = plugin("compiler.java");
     protected static final Version JAVAC_3_1 = JAVAC.version("3.1");
     protected static final Version JAVAC_0_0 = JAVAC.version("0.0");
     protected static final Version SCALA_0_1 = plugin("compiler.scala").version("0.1");
+
+    protected static final Id MAVEN_COMPILER_PLUGIN = plugin("org.apache.maven.plugins:maven-compiler-plugin");
+    protected static final Version MAVEN_COMPILER_PLUGIN_3_1 = MAVEN_COMPILER_PLUGIN.version("3.1");
 
     protected static final Version TEST_PRODUCT_VERSION = product("product:test-product").version("1.0");
 
@@ -67,8 +70,8 @@ public abstract class AbstractActivationsTest extends AbstractFileRepositoryTest
 
         Product product = repository().get(TEST_PRODUCT_VERSION);
 
-        assertTrue("did not activate javac", product.hasFeature(JAVAC));
-        assertEquals(JAVAC_3_1, product.feature(JAVAC).version());
+        assertTrue("did not activate javac", product.hasFeature(MAVEN_COMPILER_PLUGIN));
+        assertEquals(MAVEN_COMPILER_PLUGIN_3_1, product.feature(MAVEN_COMPILER_PLUGIN).version());
     }
 
     @Test
@@ -78,7 +81,7 @@ public abstract class AbstractActivationsTest extends AbstractFileRepositoryTest
 
         Product product = repository().resolve(TEST_PRODUCT_VERSION).get();
 
-        assertFalse("didn't expect to activate javac", product.hasFeature(JAVAC));
+        assertFalse("didn't expect to activate javac", product.hasFeature(MAVEN_COMPILER_PLUGIN));
     }
 
     @Test
@@ -88,6 +91,6 @@ public abstract class AbstractActivationsTest extends AbstractFileRepositoryTest
 
         Product product = repository().resolve(TEST_PRODUCT_VERSION).get();
 
-        assertFalse("didn't expect to activate javac", product.hasFeature(JAVAC));
+        assertFalse("didn't expect to activate javac", product.hasFeature(MAVEN_COMPILER_PLUGIN));
     }
 }
