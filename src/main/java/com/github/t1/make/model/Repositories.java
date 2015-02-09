@@ -3,6 +3,7 @@ package com.github.t1.make.model;
 import static com.github.t1.make.model.MergedProduct.*;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Repositories {
     private static final Repositories INSTANCE = new Repositories();
@@ -16,6 +17,10 @@ public class Repositories {
     public Repositories register(Repository repository) {
         repositories.add(repository);
         return this;
+    }
+
+    public Stream<Repository> stream() {
+        return repositories.stream();
     }
 
     public Repositories deregister(Repository repository) {

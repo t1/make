@@ -27,8 +27,5 @@ public class BuildCommandTest {
         BuildCommand buildCommand = new BuildCommand().maven(ECHO).pom(TEST_POM);
 
         assertEquals(Paths.get("~/.make"), buildCommand.repository());
-        assertEquals( //
-                Paths.get(System.getProperty("user.home")).resolve(".make"), //
-                buildCommand.fileSystemRepository().repositoryRoot());
     }
 }

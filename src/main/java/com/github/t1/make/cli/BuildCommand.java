@@ -31,7 +31,6 @@ public class BuildCommand implements Runnable {
     @CliArgument
     private Path maven = Paths.get("mvn");
 
-    private FileSystemRepository fileSystemRepository;
     private Product product;
 
     @Override
@@ -39,11 +38,17 @@ public class BuildCommand implements Runnable {
         log.info("build [{}] repository [{}]", inputDir, repository);
         log.debug("  pom [{}] maven [{}]", pom, maven);
 
-        timed("  build", () -> {
-            timed("    load product", () -> loadProduct());
-            timed("    write pom", () -> writePom());
-            timed("    run maven", () -> runMaven());
-        });
+        FileSystemRepository repo = new FileSystemRepository(repository);
+        try {
+            repositories().register(repo);
+            timed("  build", () -> {
+                timed("    load product", () -> loadProduct(repo));
+                timed("    write pom", () -> writePom());
+                timed("    run maven", () -> runMaven());
+            });
+        } finally {
+            repositories().deregister(repo);
+        }
     }
 
     private void timed(String message, Runnable runnable) {
@@ -57,16 +62,9 @@ public class BuildCommand implements Runnable {
         }
     }
 
-    private void loadProduct() {
-        FileSystemRepository repo = fileSystemRepository();
+    private void loadProduct(FileSystemRepository repo) {
         Product unactivatedProduct = repo.loadFromDirectory(inputDir);
         this.product = repo.withActivations(unactivatedProduct);
-    }
-
-    public FileSystemRepository fileSystemRepository() {
-        fileSystemRepository = new FileSystemRepository(repository);
-        repositories().register(fileSystemRepository);
-        return fileSystemRepository;
     }
 
     private void writePom() {
