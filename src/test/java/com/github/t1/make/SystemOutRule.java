@@ -7,13 +7,26 @@ import org.junit.rules.ExternalResource;
 public class SystemOutRule extends ExternalResource {
     private static final PrintStream REAL_SYSTEM_OUT = System.out;
     private static final PrintStream REAL_SYSTEM_ERR = System.err;
-    private static final ByteArrayOutputStream OUT = new ByteArrayOutputStream();
-    private static final ByteArrayOutputStream ERR = new ByteArrayOutputStream();
+    private static final OutputStream OUT = new ByteArrayOutputStream();
+    private static final OutputStream ERR = new ByteArrayOutputStream();
+
+    private static final boolean teeToSystemOut = System.getProperty("infinitest") == null;
 
     @Override
     public void before() {
-        System.setOut(new PrintStream(OUT));
-        System.setErr(new PrintStream(ERR));
+        System.setOut(printStream(OUT));
+        System.setErr(printStream(ERR));
+    }
+
+    private PrintStream printStream(OutputStream stream) {
+        return new PrintStream(new FilterOutputStream(stream) {
+            @Override
+            public void write(int b) throws IOException {
+                if (teeToSystemOut)
+                    REAL_SYSTEM_OUT.write(b);
+                super.write(b);
+            }
+        });
     }
 
     @Override
