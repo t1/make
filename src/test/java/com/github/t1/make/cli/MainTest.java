@@ -30,8 +30,7 @@ public class MainTest {
     public void shouldFailToRunBuildCommandWithInvalidRepositoryPath() {
         new Main("build", "--repository=does-not-exist", "--verbose").run();
 
-        assertThat(
-                out.systemErr(),
-                containsString("failed to run [build --repository=does-not-exist --verbose]: no features found [matching type plugin] in packaging:jar"));
+        assertThat(out.systemErr(), containsString("failed to run [build --repository=does-not-exist --verbose]: "
+                + "no features found [matching type [plugin]] in packaging:jar"));
     }
 }

@@ -13,15 +13,15 @@ import com.google.common.collect.ImmutableList;
 
 public abstract class Product {
     public static Predicate<Product> matching(Type type) {
-        return new PredicateWithToString<>(p -> type.equals(p.type()), "matching type " + type);
+        return new PredicateWithToString<>(p -> type.equals(p.type()), "matching type [" + type + "]");
     }
 
     public static Predicate<? super Product> matching(Id id) {
-        return new PredicateWithToString<>(p -> id.equals(p.id()), "matching id " + id);
+        return new PredicateWithToString<>(p -> id.equals(p.id()), "matching id [" + id + "]");
     }
 
     public static Predicate<? super Product> matching(Version version) {
-        return new PredicateWithToString<>(p -> version.equals(p.version()), "matching version " + version);
+        return new PredicateWithToString<>(p -> version.equals(p.version()), "matching version [" + version + "]");
     }
 
     private static final Id NAME = Type.emptyId("name");
