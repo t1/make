@@ -28,10 +28,10 @@ public class MainTest {
 
     @Test
     public void shouldFailToRunBuildCommandWithInvalidRepositoryPath() {
-        new Main("build", "--repository=does-not-exist").run();
+        new Main("build", "--repository=does-not-exist", "--verbose").run();
 
         assertThat(
                 out.systemErr(),
-                containsString("failed to run [build --repository=does-not-exist]: no features found [matching type plugin] in packaging:jar"));
+                containsString("failed to run [build --repository=does-not-exist --verbose]: no features found [matching type plugin] in packaging:jar"));
     }
 }

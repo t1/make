@@ -37,6 +37,7 @@ public class BuildCommand implements Runnable {
     @Override
     public void run() {
         log.info("build [{}] repository [{}]", inputDir, repository);
+        log.debug("  pom [{}] maven [{}]", pom, maven);
 
         timed("  build", () -> {
             timed("    load product", () -> loadProduct());
