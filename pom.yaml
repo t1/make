@@ -8,11 +8,11 @@ package:
   as: executable jar
   #Main-Class: com.github.t1.make.cli.Main
   containing:
-  - org.projectlombok:lombok @ 1.14.6
+  - org.projectlombok:lombok @ 1.16.8
   - ch.qos.logback:logback-classic @ 1.1*
   - com.google.guava:guava @ *
   - org.glassfish:javax.json @ 1.0.4
-  - org.joda:joda-convert @ 1.6
+  - org.joda:joda-convert @ 1.8.1
 
 #test:
 #  using:

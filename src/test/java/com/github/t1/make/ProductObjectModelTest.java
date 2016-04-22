@@ -25,11 +25,11 @@ public class ProductObjectModelTest {
                     .description("simplifies the description of project build processes"))
             .pack(pack()
                     .as("executable jar")
-                    .containing("org.projectlombok", "lombok", "1.14.6")
+                    .containing("org.projectlombok", "lombok", "1.16.8")
                     .containing("ch.qos.logback", "logback-classic", "1.1*")
                     .containing("com.google.guava", "guava", "*")
                     .containing("org.glassfish", "javax.json", "1.0.4")
-                    .containing("org.joda", "joda-convert", "1.6"))
+                    .containing("org.joda", "joda-convert", "1.8.1"))
             .build();
 
     private static final Path PATH = Paths.get("pom.yaml");
