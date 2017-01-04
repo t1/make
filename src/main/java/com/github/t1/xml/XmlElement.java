@@ -1,18 +1,19 @@
 package com.github.t1.xml;
 
-import static lombok.AccessLevel.*;
+import com.google.common.collect.ImmutableList;
+import lombok.*;
+import org.w3c.dom.CharacterData;
+import org.w3c.dom.*;
+import org.w3c.dom.ls.*;
 
+import javax.xml.xpath.*;
 import java.io.*;
 import java.net.URI;
 import java.nio.file.*;
 import java.util.*;
 
-import lombok.*;
-
-import org.w3c.dom.*;
-import org.w3c.dom.ls.*;
-
-import com.google.common.collect.ImmutableList;
+import static javax.xml.xpath.XPathConstants.*;
+import static lombok.AccessLevel.*;
 
 @EqualsAndHashCode
 @RequiredArgsConstructor(access = PROTECTED)
@@ -21,7 +22,7 @@ public class XmlElement {
     protected final Element element;
     private final int indent;
 
-    private String indentString;
+    private volatile String indentString;
 
     /** The text before the closing tag. Everything else goes before this. */
     private Text finalText;
@@ -68,13 +69,9 @@ public class XmlElement {
         return Optional.empty();
     }
 
-    public void value(String value) {
-        element.setTextContent(value);
-    }
+    public void value(String value) { element.setTextContent(value); }
 
-    public List<XmlElement> elements() {
-        return list(element.getChildNodes());
-    }
+    public List<XmlElement> elements() { return list(element.getChildNodes()); }
 
     private List<XmlElement> list(NodeList childNodes) {
         ImmutableList.Builder<XmlElement> result = ImmutableList.builder();
@@ -111,6 +108,22 @@ public class XmlElement {
             result.add(e);
             addChildNodes(e.element.getChildNodes(), result);
         });
+    }
+
+    public XmlElement getXPathElement(String xpath) {
+        List<XmlElement> list = find(xpath);
+        if (list.isEmpty())
+            throw new IllegalArgumentException("no element found: " + xpath);
+        if (list.size() > 1)
+            throw new IllegalArgumentException("xpath expression resolves to " + list.size() + " elements, "
+                    + "not a single element: " + xpath);
+        return list.get(0);
+    }
+
+    @SneakyThrows(XPathExpressionException.class)
+    public List<XmlElement> find(String xpath) {
+        XPathExpression expr = XPathFactory.newInstance().newXPath().compile(xpath);
+        return list((NodeList) expr.evaluate(element, NODESET));
     }
 
     public Optional<XmlElement> getOptionalElement(Path path) {
@@ -181,7 +194,7 @@ public class XmlElement {
         if (finalText == null) {
             String finalIndent = indentString(indent - 1);
             Node last = element.getLastChild();
-            if (last instanceof Text && finalIndent.equals(((Text) last).getData())) {
+            if (last instanceof Text && finalIndent.equals(((CharacterData) last).getData())) {
                 finalText = (Text) last;
             } else {
                 finalText = createText(finalIndent);
@@ -253,6 +266,7 @@ public class XmlElement {
     @Override
     public String toString() {
         return getClass().getSimpleName() //
+                + "[" + document().getDocumentURI() + "]"
                 + "[" + getName() + (hasAttribute("id") ? ("@" + getAttribute("id")) : "") + "]\n" //
                 + toXmlString();
     }

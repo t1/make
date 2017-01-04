@@ -1,12 +1,13 @@
 package com.github.t1.xml;
 
-import java.io.IOException;
-import java.net.URI;
-
-import javax.xml.parsers.*;
-
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.*;
+import java.io.*;
+import java.net.URI;
+
+import static java.nio.charset.StandardCharsets.*;
 
 public class Xml extends XmlElement {
     private static final URI NIL = URI.create("nil:--");
@@ -18,10 +19,23 @@ public class Xml extends XmlElement {
         return new Xml(document);
     }
 
+
     private static Document newDocument() {
         try {
             return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
         } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static Xml fromString(String xml) {
+        try {
+            Document result = DocumentBuilderFactory
+                    .newInstance()
+                    .newDocumentBuilder()
+                    .parse(new ByteArrayInputStream(xml.getBytes(UTF_8)));
+            return new Xml(result);
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -50,8 +64,9 @@ public class Xml extends XmlElement {
         return (uri == null) ? NIL : URI.create(uri);
     }
 
-    public void uri(URI uri) {
+    public Xml uri(URI uri) {
         document().setDocumentURI((uri == null) ? null : uri.toString());
+        return this;
     }
 
     public void save(URI uri) {
@@ -60,7 +75,8 @@ public class Xml extends XmlElement {
     }
 
     public void save() {
-        Document document = document();
-        serializer().writeToURI(document, document.getDocumentURI());
+        if (uri() == null)
+            throw new IllegalStateException("xml document has no uri save to");
+        serializer().writeToURI(document(), uri().toString());
     }
 }
