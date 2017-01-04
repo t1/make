@@ -18,6 +18,26 @@ import static lombok.AccessLevel.*;
 @EqualsAndHashCode
 @RequiredArgsConstructor(access = PROTECTED)
 public class XmlElement {
+    public interface XmlPosition {
+        void add(XmlElement node, XmlElement relativeTo);
+    }
+
+    public static XmlPosition atEnd() {
+        return (node, relativeTo) -> {
+            relativeTo.addIndent();
+            relativeTo.append(node.element);
+        };
+    }
+
+    public static XmlPosition before(String xpath) {
+        return (node, relativeTo) -> {
+            XmlElement reference = relativeTo.getXPathElement(xpath);
+            relativeTo.element.insertBefore(node.element, reference.element);
+            relativeTo.element.insertBefore(node.createText(relativeTo.indentString()), reference.element);
+        };
+    }
+
+
     private final XmlElement parent;
     protected final Element element;
     private final int indent;
@@ -27,13 +47,9 @@ public class XmlElement {
     /** The text before the closing tag. Everything else goes before this. */
     private Text finalText;
 
-    protected Document document() {
-        return element.getOwnerDocument();
-    }
+    protected Document document() { return element.getOwnerDocument(); }
 
-    public String getName() {
-        return element.getNodeName();
-    }
+    public String getName() { return element.getNodeName(); }
 
     public XmlElement assertName(String expectedName) {
         if (!expectedName.equals(getName())) {
@@ -42,9 +58,7 @@ public class XmlElement {
         return this;
     }
 
-    public Path getPath() {
-        return buildPath(element, Paths.get("/"));
-    }
+    public Path getPath() { return buildPath(element, Paths.get("/")); }
 
     private Path buildPath(Node e, Path out) {
         Node parentNode = e.getParentNode();
@@ -53,13 +67,9 @@ public class XmlElement {
         return out.resolve(e.getNodeName());
     }
 
-    public boolean hasAttribute(String name) {
-        return !element.getAttribute(name).isEmpty();
-    }
+    public boolean hasAttribute(String name) { return !element.getAttribute(name).isEmpty(); }
 
-    public String getAttribute(String name) {
-        return element.getAttribute(name);
-    }
+    public String getAttribute(String name) { return element.getAttribute(name); }
 
     public Optional<String> value() {
         if (elements().isEmpty()) {
@@ -85,9 +95,7 @@ public class XmlElement {
         return result.build();
     }
 
-    private XmlElement newChildXmlElement(Element e) {
-        return new XmlElement(this, e, indent + 1);
-    }
+    private XmlElement newChildXmlElement(Element e) { return new XmlElement(this, e, indent + 1); }
 
     public ImmutableList<Path> elementPaths() {
         ImmutableList.Builder<Path> result = ImmutableList.builder();
@@ -164,11 +172,13 @@ public class XmlElement {
         return out;
     }
 
-    public XmlElement getOrCreateElement(String name) {
+    public XmlElement getOrCreateElement(String name) { return getOrCreateElement(name, atEnd()); }
+
+    public XmlElement getOrCreateElement(String name, XmlPosition position) {
         NodeList list = element.getElementsByTagName(name);
         if (list.getLength() >= 1)
             return newChildXmlElement((Element) list.item(0));
-        return addElement(name);
+        return addElement(name, position);
     }
 
     public XmlElement addElement(Path path) {
@@ -179,16 +189,15 @@ public class XmlElement {
         return out;
     }
 
-    public XmlElement addElement(String name) {
-        Element node = document().createElement(name);
-        addIndent();
-        append(node);
-        return newChildXmlElement(node);
+    public XmlElement addElement(String name) { return addElement(name, atEnd()); }
+
+    public XmlElement addElement(String name, XmlPosition position) {
+        XmlElement node = newChildXmlElement(document().createElement(name));
+        position.add(node, this);
+        return node;
     }
 
-    private void append(Node node) {
-        element.insertBefore(node, finalText());
-    }
+    private void append(Node node) { element.insertBefore(node, finalText()); }
 
     private Text finalText() {
         if (finalText == null) {
@@ -204,9 +213,7 @@ public class XmlElement {
         return finalText;
     }
 
-    private void addIndent() {
-        element.insertBefore(createText(indentString()), finalText());
-    }
+    private void addIndent() { element.insertBefore(createText(indentString()), finalText()); }
 
     private String indentString() {
         if (indentString == null)
@@ -222,9 +229,7 @@ public class XmlElement {
         return builder.toString();
     }
 
-    private Text createText(String text) {
-        return document().createTextNode(text);
-    }
+    private Text createText(String text) { return document().createTextNode(text); }
 
     public XmlElement setAttribute(String name, String value) {
         if (value == null)
@@ -240,9 +245,7 @@ public class XmlElement {
         return this;
     }
 
-    public XmlElement nl() {
-        return addText("\n");
-    }
+    public XmlElement nl() { return addText("\n"); }
 
     public XmlElement addText(String string) {
         // we don't use finalText here, as this may be an element without linebreaks
@@ -251,17 +254,11 @@ public class XmlElement {
         return this;
     }
 
-    public URI uri() {
-        return URI.create(parent.uri() + uriDelimiter() + getName() + id());
-    }
+    public URI uri() { return URI.create(parent.uri() + uriDelimiter() + getName() + id()); }
 
-    private String uriDelimiter() {
-        return (parent.parent == null) ? "#" : "/";
-    }
+    private String uriDelimiter() { return (parent.parent == null) ? "#" : "/"; }
 
-    private String id() {
-        return hasAttribute("id") ? (";id=" + getAttribute("id")) : "";
-    }
+    private String id() { return hasAttribute("id") ? (";id=" + getAttribute("id")) : ""; }
 
     @Override
     public String toString() {
@@ -282,9 +279,7 @@ public class XmlElement {
         nl(writer);
     }
 
-    protected LSSerializer serializer() {
-        return domLs().createLSSerializer();
-    }
+    protected LSSerializer serializer() { return domLs().createLSSerializer(); }
 
     protected DOMImplementationLS domLs() {
         DOMImplementationLS domLs = (DOMImplementationLS) (document().getImplementation()).getFeature("LS", "3.0");
@@ -307,7 +302,5 @@ public class XmlElement {
         }
     }
 
-    public XmlElement getParent() {
-        return parent;
-    }
+    public XmlElement getParent() { return parent; }
 }
